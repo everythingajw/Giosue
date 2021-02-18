@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Giosue.ConsoleApp", "Giosue.ConsoleApp\Giosue.ConsoleApp.csproj", "{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBDE3C34-B96E-477D-9438-249252DB8CCE}
+	EndGlobalSection
+EndGlobal
