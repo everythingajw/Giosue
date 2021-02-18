@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Giosue
 {
+    /// <summary>
+    /// Represents the type of a token.
+    /// </summary>
     public enum TokenType
     {
         #region Single character tokens
