@@ -173,9 +173,14 @@ namespace Giosue
         String,
 
         /// <summary>
-        /// A numeric literal, such as <c>314</c> or <c>1.618</c>.
+        /// An integer literal, such as <c>314</c>.
         /// </summary>
-        Number,
+        Integer,
+
+        /// <summary>
+        /// A floating-point literal, such as <c>1.618</c>.
+        /// </summary>
+        Float,
 
         #endregion Literals
 

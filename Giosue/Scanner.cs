@@ -125,6 +125,12 @@ namespace Giosue
             return IsAtEnd ? '\0' : Source[Current];
         }
 
+        private char PeekNext()
+        {
+            // TODO: Should this method return '\0' or null when at the end?
+            return Current + 1 >= Source.Length ? '\0' : Source[Current + 1];
+        }
+
         private void String()
         {
             while (Peek() != '"' && !IsAtEnd)
@@ -146,6 +152,50 @@ namespace Giosue
             // Trim off the opening and closing quotes
             var value = Source[(Start + 1)..(Current - 1)];
             AddToken(TokenType.String, value);
+        }
+
+        /// <summary>
+        /// Tests if a character is an ASCII character. 
+        /// </summary>
+        /// <remarks>
+        /// We use this to avoid accepting digits from other writing systems.
+        /// </remarks>
+        /// <param name="c">A character</param>
+        /// <returns>True if the character is an ASCII digit, false otherwise.</returns>
+        private static bool IsAsciiDigit(char c)
+        {
+            // Visual Studio thinks that casts are redundant here.
+            return c >= '0' && c <= '9';
+        }
+
+        private void Number()
+        {
+            while (IsAsciiDigit(Peek()))
+            {
+                Advance();
+            }
+
+            var hasFractionalPart = Peek() == '.';
+            if (hasFractionalPart && IsAsciiDigit(PeekNext()))
+            {
+                // Consume the '.'
+                Advance();
+
+                while (IsAsciiDigit(Peek()))
+                {
+                    Advance();
+                }
+            }
+
+            var lexeme = Source[Start..Current];
+            if (hasFractionalPart)
+            {
+                AddToken(TokenType.Float, double.Parse(lexeme));
+            }
+            else
+            {
+                AddToken(TokenType.Integer, int.Parse(lexeme));
+            }
         }
     }
 }
