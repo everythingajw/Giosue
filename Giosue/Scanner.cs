@@ -6,6 +6,16 @@ namespace Giosue
 {
     class Scanner
     {
+        private static readonly Dictionary<string, TokenType> Keywords = new()
+        {
+            { "oppure", TokenType.Oppure },
+            { "falso", TokenType.Falso },
+            { "se", TokenType.Se },
+            { "niente", TokenType.Niente },
+            { "vero", TokenType.Vero },
+            { "mentre", TokenType.Mentre },
+        };
+
         private string Source { get; }
         private List<Token> Tokens { get; } = new();
         private int Start { get; set; } = 0;
@@ -79,7 +89,17 @@ namespace Giosue
                 case '>':
                     AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater);
                     break;
-                default: throw new Exception($"Unexpected character at line {Line}.");
+                default:
+                    if (IsAsciiDigit(ch))
+                    {
+                        Number();
+                    }
+                    else if (IsAsciiLetter(ch) || ch == '_')
+                    {
+                        Identifier();
+                    }
+
+                    throw new Exception($"Unexpected character at line {Line}.");
             }
         }
 
@@ -168,6 +188,23 @@ namespace Giosue
             return c >= '0' && c <= '9';
         }
 
+        private static bool IsAsciiLetter(char c)
+        {
+            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        }
+
+        private static bool IsAsciiLetterOrUnderscore(char c)
+        {
+            return (c >= 'A' && c <= 'Z') || 
+                   (c >= 'a' && c <= 'z') || 
+                   (c == '_');
+        }
+
+        private static bool IsAsciiAlphanumericOrUnderscore(char c)
+        {
+            return IsAsciiLetterOrUnderscore(c) || IsAsciiDigit(c);
+        }
+
         private void Number()
         {
             while (IsAsciiDigit(Peek()))
@@ -195,6 +232,20 @@ namespace Giosue
             else
             {
                 AddToken(TokenType.Integer, int.Parse(lexeme));
+            }
+        }
+
+        private void Identifier()
+        {
+            while (IsAsciiAlphanumericOrUnderscore(Peek()))
+            {
+                Advance();
+            }
+
+            var lexeme = Source[Start..Current];
+            if (Keywords.TryGetValue(lexeme, out var type))
+            {
+                AddToken(type);
             }
         }
     }
