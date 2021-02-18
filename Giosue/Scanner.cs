@@ -127,7 +127,6 @@ namespace Giosue
 
         private void String()
         {
-            var foundClosingQuote = false;
             while (Peek() != '"' && !IsAtEnd)
             {
                 if (Peek() == '\n')
