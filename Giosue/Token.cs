@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Giosue
 {
-    class Token
+    public class Token
     {
         public TokenType Type { get; }
         public string Lexeme { get; }
