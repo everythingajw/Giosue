@@ -4,8 +4,14 @@ using System.Text;
 
 namespace Giosue
 {
-    class Scanner
+    /// <summary>
+    /// Represents a scanner that converts source code to a <see cref="List{T}"/> of <see cref="Tokens"/>.
+    /// </summary>
+    public class Scanner
     {
+        /// <summary>
+        /// A dictionary of <see cref="string"/> to <see cref="TokenType"/>.
+        /// </summary>
         private static readonly Dictionary<string, TokenType> Keywords = new()
         {
             { "oppure", TokenType.Oppure },
@@ -16,19 +22,53 @@ namespace Giosue
             { "mentre", TokenType.Mentre },
         };
 
+        /// <summary>
+        /// The source code for the scanner.
+        /// </summary>
         private string Source { get; }
-        private List<Token> Tokens { get; } = new();
-        private int Start { get; set; } = 0;
-        private int Current { get; set; } = 0;
-        private int Line { get; set; } = 1;
-        private bool IsAtEnd => Current >= Source.Length;
 
+        /// <summary>
+        /// The list of tokens produced after scanning.
+        /// </summary>
+        private List<Token> Tokens { get; } = new();
+
+        /// <summary>
+        /// The index of the first character of the current token in <see cref="Source"/>.
+        /// </summary>
+        private int Start { get; set; } = 0;
+
+        /// <summary>
+        /// The index of the current character of the current token in <see cref="Source"/>.
+        /// </summary>
+        private int Current { get; set; } = 0;
+
+        /// <summary>
+        /// The line that the current character is on.
+        /// </summary>
+        private int Line { get; set; } = 1;
+        
+        /// <summary>
+        /// Indicates if the scanner has reached the end of <see cref="Source"/>.
+        /// </summary>
+        /// <remarks>
+        /// True if the scanner has reached the end of <see cref="Source"/>, false otherwise.
+        /// </remarks>
+        private bool IsAtEnd => Current >= Source.Length;
+        
+        /// <summary>
+        /// Creates a new <see cref="Scanner"/>.
+        /// </summary>
+        /// <param name="source">The source code for the <see cref="Scanner"/>.</param>
         public Scanner(string source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source), "The source for a scanner cannot be null.");
         }
 
-        List<Token> ScanTokens()
+        /// <summary>
+        /// Scans all the tokens in the source.
+        /// </summary>
+        /// <returns>The list of scanned tokens.</returns>
+        public List<Token> ScanTokens()
         {
             while (!IsAtEnd)
             {
@@ -40,6 +80,9 @@ namespace Giosue
             return Tokens;
         }
 
+        /// <summary>
+        /// Scans one token.
+        /// </summary>
         private void ScanToken()
         {
             var ch = Advance();
@@ -103,17 +146,30 @@ namespace Giosue
             }
         }
 
+        /// <summary>
+        /// Advances the scanner one character forward, consuming one character.
+        /// </summary>
+        /// <returns>The consumed character.</returns>
         private char Advance()
         {
             Current++;
             return Source[Current - 1];
         }
 
+        /// <summary>
+        /// Adds a token to <see cref="Tokens"/>.
+        /// </summary>
+        /// <param name="type">The type of the token to add.</param>
         private void AddToken(TokenType type)
         {
             AddToken(type, null);
         }
 
+        /// <summary>
+        /// Adds a token to <see cref="Tokens"/>.
+        /// </summary>
+        /// <param name="type">The type of the token to add.</param>
+        /// <param name="literal">The token's literal.</param>
         private void AddToken(TokenType type, object literal)
         {
             var lexeme = Source[Start..Current];
@@ -139,18 +195,29 @@ namespace Giosue
             return true;
         }
 
+        /// <summary>
+        /// Gets the current character without consuming it.
+        /// </summary>
+        /// <returns>The current character or <c>'\0'</c> if <see cref="Source"/> is empty.</returns>
         private char Peek()
         {
             // TODO: Should this method return '\0' or null when at the end?
             return IsAtEnd ? '\0' : Source[Current];
         }
 
+        /// <summary>
+        /// Gets the next character without consuming it.
+        /// </summary>
+        /// <returns>The next character or <c>'\0'</c> if <see cref="Source"/> is empty.</returns>
         private char PeekNext()
         {
             // TODO: Should this method return '\0' or null when at the end?
             return Current + 1 >= Source.Length ? '\0' : Source[Current + 1];
         }
 
+        /// <summary>
+        /// Scans a string.
+        /// </summary>
         private void String()
         {
             while (Peek() != '"' && !IsAtEnd)
@@ -175,7 +242,7 @@ namespace Giosue
         }
 
         /// <summary>
-        /// Tests if a character is an ASCII character. 
+        /// Tests if a character is an ASCII digit. 
         /// </summary>
         /// <remarks>
         /// We use this to avoid accepting digits from other writing systems.
@@ -187,12 +254,26 @@ namespace Giosue
             // Visual Studio thinks that casts are redundant here.
             return c >= '0' && c <= '9';
         }
-
+        
+        /// <summary>
+        /// Tests if <paramref name="c"/> is an ASCII letter.
+        /// </summary>
+        /// <remarks>
+        /// We use this to avoid accepting letters from other writing systems.
+        /// </remarks>
+        /// <param name="c">A character.</param>
+        /// <returns>True if <paramref name="c"/> is an ASCII letter, false otherwise.</returns>
         private static bool IsAsciiLetter(char c)
         {
             return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
         }
 
+        /// <summary>
+        /// Tests if <paramref name="c"/> is an ASCII letter or an underscore.
+        /// </summary>
+        /// <param name="c">A character.</param>
+        /// <returns>True if <paramref name="c"/> is an ASCII letter or an underscore, false otherwise.</returns>
+        /// <seealso cref="IsAsciiLetter(char)"/>
         private static bool IsAsciiLetterOrUnderscore(char c)
         {
             return (c >= 'A' && c <= 'Z') || 
@@ -200,11 +281,33 @@ namespace Giosue
                    (c == '_');
         }
 
-        private static bool IsAsciiAlphanumericOrUnderscore(char c)
+        /// <summary>
+        /// Tests if <paramref name="c"/> is an ASCII alphanumeric character.
+        /// </summary>
+        /// <param name="c">A character.</param>
+        /// <returns>True if <paramref name="c"/> is an ASCII alphanumeric character, false otherwise.</returns>
+        /// <seealso cref="IsAsciiLetter(char)"/>
+        /// <seealso cref="IsAsciiDigit(char)"/>
+        private static bool IsAsciiAlphanumeric(char c)
         {
-            return IsAsciiLetterOrUnderscore(c) || IsAsciiDigit(c);
+            return IsAsciiLetter(c) || IsAsciiDigit(c);
         }
 
+        /// <summary>
+        /// Tests if <paramref name="c"/> is an ASCII alphanumeric character or an underscore.
+        /// </summary>
+        /// <param name="c">A character.</param>
+        /// <returns>True if <paramref name="c"/> is an ASCII alphanumeric character or an underscore, false otherwise.</returns>
+        /// <seealso cref="IsAsciiAlphanumeric(char)"/>
+        /// <seealso cref="IsAsciiLetterOrUnderscore(char)"/>
+        private static bool IsAsciiAlphanumericOrUnderscore(char c)
+        {
+            return IsAsciiAlphanumeric(c) || IsAsciiLetterOrUnderscore(c);
+        }
+
+        /// <summary>
+        /// Scans a number (integer or float).
+        /// </summary>
         private void Number()
         {
             while (IsAsciiDigit(Peek()))
@@ -235,6 +338,9 @@ namespace Giosue
             }
         }
 
+        /// <summary>
+        /// Scans an identifier (user-defined or keyword).
+        /// </summary>
         private void Identifier()
         {
             while (IsAsciiAlphanumericOrUnderscore(Peek()))
