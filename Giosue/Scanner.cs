@@ -149,8 +149,7 @@ namespace Giosue
                 
                 // Catch all
                 default:
-                    throw new UnexpectedCharacterException(Line, "Unexpected character")
-                    throw new Exception($"Unexpected character at line {Line}.");
+                    throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
             }
         }
 
