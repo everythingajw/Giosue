@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Giosue.Exceptions;
 
 namespace Giosue.ConsoleApp
 {
@@ -24,6 +25,14 @@ namespace Giosue.ConsoleApp
                 PrettyPrintTokens(tokens);
                 Console.WriteLine();
                 Console.WriteLine("Scanning successful.");
+            }
+            catch (UnexpectedCharacterException e)
+            {
+                PrettyPrintTokens(scanner.GetTokens());
+                Console.WriteLine();
+                Console.WriteLine(e.Message);
+                Console.WriteLine($"Character: {e.UnexpectedCharacter}");
+                Console.WriteLine($"Line: {e.Line}");
             }
             catch (Exception e)
             {
