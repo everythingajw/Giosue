@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -20,15 +21,41 @@ namespace Giosue.ConsoleApp
             try
             {
                 var tokens = scanner.ScanTokens();
-                tokens.ForEach(t => Console.WriteLine(t.ToString()));
+                PrintTokens(tokens);
+                Console.WriteLine();
+                Console.WriteLine("Scanning successful.");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                PrintTokens(scanner.GetTokens());
+                Console.WriteLine();
                 Console.WriteLine("An error occurred");
                 Console.WriteLine(e.Message);
+            }
+
+            Console.WriteLine();
+            Console.ReadKey();
+        }
+
+        private static IEnumerable<IEnumerable<Token>> GroupTokens(IEnumerable<Token> tokens)
+        {
+            return tokens.GroupBy(t => t.Line);
+        }
+
+        private static void PrintTokens(IEnumerable<Token> tokens)
+        {
+            PrintTokens(GroupTokens(tokens));
+        }
+
+        private static void PrintTokens(IEnumerable<IEnumerable<Token>> tokens)
+        {
+            foreach (var group in tokens)
+            {
+                foreach (var token in group)
+                {
+                    Console.WriteLine(token.ToString());
+                }
                 Console.WriteLine();
-                Console.WriteLine("Tokens were:");
-                scanner.GetTokens().ToList().ForEach(t => Console.WriteLine(t.ToString()));
             }
         }
     }

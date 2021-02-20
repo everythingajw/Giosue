@@ -95,7 +95,7 @@ namespace Giosue
 
             switch (ch)
             {
-                // Ignore whitespace 
+                // Whitespace and newlines
                 case ' ':
                 case '\r':
                 case '\t':
@@ -103,14 +103,20 @@ namespace Giosue
                 case '\n':
                     Line++;
                     break;
+                
+                // Grouping operators
                 case '(': AddToken(TokenType.LeftParenthesis); break;
                 case ')': AddToken(TokenType.RightParenthesis); break;
                 case '{': AddToken(TokenType.LeftBrace); break;
                 case '}': AddToken(TokenType.RightBrace); break;
+                
+                // Other operators
                 case ',': AddToken(TokenType.Comma); break;
                 case '.': AddToken(TokenType.Dot); break;
-                case '+': AddToken(TokenType.Plus); break;
                 case ';': AddToken(TokenType.Semicolon); break;
+                
+                // Math operators
+                case '+': AddToken(TokenType.Plus); break;
                 case '*': AddToken(TokenType.Star); break;
                 case '-':
                     if (Match('-'))
@@ -126,27 +132,24 @@ namespace Giosue
                         AddToken(TokenType.Minus);
                     }
                     break;
-                case '!':
-                    AddToken(Match('=') ? TokenType.BangEqual : TokenType.Bang);
-                    break;
-                case '=':
-                    AddToken(Match('=') ? TokenType.EqualEqual : TokenType.Equal);
-                    break;
-                case '<':
-                    AddToken(Match('=') ? TokenType.LessEqual : TokenType.Less);
-                    break;
-                case '>':
-                    AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater);
-                    break;
-                case '"':
-                    String();
-                    break;
-                case var c when c.IsAsciiDigit():
-                    Number();
-                    break;
-                case var c when c.IsAsciiAlphanumericOrUnderscore():
-                    Identifier();
-                    break;
+                
+                // Comparison operators
+                case '!': AddToken(Match('=') ? TokenType.BangEqual : TokenType.Bang); break;
+                case '=': AddToken(Match('=') ? TokenType.EqualEqual : TokenType.Equal); break;
+                case '<': AddToken(Match('=') ? TokenType.LessEqual : TokenType.Less); break;
+                case '>': AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater); break;
+                
+                // Boolean operators
+                case '&': AddToken(Match('&') ? TokenType.AndAnd : TokenType.And); break;
+                case '|': AddToken(Match('|') ? TokenType.PipePipe : TokenType.Pipe); break;
+                case '^': AddToken(Match('^') ? TokenType.Caret : TokenType.CaretCaret); break;
+                
+                // Strings and numbers
+                case '"': String(); break;
+                case var c when c.IsAsciiDigit(): Number(); break;
+                case var c when c.IsAsciiAlphanumericOrUnderscore(): Identifier(); break;
+                
+                // Catch all
                 default:
                     throw new Exception($"Unexpected character at line {Line}.");
             }
