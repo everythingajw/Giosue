@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Giosue.Extensions;
 
 namespace Giosue
 {
@@ -133,11 +134,11 @@ namespace Giosue
                     AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater);
                     break;
                 default:
-                    if (IsAsciiDigit(ch))
+                    if (ch.IsAsciiDigit())
                     {
                         Number();
                     }
-                    else if (IsAsciiLetter(ch) || ch == '_')
+                    else if (ch.IsAsciiLetterOrUnderscore())
                     {
                         Identifier();
                     }
@@ -242,86 +243,22 @@ namespace Giosue
         }
 
         /// <summary>
-        /// Tests if a character is an ASCII digit. 
-        /// </summary>
-        /// <remarks>
-        /// We use this to avoid accepting digits from other writing systems.
-        /// </remarks>
-        /// <param name="c">A character</param>
-        /// <returns>True if the character is an ASCII digit, false otherwise.</returns>
-        private static bool IsAsciiDigit(char c)
-        {
-            // Visual Studio thinks that casts are redundant here.
-            return c >= '0' && c <= '9';
-        }
-        
-        /// <summary>
-        /// Tests if <paramref name="c"/> is an ASCII letter.
-        /// </summary>
-        /// <remarks>
-        /// We use this to avoid accepting letters from other writing systems.
-        /// </remarks>
-        /// <param name="c">A character.</param>
-        /// <returns>True if <paramref name="c"/> is an ASCII letter, false otherwise.</returns>
-        private static bool IsAsciiLetter(char c)
-        {
-            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
-        }
-
-        /// <summary>
-        /// Tests if <paramref name="c"/> is an ASCII letter or an underscore.
-        /// </summary>
-        /// <param name="c">A character.</param>
-        /// <returns>True if <paramref name="c"/> is an ASCII letter or an underscore, false otherwise.</returns>
-        /// <seealso cref="IsAsciiLetter(char)"/>
-        private static bool IsAsciiLetterOrUnderscore(char c)
-        {
-            return (c >= 'A' && c <= 'Z') || 
-                   (c >= 'a' && c <= 'z') || 
-                   (c == '_');
-        }
-
-        /// <summary>
-        /// Tests if <paramref name="c"/> is an ASCII alphanumeric character.
-        /// </summary>
-        /// <param name="c">A character.</param>
-        /// <returns>True if <paramref name="c"/> is an ASCII alphanumeric character, false otherwise.</returns>
-        /// <seealso cref="IsAsciiLetter(char)"/>
-        /// <seealso cref="IsAsciiDigit(char)"/>
-        private static bool IsAsciiAlphanumeric(char c)
-        {
-            return IsAsciiLetter(c) || IsAsciiDigit(c);
-        }
-
-        /// <summary>
-        /// Tests if <paramref name="c"/> is an ASCII alphanumeric character or an underscore.
-        /// </summary>
-        /// <param name="c">A character.</param>
-        /// <returns>True if <paramref name="c"/> is an ASCII alphanumeric character or an underscore, false otherwise.</returns>
-        /// <seealso cref="IsAsciiAlphanumeric(char)"/>
-        /// <seealso cref="IsAsciiLetterOrUnderscore(char)"/>
-        private static bool IsAsciiAlphanumericOrUnderscore(char c)
-        {
-            return IsAsciiAlphanumeric(c) || IsAsciiLetterOrUnderscore(c);
-        }
-
-        /// <summary>
         /// Scans a number (integer or float).
         /// </summary>
         private void Number()
         {
-            while (IsAsciiDigit(Peek()))
+            while (Peek().IsAsciiDigit())
             {
                 Advance();
             }
 
             var hasFractionalPart = Peek() == '.';
-            if (hasFractionalPart && IsAsciiDigit(PeekNext()))
+            if (hasFractionalPart && PeekNext().IsAsciiDigit())
             {
                 // Consume the '.'
                 Advance();
 
-                while (IsAsciiDigit(Peek()))
+                while (Peek().IsAsciiDigit())
                 {
                     Advance();
                 }
@@ -343,7 +280,7 @@ namespace Giosue
         /// </summary>
         private void Identifier()
         {
-            while (IsAsciiAlphanumericOrUnderscore(Peek()))
+            while (Peek().IsAsciiAlphanumericOrUnderscore())
             {
                 Advance();
             }
