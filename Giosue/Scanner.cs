@@ -199,21 +199,19 @@ namespace Giosue
         /// <summary>
         /// Gets the current character without consuming it.
         /// </summary>
-        /// <returns>The current character or <c>'\0'</c> if <see cref="Source"/> is empty.</returns>
-        private char Peek()
+        /// <returns>The current character or <c>null</c> if <see cref="Source"/> is empty.</returns>
+        private char? Peek()
         {
-            // TODO: Should this method return '\0' or null when at the end?
-            return IsAtEnd ? '\0' : Source[Current];
+            return IsAtEnd ? null : Source[Current];
         }
 
         /// <summary>
         /// Gets the next character without consuming it.
         /// </summary>
-        /// <returns>The next character or <c>'\0'</c> if <see cref="Source"/> is empty.</returns>
-        private char PeekNext()
+        /// <returns>The next character or <c>null</c> if there are not enough characters in <see cref="Source"/>.</returns>
+        private char? PeekNext()
         {
-            // TODO: Should this method return '\0' or null when at the end?
-            return Current + 1 >= Source.Length ? '\0' : Source[Current + 1];
+            return Current + 1 >= Source.Length ? null : Source[Current + 1];
         }
 
         /// <summary>
