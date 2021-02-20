@@ -21,7 +21,7 @@ namespace Giosue
 
         public override string ToString()
         {
-            return $"{Type} ;; {Lexeme} ;; {Literal} ;; {Line}";
+            return $"{Type} ~ {Lexeme} ~ {Literal} ~ {Line}";
         }
     }
 }
