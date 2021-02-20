@@ -81,6 +81,11 @@ namespace Giosue
             return Tokens;
         }
 
+        public IReadOnlyList<Token> GetTokens()
+        {
+            return Tokens.AsReadOnly();
+        }
+
         /// <summary>
         /// Scans one token.
         /// </summary>
@@ -133,16 +138,16 @@ namespace Giosue
                 case '>':
                     AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater);
                     break;
+                case '"':
+                    String();
+                    break;
+                case var c when c.IsAsciiDigit():
+                    Number();
+                    break;
+                case var c when c.IsAsciiAlphanumericOrUnderscore():
+                    Identifier();
+                    break;
                 default:
-                    if (ch.IsAsciiDigit())
-                    {
-                        Number();
-                    }
-                    else if (ch.IsAsciiLetterOrUnderscore())
-                    {
-                        Identifier();
-                    }
-
                     throw new Exception($"Unexpected character at line {Line}.");
             }
         }
