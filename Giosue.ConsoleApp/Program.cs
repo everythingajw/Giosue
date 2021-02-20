@@ -21,13 +21,13 @@ namespace Giosue.ConsoleApp
             try
             {
                 var tokens = scanner.ScanTokens();
-                PrintTokens(tokens);
+                PrettyPrintTokens(tokens);
                 Console.WriteLine();
                 Console.WriteLine("Scanning successful.");
             }
             catch (Exception e)
             {
-                PrintTokens(scanner.GetTokens());
+                PrettyPrintTokens(scanner.GetTokens());
                 Console.WriteLine();
                 Console.WriteLine("An error occurred");
                 Console.WriteLine(e.Message);
@@ -55,6 +55,43 @@ namespace Giosue.ConsoleApp
                 {
                     Console.WriteLine(token.ToString());
                 }
+                Console.WriteLine();
+            }
+        }
+
+        private static void PrettyPrintTokens(IEnumerable<Token> tokens)
+        {
+            var stringifiedTokens = tokens.Select(t => (t.Type.ToString(), t?.Lexeme?.ToString() ?? "", t?.Literal?.ToString() ?? "", t.Line.ToString()));
+
+            var columnLengths = new int[]
+            {
+                stringifiedTokens.Max(t => t.Item1.Length),
+                stringifiedTokens.Max(t => t.Item2.Length),
+                stringifiedTokens.Max(t => t.Item3.Length),
+                stringifiedTokens.Max(t => t.Item4.Length),
+            };
+
+            var headers = new string[]
+            {
+                $"{nameof(Token.Type).PadRight(columnLengths[0])} | ",
+                $"{nameof(Token.Lexeme).PadRight(columnLengths[1])} | ",
+                $"{nameof(Token.Literal).PadRight(columnLengths[2])} | ",
+                $"{nameof(Token.Line).PadRight(columnLengths[3])}"
+            };
+
+            foreach (var header in headers)
+            {
+                Console.Write(header);
+            }
+            Console.WriteLine();
+            Console.WriteLine("".PadLeft(headers.Sum(h => h.Length), '-'));
+
+            foreach (var token in stringifiedTokens)
+            {
+                Console.Write($"{token.Item1.PadRight(columnLengths[0])} | ");
+                Console.Write($"{token.Item2.PadRight(columnLengths[1])} | ");
+                Console.Write($"{token.Item3.PadRight(columnLengths[2])} | ");
+                Console.Write($"{token.Item4.PadRight(columnLengths[3])}");
                 Console.WriteLine();
             }
         }

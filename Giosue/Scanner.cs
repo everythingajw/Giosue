@@ -118,14 +118,11 @@ namespace Giosue
                 // Math operators
                 case '+': AddToken(TokenType.Plus); break;
                 case '*': AddToken(TokenType.Star); break;
-                case '-':
+                case '/': AddToken(TokenType.Slash); break;
+                case '-': 
                     if (Match('-'))
                     {
-                        // Completely ignore comments
-                        while (Peek() != '\n')
-                        {
-                            Advance();
-                        }
+                        Comment();
                     }
                     else
                     {
@@ -138,11 +135,11 @@ namespace Giosue
                 case '=': AddToken(Match('=') ? TokenType.EqualEqual : TokenType.Equal); break;
                 case '<': AddToken(Match('=') ? TokenType.LessEqual : TokenType.Less); break;
                 case '>': AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater); break;
-                
-                // Boolean operators
+
+                // Boolean and bitwise operators
                 case '&': AddToken(Match('&') ? TokenType.AndAnd : TokenType.And); break;
                 case '|': AddToken(Match('|') ? TokenType.PipePipe : TokenType.Pipe); break;
-                case '^': AddToken(Match('^') ? TokenType.Caret : TokenType.CaretCaret); break;
+                case '^': AddToken(Match('^') ? TokenType.CaretCaret : TokenType.Caret); break;
                 
                 // Strings and numbers
                 case '"': String(); break;
@@ -292,9 +289,26 @@ namespace Giosue
             }
 
             var lexeme = Source[Start..Current];
-            if (Keywords.TryGetValue(lexeme, out var type))
+            var tokenType = TokenType.Identifier;
+            if (Keywords.TryGetValue(lexeme, out var keywordType))
             {
-                AddToken(type);
+                tokenType = keywordType;
+            }
+            AddToken(tokenType);
+        }
+
+        /// <summary>
+        /// Scans a line comment.
+        /// </summary>
+        /// <remarks>
+        /// Comments are completely ignored and are thrown away by the scanner.
+        /// </remarks>
+        private void Comment()
+        {
+            // Completely ignore comments.
+            while (Peek() != '\n')
+            {
+                Advance();
             }
         }
     }
