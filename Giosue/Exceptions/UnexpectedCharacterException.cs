@@ -10,6 +10,10 @@ namespace Giosue.Exceptions
     {
         public int Line { get; } = 0;
 
+        public char UnexpectedCharacter { get; } = default;
+
+        #region Common constructors
+
         public UnexpectedCharacterException() : base()
         {
 
@@ -19,20 +23,24 @@ namespace Giosue.Exceptions
         {
 
         }
-
-        public UnexpectedCharacterException(int line, string message) : this(message)
-        {
-            Line = line;
-        }
-
+        
         public UnexpectedCharacterException(string message, Exception innerException) : base(message, innerException)
         {
 
         }
 
-        public UnexpectedCharacterException(int line, string message, Exception innerException) : this(message, innerException)
+        #endregion Common constructors
+
+        public UnexpectedCharacterException(int line, char unexpectedCharacter, string message) : base(message)
         {
             Line = line;
+            UnexpectedCharacter = unexpectedCharacter;
+        }
+
+        public UnexpectedCharacterException(int line, char unexpectedCharacter, string message, Exception innerException) : base(message, innerException)
+        {
+            Line = line;
+            UnexpectedCharacter = unexpectedCharacter;
         }
     }
 }

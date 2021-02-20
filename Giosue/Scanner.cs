@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Giosue.Exceptions;
 using Giosue.Extensions;
 
 namespace Giosue
@@ -148,6 +149,7 @@ namespace Giosue
                 
                 // Catch all
                 default:
+                    throw new UnexpectedCharacterException(Line, "Unexpected character")
                     throw new Exception($"Unexpected character at line {Line}.");
             }
         }
