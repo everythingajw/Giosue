@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Giosue.Exceptions;
 using Giosue.Extensions;
@@ -23,6 +24,33 @@ namespace Giosue
             { "vero", TokenType.Vero },
             { "mentre", TokenType.Mentre },
         };
+
+        private static readonly Dictionary<char, TokenType> SingleCharacterTokens = new()
+        {
+            { '(', TokenType.LeftParenthesis },
+            { ')', TokenType.RightParenthesis },
+            { '{', TokenType.LeftBrace },
+            { '}', TokenType.RightBrace },
+            { ',', TokenType.Comma },
+            { '.', TokenType.Dot },
+            { ';', TokenType.Semicolon },
+            { '+', TokenType.Plus },
+            { '*', TokenType.Star },
+            { '/', TokenType.Slash },
+        };
+
+        // FUTURE
+        // The logic for this is messy. I'll do this later.
+        //private static readonly Dictionary<(char, char), (TokenType, TokenType)> DoubleCharacterTokens = new()
+        //{
+        //    { ('!', '='), (TokenType.Bang, TokenType.BangEqual) },
+        //    { ('=', '='), (TokenType.Equal, TokenType.EqualEqual) },
+        //    { ('<', '='), (TokenType.Less, TokenType.LessEqual) },
+        //    { ('>', '='), (TokenType.Greater, TokenType.GreaterEqual) },
+        //    { ('&', '&'), (TokenType.And, TokenType.AndAnd) },
+        //    { ('|', '|'), (TokenType.Pipe, TokenType.PipePipe) },
+        //    { ('^', '^'), (TokenType.Caret, TokenType.CaretCaret) },
+        //};
 
         /// <summary>
         /// The source code for the scanner.
@@ -94,6 +122,12 @@ namespace Giosue
         {
             var ch = Advance();
 
+            if (SingleCharacterTokens.TryGetValue(ch, out var type))
+            {
+                AddToken(type);
+                return;
+            }
+
             switch (ch)
             {
                 // Whitespace and newlines
@@ -105,21 +139,6 @@ namespace Giosue
                     Line++;
                     break;
                 
-                // Grouping operators
-                case '(': AddToken(TokenType.LeftParenthesis); break;
-                case ')': AddToken(TokenType.RightParenthesis); break;
-                case '{': AddToken(TokenType.LeftBrace); break;
-                case '}': AddToken(TokenType.RightBrace); break;
-                
-                // Other operators
-                case ',': AddToken(TokenType.Comma); break;
-                case '.': AddToken(TokenType.Dot); break;
-                case ';': AddToken(TokenType.Semicolon); break;
-                
-                // Math operators
-                case '+': AddToken(TokenType.Plus); break;
-                case '*': AddToken(TokenType.Star); break;
-                case '/': AddToken(TokenType.Slash); break;
                 case '-': 
                     if (AdvanceIfMatches('-'))
                     {

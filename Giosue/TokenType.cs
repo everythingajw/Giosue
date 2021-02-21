@@ -9,6 +9,11 @@ namespace Giosue
     /// </summary>
     public enum TokenType
     {
+        /// <summary>
+        /// The current character is not a token and can be disregarded.
+        /// </summary>
+        None,
+
         #region Single character tokens
 
         /// <summary>
