@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Giosue.ConsoleApp", "Giosue.ConsoleApp\Giosue.ConsoleApp.csproj", "{FD665FFB-DDD0-493B-8B73-1CC3C5EED455}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Giosue", "Giosue\Giosue.csproj", "{CD4C9C7F-E943-476D-A532-5BFAEB3B0E2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Giosue", "Giosue\Giosue.csproj", "{CD4C9C7F-E943-476D-A532-5BFAEB3B0E2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceManager", "SourceManager\SourceManager.csproj", "{4AC080EB-278E-48FA-AE92-BBB4E3E268FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{CD4C9C7F-E943-476D-A532-5BFAEB3B0E2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD4C9C7F-E943-476D-A532-5BFAEB3B0E2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD4C9C7F-E943-476D-A532-5BFAEB3B0E2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AC080EB-278E-48FA-AE92-BBB4E3E268FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AC080EB-278E-48FA-AE92-BBB4E3E268FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AC080EB-278E-48FA-AE92-BBB4E3E268FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AC080EB-278E-48FA-AE92-BBB4E3E268FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
