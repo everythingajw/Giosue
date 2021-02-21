@@ -12,6 +12,8 @@ namespace Giosue
     /// </summary>
     public class Scanner
     {
+        private const char StringTerminator = '"';
+
         /// <summary>
         /// A dictionary of <see cref="string"/> to <see cref="TokenType"/>.
         /// </summary>
@@ -162,7 +164,7 @@ namespace Giosue
                 case '^': AddToken(AdvanceIfMatches('^') ? TokenType.CaretCaret : TokenType.Caret); break;
                 
                 // Strings, numbers, and identifiers
-                case '"':
+                case StringTerminator:
                     {
                         var parsedString = String();
                         AddToken(TokenType.String, parsedString);
@@ -251,7 +253,7 @@ namespace Giosue
         /// <returns>The scanned string.</returns>
         private string String()
         {
-            while (Peek() != '"' && !IsAtEnd)
+            while (Peek() != StringTerminator && !IsAtEnd)
             {
                 if (Peek() == '\n')
                 {
