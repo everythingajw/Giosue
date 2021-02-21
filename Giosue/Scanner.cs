@@ -37,12 +37,12 @@ namespace Giosue
         /// <summary>
         /// The index of the first character of the current token in <see cref="Source"/>.
         /// </summary>
-        private int Start { get; set; } = 0;
+        private int TokenStartIndex { get; set; } = 0;
 
         /// <summary>
         /// The index of the current character of the current token in <see cref="Source"/>.
         /// </summary>
-        private int Current { get; set; } = 0;
+        private int CurrentCharacterIndex { get; set; } = 0;
 
         /// <summary>
         /// The line that the current character is on.
@@ -55,7 +55,7 @@ namespace Giosue
         /// <remarks>
         /// True if the scanner has reached the end of <see cref="Source"/>, false otherwise.
         /// </remarks>
-        private bool IsAtEnd => Current >= Source.Length;
+        private bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
         
         /// <summary>
         /// Creates a new <see cref="Scanner"/>.
@@ -74,7 +74,7 @@ namespace Giosue
         {
             while (!IsAtEnd)
             {
-                Start = Current;
+                TokenStartIndex = CurrentCharacterIndex;
                 ScanToken();
             }
 
@@ -121,7 +121,7 @@ namespace Giosue
                 case '*': AddToken(TokenType.Star); break;
                 case '/': AddToken(TokenType.Slash); break;
                 case '-': 
-                    if (Match('-'))
+                    if (AdvanceIfMatches('-'))
                     {
                         Comment();
                     }
@@ -132,15 +132,15 @@ namespace Giosue
                     break;
                 
                 // Comparison operators
-                case '!': AddToken(Match('=') ? TokenType.BangEqual : TokenType.Bang); break;
-                case '=': AddToken(Match('=') ? TokenType.EqualEqual : TokenType.Equal); break;
-                case '<': AddToken(Match('=') ? TokenType.LessEqual : TokenType.Less); break;
-                case '>': AddToken(Match('=') ? TokenType.GreaterEqual : TokenType.Greater); break;
+                case '!': AddToken(AdvanceIfMatches('=') ? TokenType.BangEqual : TokenType.Bang); break;
+                case '=': AddToken(AdvanceIfMatches('=') ? TokenType.EqualEqual : TokenType.Equal); break;
+                case '<': AddToken(AdvanceIfMatches('=') ? TokenType.LessEqual : TokenType.Less); break;
+                case '>': AddToken(AdvanceIfMatches('=') ? TokenType.GreaterEqual : TokenType.Greater); break;
 
                 // Boolean and bitwise operators
-                case '&': AddToken(Match('&') ? TokenType.AndAnd : TokenType.And); break;
-                case '|': AddToken(Match('|') ? TokenType.PipePipe : TokenType.Pipe); break;
-                case '^': AddToken(Match('^') ? TokenType.CaretCaret : TokenType.Caret); break;
+                case '&': AddToken(AdvanceIfMatches('&') ? TokenType.AndAnd : TokenType.And); break;
+                case '|': AddToken(AdvanceIfMatches('|') ? TokenType.PipePipe : TokenType.Pipe); break;
+                case '^': AddToken(AdvanceIfMatches('^') ? TokenType.CaretCaret : TokenType.Caret); break;
                 
                 // Strings and numbers
                 case '"': String(); break;
@@ -159,8 +159,8 @@ namespace Giosue
         /// <returns>The consumed character.</returns>
         private char Advance()
         {
-            Current++;
-            return Source[Current - 1];
+            CurrentCharacterIndex++;
+            return Source[CurrentCharacterIndex - 1];
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Giosue
         /// <param name="literal">The token's literal.</param>
         private void AddToken(TokenType type, object literal)
         {
-            var lexeme = Source[Start..Current];
+            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
             Tokens.Add(new Token(type, lexeme, literal, Line));
         }
 
@@ -188,17 +188,17 @@ namespace Giosue
         /// </summary>
         /// <param name="expected">The character to match</param>
         /// <returns>True if <paramref name="expected"/> matches the current character, false otherwise.</returns>
-        private bool Match(char expected)
+        private bool AdvanceIfMatches(char expected)
         {
             if (IsAtEnd)
             {
                 return false;
             }
-            if (Source[Current] != expected)
+            if (Source[CurrentCharacterIndex] != expected)
             {
                 return false;
             }
-            Current++;
+            CurrentCharacterIndex++;
             return true;
         }
 
@@ -208,7 +208,7 @@ namespace Giosue
         /// <returns>The current character or <c>null</c> if <see cref="Source"/> is empty.</returns>
         private char? Peek()
         {
-            return IsAtEnd ? null : Source[Current];
+            return IsAtEnd ? null : Source[CurrentCharacterIndex];
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Giosue
         /// <returns>The next character or <c>null</c> if there are not enough characters in <see cref="Source"/>.</returns>
         private char? PeekNext()
         {
-            return Current + 1 >= Source.Length ? null : Source[Current + 1];
+            return CurrentCharacterIndex + 1 >= Source.Length ? null : Source[CurrentCharacterIndex + 1];
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Giosue
             Advance();
 
             // Trim off the opening and closing quotes
-            var value = Source[(Start + 1)..(Current - 1)];
+            var value = Source[(TokenStartIndex + 1)..(CurrentCharacterIndex - 1)];
             AddToken(TokenType.String, value);
         }
 
@@ -268,7 +268,7 @@ namespace Giosue
                 }
             }
 
-            var lexeme = Source[Start..Current];
+            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
             if (hasFractionalPart)
             {
                 AddToken(TokenType.Float, double.Parse(lexeme));
@@ -289,7 +289,7 @@ namespace Giosue
                 Advance();
             }
 
-            var lexeme = Source[Start..Current];
+            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
             var tokenType = TokenType.Identifier;
             if (Keywords.TryGetValue(lexeme, out var keywordType))
             {
