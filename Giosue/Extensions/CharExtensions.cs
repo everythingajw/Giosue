@@ -20,8 +20,7 @@ namespace Giosue.Extensions
         /// <returns>True if the character is an ASCII digit, false otherwise.</returns>
         public static bool IsAsciiDigit(this char c)
         {
-            // Visual Studio thinks that casts are redundant here.
-            return c >= '0' && c <= '9';
+            return ((char?)c).IsAsciiDigit();
         }
 
         /// <summary>
@@ -34,7 +33,7 @@ namespace Giosue.Extensions
         /// <returns>True if <paramref name="c"/> is an ASCII letter, false otherwise.</returns>
         public static bool IsAsciiLetter(this char c)
         {
-            return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+            return ((char?)c).IsAsciiLetter();
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace Giosue.Extensions
         /// <seealso cref="IsAsciiLetter(char)"/>
         public static bool IsAsciiLetterOrUnderscore(this char c)
         {
-            return c.IsAsciiLetter() || (c == '_');
+            return ((char?)c).IsAsciiLetterOrUnderscore();
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace Giosue.Extensions
         /// <seealso cref="IsAsciiDigit(char)"/>
         public static bool IsAsciiAlphanumeric(this char c)
         {
-            return c.IsAsciiLetter() || c.IsAsciiDigit();
+            return ((char?)c).IsAsciiAlphanumeric();
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace Giosue.Extensions
         /// <seealso cref="IsAsciiLetterOrUnderscore(char)"/>
         public static bool IsAsciiAlphanumericOrUnderscore(this char c)
         {
-            return c.IsAsciiAlphanumeric() || c.IsAsciiLetterOrUnderscore();
+            return ((char?)c).IsAsciiAlphanumericOrUnderscore();
         }
 
         #endregion Non-null
@@ -105,6 +104,16 @@ namespace Giosue.Extensions
         }
 
         /// <summary>
+        /// Tests if <paramref name="c"/> is an underscore.
+        /// </summary>
+        /// <param name="c">A character.</param>
+        /// <returns>True if <paramref name="c"/> is an underscore and not null, false otherwise.</returns>
+        public static bool IsUnderscore(this char? c)
+        {
+            return c.HasValue && (c.Value == '_');
+        }
+
+        /// <summary>
         /// Tests if <paramref name="c"/> is an ASCII letter or an underscore.
         /// </summary>
         /// <param name="c">A character.</param>
@@ -112,7 +121,7 @@ namespace Giosue.Extensions
         /// <seealso cref="IsAsciiLetter(char)"/>
         public static bool IsAsciiLetterOrUnderscore(this char? c)
         {
-            return c.HasValue && (c.IsAsciiLetter() || (c.Value == '_'));
+            return c.IsAsciiLetter() || c.IsUnderscore();
         }
 
         /// <summary>
@@ -136,7 +145,7 @@ namespace Giosue.Extensions
         /// <seealso cref="IsAsciiLetterOrUnderscore(char)"/>
         public static bool IsAsciiAlphanumericOrUnderscore(this char? c)
         {
-            return c.IsAsciiAlphanumeric() || c.IsAsciiLetterOrUnderscore();
+            return c.IsAsciiAlphanumeric() || c.IsUnderscore();
         }
 
         #endregion Nullable
