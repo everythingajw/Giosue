@@ -142,10 +142,25 @@ namespace Giosue
                 case '|': AddToken(AdvanceIfMatches('|') ? TokenType.PipePipe : TokenType.Pipe); break;
                 case '^': AddToken(AdvanceIfMatches('^') ? TokenType.CaretCaret : TokenType.Caret); break;
                 
-                // Strings and numbers
-                case '"': String(); break;
-                case var c when c.IsAsciiDigit(): Number(); break;
-                case var c when c.IsAsciiAlphanumericOrUnderscore(): Identifier(); break;
+                // Strings, numbers, and identifiers
+                case '"':
+                    {
+                        var parsedString = String();
+                        AddToken(TokenType.String, parsedString);
+                        break;
+                    }
+                case var c when c.IsAsciiDigit():
+                    {
+                        var (numberType, parsedNumber) = Number();
+                        AddToken(numberType, parsedNumber);
+                        break;
+                    }
+                case var c when c.IsAsciiAlphanumericOrUnderscore():
+                    { 
+                        var tokenType = Identifier();
+                        AddToken(tokenType);
+                        break; 
+                    }
                 
                 // Catch all
                 default:
@@ -214,7 +229,8 @@ namespace Giosue
         /// <summary>
         /// Scans a string.
         /// </summary>
-        private void String()
+        /// <returns>The scanned string.</returns>
+        private string String()
         {
             while (Peek() != '"' && !IsAtEnd)
             {
@@ -233,14 +249,14 @@ namespace Giosue
             Advance();
 
             // Trim off the opening and closing quotes
-            var value = Source[(TokenStartIndex + 1)..(CurrentCharacterIndex - 1)];
-            AddToken(TokenType.String, value);
+            return Source[(TokenStartIndex + 1)..(CurrentCharacterIndex - 1)];
         }
 
         /// <summary>
         /// Scans a number (integer or float).
         /// </summary>
-        private void Number()
+        /// <returns>A pair of the type of the number and the parsed number itself.</returns>
+        private (TokenType, object) Number()
         {
             while (Peek().IsAsciiDigit())
             {
@@ -260,20 +276,15 @@ namespace Giosue
             }
 
             var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
-            if (hasFractionalPart)
-            {
-                AddToken(TokenType.Float, double.Parse(lexeme));
-            }
-            else
-            {
-                AddToken(TokenType.Integer, int.Parse(lexeme));
-            }
+            
+            return hasFractionalPart ? (TokenType.Float, double.Parse(lexeme)) : (TokenType.Integer, int.Parse(lexeme));
         }
 
         /// <summary>
         /// Scans an identifier (user-defined or keyword).
         /// </summary>
-        private void Identifier()
+        /// <returns>The type of the identifier.</returns>
+        private TokenType Identifier()
         {
             while (Peek().IsAsciiAlphanumericOrUnderscore())
             {
@@ -286,7 +297,7 @@ namespace Giosue
             {
                 tokenType = keywordType;
             }
-            AddToken(tokenType);
+            return tokenType;
         }
 
         /// <summary>
