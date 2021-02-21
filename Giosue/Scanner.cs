@@ -167,17 +167,8 @@ namespace Giosue
         /// Adds a token to <see cref="Tokens"/>.
         /// </summary>
         /// <param name="type">The type of the token to add.</param>
-        private void AddToken(TokenType type)
-        {
-            AddToken(type, null);
-        }
-
-        /// <summary>
-        /// Adds a token to <see cref="Tokens"/>.
-        /// </summary>
-        /// <param name="type">The type of the token to add.</param>
         /// <param name="literal">The token's literal.</param>
-        private void AddToken(TokenType type, object literal)
+        private void AddToken(TokenType type, object literal = null)
         {
             var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
             Tokens.Add(new Token(type, lexeme, literal, Line));
