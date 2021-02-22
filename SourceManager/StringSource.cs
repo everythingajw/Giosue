@@ -8,18 +8,38 @@ namespace SourceManager
 {
     public class StringSource : ISource
     {
-        private string Source { get; }
+        private string Source { get; } = null;
 
-        private int TokenStartIndex { get; }
+        private int TokenStartIndex { get; } = 0;
 
-        private int CurrentCharacterIndex { get; }
-
-        /// <inheritdoc/>
-        public bool IsAtEnd => throw new NotImplementedException();
+        private int CurrentCharacterIndex { get; } = 0;
 
         /// <inheritdoc/>
-        public string CurrentToken => throw new NotImplementedException();
+        public bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
 
+        /// <summary>
+        /// Backing field for 
+        /// </summary>
+        private string _currentToken = null;
+
+        /// <inheritdoc/>
+        public string CurrentToken 
+        {
+            get
+            {
+                if (_currentToken == null)
+                {
+                    _currentToken = Source[TokenStartIndex..CurrentCharacterIndex];
+                }
+
+                return _currentToken;
+            } 
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="StringSource"/>.
+        /// </summary>
+        /// <param name="source">The <see cref="string"/> that provides a source for the <see cref="StringSource"/>.</param>
         public StringSource(string source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source), $"The source for a {nameof(StringSource)} cannot be null.");
