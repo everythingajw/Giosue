@@ -8,7 +8,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source for data.
     /// </summary>
-    public class FileSource : IDisposable
+    public class FileSource : ISource
     {
         /// <summary>
         /// The length of the internal buffer for characters read.
