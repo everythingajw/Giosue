@@ -88,7 +88,7 @@ namespace SourceManager
                 // of the current token we copied initially (which is at the beginning
                 // of the array) and the number of characters just read (which is 
                 // directly after the current token) and add them together.
-                BufferEndIndex = currentTokenLength + charactersToRead;
+                BufferEndIndex = CurrentTokenLength + charactersToRead;
             }
         }
 
