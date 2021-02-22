@@ -176,10 +176,5 @@ namespace SourceManager
             Advance(out consumed);
             return true;
         }
-
-        public char[] Slice(int start, int count)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
