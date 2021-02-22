@@ -8,7 +8,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source for data.
     /// </summary>
-    public class Source : IDisposable
+    public class FileSource : IDisposable
     {
         /// <summary>
         /// The length of the internal buffer for characters read.
@@ -76,10 +76,10 @@ namespace SourceManager
         // TODO: Ability to construct a Source from a string
 
         /// <summary>
-        /// Creates a new <see cref="Source"/>
+        /// Creates a new <see cref="FileSource"/>
         /// </summary>
-        /// <param name="reader">The <see cref="StreamReader"/> that provides the data for the <see cref="Source"/>.</param>
-        public Source(StreamReader reader)
+        /// <param name="reader">The <see cref="StreamReader"/> that provides the data for the <see cref="FileSource"/>.</param>
+        public FileSource(StreamReader reader)
         {
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
@@ -149,7 +149,7 @@ namespace SourceManager
         /// Consumes one character.
         /// </summary>
         /// <param name="consumed">The consumed character.</param>
-        /// <returns>True if the <see cref="Source"/> was successfully advanced, false otherwise.</returns>
+        /// <returns>True if the <see cref="FileSource"/> was successfully advanced, false otherwise.</returns>
         public bool Advance(out char consumed)
         {
             ReadNextIntoBufferIfNecessary();
