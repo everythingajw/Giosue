@@ -115,7 +115,7 @@ namespace SourceManager
 
             // Update the indexes accordingly
             TokenStartIndex = 0;
-            CurrentCharacterIndex = CurrentTokenLength;
+            CurrentCharacterIndex = CurrentTokenLength - 1;
 
             // Now that we've copied the current token, read the next bit
             // of data into the buffer.
