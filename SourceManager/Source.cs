@@ -119,7 +119,7 @@ namespace SourceManager
 
             // Now that we've copied the current token, read the next bit
             // of data into the buffer.
-            var charactersToRead = BufferLength - CurrentCharacterIndex;
+            var charactersToRead = BufferLength - CurrentCharacterIndex - 1;
             var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex + 1, charactersToRead);
 
             // If the number of characters read does not equal the number
