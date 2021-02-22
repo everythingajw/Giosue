@@ -106,16 +106,12 @@ namespace SourceManager
         private void ReadNextIntoBuffer()
         {
             // First, we need to move the current token to the beginning.
-            // Let's do this by copying the current token to a temporary array,
-            // and replacing the content at the beginning of the buffer with 
-            // the current token
-            var currentToken = new char[CurrentTokenLength];
-            
-            // Copy the current token
-            Array.Copy(Buffer, currentToken, CurrentTokenLength);
-            
-            // Copy the current token back to the beginning
-            Array.Copy(currentToken, 0, Buffer, 0, CurrentTokenLength);
+            for (int bufferFront = 0, currentTokenIndex = TokenStartIndex; 
+                 currentTokenIndex < CurrentTokenLength; 
+                 bufferFront++, currentTokenIndex++)
+            {
+                Buffer[bufferFront] = Buffer[currentTokenIndex];
+            }
 
             // Update the indexes accordingly
             TokenStartIndex = 0;
