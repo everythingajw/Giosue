@@ -142,9 +142,17 @@ namespace SourceManager
             {
                 ReadNextIntoBuffer();
 
+                // We need to check again that there is a character to read.
+                // Just because we read the next amount of data into the 
+                // buffer doesn't necessarily mean that there's data to read
+                if (IsAtEnd)
+                {
+                    return false;
+                }
+
                 // Get the new index to peek because it's updated
                 // by ReadNextIntoBuffer.
-                indexToPeek = CurrentCharacterIndex;
+                indexToPeek = CurrentCharacterIndex + 1;
             }
 
             next = Buffer[indexToPeek];
