@@ -43,7 +43,7 @@ namespace SourceManager
         /// <summary>
         /// The length of the current token.
         /// </summary>
-        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex;
+        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex + 1;
 
         // The buffer is empty if the end index is the same as the index of the current character.
         /// <summary>
