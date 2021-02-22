@@ -5,27 +5,60 @@ using System.Text;
 
 namespace SourceManager
 {
+    /// <summary>
+    /// Represents a source for data.
+    /// </summary>
     public class Source : IDisposable
     {
+        /// <summary>
+        /// The length of the internal buffer for characters read.
+        /// </summary>
         private const int BufferLength = 10000;
 
+        /// <summary>
+        /// The source stream for the data.
+        /// </summary>
         private StreamReader Reader { get; } = null;
 
+        /// <summary>
+        /// The current data that we're working with.
+        /// </summary>
         private char[] Buffer { get; } = new char[BufferLength];
 
+        /// <summary>
+        /// The starting index of the current token.
+        /// </summary>
         private int TokenStartIndex { get; set; } = 0;
 
+        /// <summary>
+        /// The index of the current character.
+        /// </summary>
         private int CurrentCharacterIndex { get; set; } = 0;
 
+        /// <summary>
+        /// The index of the end of <see cref="Buffer"/>
+        /// </summary>
         private int? BufferEndIndex { get; set; } = null;
 
+        /// <summary>
+        /// The length of the current token.
+        /// </summary>
         private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex;
 
-        // The buffer is empty if the end index is the same as the index
-        // of the current character.
+        // The buffer is empty if the end index is the same as the index of the current character.
+        /// <summary>
+        /// Indicates if there are more characters to be read.
+        /// </summary>
         public bool IsAtEnd => BufferEndIndex == CurrentCharacterIndex;
 
+        /// <summary>
+        /// Backing field for <see cref="CurrentToken"/>.
+        /// </summary>
         private string _currentToken;
+
+        /// <summary>
+        /// The current token.
+        /// </summary>
         public string CurrentToken
         {
             get
@@ -45,11 +78,15 @@ namespace SourceManager
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Reader.Dispose();
         }
 
+        /// <summary>
+        /// Clears the current token and prepares for reading the next token.
+        /// </summary>
         public void ClearToken()
         {
             _currentToken = null;
@@ -57,6 +94,9 @@ namespace SourceManager
             CurrentCharacterIndex = TokenStartIndex;
         }
 
+        /// <summary>
+        /// Reads the next amount of characters into <see cref="Buffer"/>.
+        /// </summary>
         private void ReadNextIntoBuffer()
         {
             // First, we need to move the current token to the beginning.
@@ -92,6 +132,9 @@ namespace SourceManager
             }
         }
 
+        /// <summary>
+        /// Reads the next amount of characters into <see cref="Buffer"/> if necessary.
+        /// </summary>
         private void ReadNextIntoBufferIfNecessary()
         {
             if (CurrentCharacterIndex >= BufferLength)
@@ -100,6 +143,11 @@ namespace SourceManager
             }
         }
 
+        /// <summary>
+        /// Consumes one character.
+        /// </summary>
+        /// <param name="consumed">The consumed character.</param>
+        /// <returns>True if the <see cref="Source"/> was successfully advanced, false otherwise.</returns>
         public bool Advance(out char consumed)
         {
             ReadNextIntoBufferIfNecessary();
@@ -115,6 +163,11 @@ namespace SourceManager
             return true;
         }
 
+        /// <summary>
+        /// Gets the current character without consuming it.
+        /// </summary>
+        /// <param name="current">The current character.</param>
+        /// <returns>True if the current character was successfully read, false otherwise.</returns>
         public bool Peek(out char current)
         {
             current = default;
@@ -128,6 +181,11 @@ namespace SourceManager
             return true;
         }
 
+        /// <summary>
+        /// Gets the character after the current character without consuming the current character or the next character.
+        /// </summary>
+        /// <param name="next">The character after the current character.</param>
+        /// <returns>True if the character after the current character was successfully read, false otherwise.</returns>
         public bool PeekNext(out char next)
         {
             next = default;
@@ -159,6 +217,12 @@ namespace SourceManager
             return true;            
         }
 
+        /// <summary>
+        /// Consumes the current character if it matches <paramref name="c"/>.
+        /// </summary>
+        /// <param name="c">The character to match.</param>
+        /// <param name="consumed">The consumed character.</param>
+        /// <returns>True if the current character matched <paramref name="c"/> and it was consumed, false otherwise.</returns>
         public bool AdvanceIfMatches(char c, out char consumed)
         {
             consumed = default;
