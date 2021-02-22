@@ -73,6 +73,12 @@ namespace SourceManager
             }
         }
 
+        // TODO: Ability to construct a Source from a string
+
+        /// <summary>
+        /// Creates a new <see cref="Source"/>
+        /// </summary>
+        /// <param name="reader">The <see cref="StreamReader"/> that provides the data for the <see cref="Source"/>.</param>
         public Source(StreamReader reader)
         {
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
