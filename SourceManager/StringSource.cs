@@ -18,7 +18,7 @@ namespace SourceManager
         public bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
 
         /// <summary>
-        /// Backing field for 
+        /// Backing field for <see cref="CurrentToken"/>.
         /// </summary>
         private string _currentToken = null;
 
