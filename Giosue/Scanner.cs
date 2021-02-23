@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Giosue.Exceptions;
 using Giosue.Extensions;
+using SourceManager;
 
 namespace Giosue
 {
@@ -55,9 +56,9 @@ namespace Giosue
         //};
 
         /// <summary>
-        /// The source code for the scanner.
+        /// The source code for the <see cref="Scanner"/>.
         /// </summary>
-        private string Source { get; }
+        private ISource Source { get; }
 
         /// <summary>
         /// The list of tokens produced after scanning.
@@ -65,33 +66,15 @@ namespace Giosue
         private List<Token> Tokens { get; } = new();
 
         /// <summary>
-        /// The index of the first character of the current token in <see cref="Source"/>.
-        /// </summary>
-        private int TokenStartIndex { get; set; } = 0;
-
-        /// <summary>
-        /// The index of the current character of the current token in <see cref="Source"/>.
-        /// </summary>
-        private int CurrentCharacterIndex { get; set; } = 0;
-
-        /// <summary>
         /// The line that the current character is on.
         /// </summary>
         private int Line { get; set; } = 1;
         
         /// <summary>
-        /// Indicates if the scanner has reached the end of <see cref="Source"/>.
-        /// </summary>
-        /// <remarks>
-        /// True if the scanner has reached the end of <see cref="Source"/>, false otherwise.
-        /// </remarks>
-        private bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
-        
-        /// <summary>
         /// Creates a new <see cref="Scanner"/>.
         /// </summary>
         /// <param name="source">The source code for the <see cref="Scanner"/>.</param>
-        public Scanner(string source)
+        public Scanner(ISource source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source), "The source for a scanner cannot be null.");
         }
@@ -102,9 +85,8 @@ namespace Giosue
         /// <returns>The list of scanned tokens.</returns>
         public List<Token> ScanTokens()
         {
-            while (!IsAtEnd)
+            while (!Source.IsAtEnd)
             {
-                TokenStartIndex = CurrentCharacterIndex;
                 ScanToken();
             }
 
@@ -122,7 +104,10 @@ namespace Giosue
         /// </summary>
         private void ScanToken()
         {
-            var ch = Advance();
+            if (!Source.Advance(out var ch))
+            {
+                return;
+            }
 
             if (SingleCharacterTokens.TryGetValue(ch, out var type))
             {
@@ -142,7 +127,7 @@ namespace Giosue
                     break;
                 
                 case '-': 
-                    if (AdvanceIfMatches('-'))
+                    if (Source.AdvanceIfMatches('-', out _))
                     {
                         Comment();
                     }
@@ -153,15 +138,15 @@ namespace Giosue
                     break;
                 
                 // Comparison operators
-                case '!': AddToken(AdvanceIfMatches('=') ? TokenType.BangEqual : TokenType.Bang); break;
-                case '=': AddToken(AdvanceIfMatches('=') ? TokenType.EqualEqual : TokenType.Equal); break;
-                case '<': AddToken(AdvanceIfMatches('=') ? TokenType.LessEqual : TokenType.Less); break;
-                case '>': AddToken(AdvanceIfMatches('=') ? TokenType.GreaterEqual : TokenType.Greater); break;
+                case '!': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.BangEqual : TokenType.Bang); break;
+                case '=': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.EqualEqual : TokenType.Equal); break;
+                case '<': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.LessEqual : TokenType.Less); break;
+                case '>': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.GreaterEqual : TokenType.Greater); break;
 
                 // Boolean and bitwise operators
-                case '&': AddToken(AdvanceIfMatches('&') ? TokenType.AndAnd : TokenType.And); break;
-                case '|': AddToken(AdvanceIfMatches('|') ? TokenType.PipePipe : TokenType.Pipe); break;
-                case '^': AddToken(AdvanceIfMatches('^') ? TokenType.CaretCaret : TokenType.Caret); break;
+                case '&': AddToken(Source.AdvanceIfMatches('&', out _) ? TokenType.AndAnd : TokenType.And); break;
+                case '|': AddToken(Source.AdvanceIfMatches('|', out _) ? TokenType.PipePipe : TokenType.Pipe); break;
+                case '^': AddToken(Source.AdvanceIfMatches('^', out _) ? TokenType.CaretCaret : TokenType.Caret); break;
                 
                 // Strings, numbers, and identifiers
                 case StringTerminator:
@@ -187,16 +172,10 @@ namespace Giosue
                 default:
                     throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
             }
-        }
 
-        /// <summary>
-        /// Advances the scanner one character forward, consuming one character.
-        /// </summary>
-        /// <returns>The consumed character.</returns>
-        private char Advance()
-        {
-            CurrentCharacterIndex++;
-            return Source[CurrentCharacterIndex - 1];
+            // We scanned one token. Clear out the token from the source
+            // so the next token can be read.
+            Source.ClearToken();
         }
 
         /// <summary>
@@ -206,45 +185,8 @@ namespace Giosue
         /// <param name="literal">The token's literal.</param>
         private void AddToken(TokenType type, object literal = null)
         {
-            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
+            var lexeme = Source.CurrentToken;
             Tokens.Add(new Token(type, lexeme, literal, Line));
-        }
-
-        /// <summary>
-        /// Consume the current character only if it matches <paramref name="expected"/>.
-        /// </summary>
-        /// <param name="expected">The character to match</param>
-        /// <returns>True if <paramref name="expected"/> matches the current character, false otherwise.</returns>
-        private bool AdvanceIfMatches(char expected)
-        {
-            if (IsAtEnd)
-            {
-                return false;
-            }
-            if (Source[CurrentCharacterIndex] != expected)
-            {
-                return false;
-            }
-            CurrentCharacterIndex++;
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the current character without consuming it.
-        /// </summary>
-        /// <returns>The current character or <c>null</c> if <see cref="Source"/> is empty.</returns>
-        private char? Peek()
-        {
-            return IsAtEnd ? null : Source[CurrentCharacterIndex];
-        }
-
-        /// <summary>
-        /// Gets the next character without consuming it.
-        /// </summary>
-        /// <returns>The next character or <c>null</c> if there are not enough characters in <see cref="Source"/>.</returns>
-        private char? PeekNext()
-        {
-            return CurrentCharacterIndex + 1 >= Source.Length ? null : Source[CurrentCharacterIndex + 1];
         }
 
         /// <summary>
@@ -253,24 +195,25 @@ namespace Giosue
         /// <returns>The scanned string.</returns>
         private string String()
         {
-            while (Peek() != StringTerminator && !IsAtEnd)
+            while (Source.Peek(out var current) && current != StringTerminator && !Source.IsAtEnd)
             {
-                if (Peek() == '\n')
+                if (Source.Peek(out current) && current == '\n')
                 {
                     throw new Exception("Multi-line strings are not supported.");
                 }
-                Advance();
+                Source.Advance(out _);
             }
-            if (IsAtEnd)
+            
+            if (Source.IsAtEnd)
             {
                 throw new Exception($"Unterminated string at line {Line}.");
             }
             
             // The closing ".
-            Advance();
+            Source.Advance(out _);
 
             // Trim off the opening and closing quotes
-            return Source[(TokenStartIndex + 1)..(CurrentCharacterIndex - 1)];
+            return Source.CurrentToken;
         }
 
         /// <summary>
@@ -279,24 +222,26 @@ namespace Giosue
         /// <returns>A pair of the type of the number and the parsed number itself.</returns>
         private (TokenType, object) Number()
         {
-            while (Peek().IsAsciiDigit())
+            char current = default;
+            while (Source.Peek(out current) && current.IsAsciiDigit())
             {
-                Advance();
+                Source.Advance(out _);
             }
 
-            var hasFractionalPart = Peek() == '.';
-            if (hasFractionalPart && PeekNext().IsAsciiDigit())
+            var hasFractionalPart = Source.Peek(out current) && current == '.';
+            
+            if (hasFractionalPart && Source.PeekNext(out char next) && next.IsAsciiDigit())
             {
                 // Consume the '.'
-                Advance();
+                Source.Advance(out _);
 
-                while (Peek().IsAsciiDigit())
+                while (Source.Peek(out current) && current.IsAsciiDigit())
                 {
-                    Advance();
+                    Source.Advance(out _);
                 }
             }
 
-            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
+            var lexeme = Source.CurrentToken;
             
             return hasFractionalPart ? (TokenType.Float, double.Parse(lexeme)) : (TokenType.Integer, int.Parse(lexeme));
         }
@@ -307,12 +252,12 @@ namespace Giosue
         /// <returns>The type of the identifier.</returns>
         private TokenType Identifier()
         {
-            while (Peek().IsAsciiAlphanumericOrUnderscore())
+            while (Source.Peek(out var current) && current.IsAsciiAlphanumericOrUnderscore())
             {
-                Advance();
+                Source.Advance(out _);
             }
 
-            var lexeme = Source[TokenStartIndex..CurrentCharacterIndex];
+            var lexeme = Source.CurrentToken;
             var tokenType = TokenType.Identifier;
             if (Keywords.TryGetValue(lexeme, out var keywordType))
             {
@@ -330,9 +275,9 @@ namespace Giosue
         private void Comment()
         {
             // Completely ignore comments.
-            while (Peek() != '\n')
+            while (Source.Peek(out var current) && current != '\n')
             {
-                Advance();
+                Source.Advance(out _);
             }
         }
     }
