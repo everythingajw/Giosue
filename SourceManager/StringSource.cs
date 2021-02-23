@@ -8,10 +8,19 @@ namespace SourceManager
 {
     public class StringSource : ISource
     {
+        /// <summary>
+        /// The source string for the tokens.
+        /// </summary>
         private string Source { get; } = null;
 
+        /// <summary>
+        /// The starting index of the current token.
+        /// </summary>
         private int TokenStartIndex { get; set; } = 0;
 
+        /// <summary>
+        /// The index of the current character.
+        /// </summary>
         private int CurrentCharacterIndex { get; set; } = 0;
 
         /// <inheritdoc/>
