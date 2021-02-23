@@ -85,6 +85,17 @@ namespace SourceManager
             // No need to call ReadNextIntoBuffer - that method does too much and accounts
             // for things that don't need to be accounted for in this case.
             Reader.ReadBlock(Buffer, 0, BufferLength);
+
+            // If the total contents of the base stream fits into the buffer, then
+            // initialize the buffer end index to the end of the content.
+            if (reader.BaseStream.Length < BufferLength)
+            {
+                BufferEndIndex = (int?)reader.BaseStream.Length;
+            }
+            else
+            {
+                BufferEndIndex = BufferLength;
+            }
         }
 
         /// <inheritdoc/>
