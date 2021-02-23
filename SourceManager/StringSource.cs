@@ -42,7 +42,7 @@ namespace SourceManager
         /// <param name="source">The <see cref="string"/> that provides a source for the <see cref="StringSource"/>.</param>
         public StringSource(string source)
         {
-            Source = source ?? throw new ArgumentNullException(nameof(source), $"The source for a {nameof(StringSource)} cannot be null.");
+            Source = source ?? throw new ArgumentNullException(nameof(source), $"The source string for a {nameof(StringSource)} cannot be null.");
         }
 
         /// <inheritdoc/>
