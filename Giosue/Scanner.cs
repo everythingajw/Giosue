@@ -213,7 +213,8 @@ namespace Giosue
             Source.Advance(out _);
 
             // Trim off the opening and closing quotes
-            return Source.CurrentToken;
+            var lexeme = Source.CurrentToken;
+            return lexeme[1..(lexeme.Length - 1)];
         }
 
         /// <summary>
