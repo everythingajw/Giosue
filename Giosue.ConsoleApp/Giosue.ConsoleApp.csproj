@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Giosue\Giosue.csproj" />
+    <ProjectReference Include="..\SourceManager\SourceManager.csproj" />
   </ItemGroup>
 
 </Project>
