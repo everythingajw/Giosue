@@ -82,6 +82,9 @@ namespace SourceManager
         public FileSource(StreamReader reader)
         {
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
+            
+            // Read the first bit of information into the buffer so it can be worked with.
+            ReadNextIntoBuffer();
         }
 
         /// <inheritdoc/>
