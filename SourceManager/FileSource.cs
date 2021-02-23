@@ -82,9 +82,11 @@ namespace SourceManager
         public FileSource(StreamReader reader)
         {
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
-            
+
             // Read the first bit of information into the buffer so it can be worked with.
-            ReadNextIntoBuffer();
+            // No need to call ReadNextIntoBuffer - that method does too much and accounts
+            // for things that don't need to be accounted for in this case.
+            Reader.ReadBlock(Buffer, 0, BufferLength);
         }
 
         /// <inheritdoc/>
