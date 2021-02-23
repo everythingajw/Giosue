@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Giosue.Exceptions;
+using SourceManager;
 
 namespace Giosue.ConsoleApp
 {
@@ -15,9 +16,10 @@ namespace Giosue.ConsoleApp
             Console.WriteLine("Hello World!");
 
             Console.WriteLine(TestCodePath);
-            
-            var testCode = File.ReadAllText(TestCodePath);
-            var scanner = new Scanner(testCode);
+
+            using var fileReader = new StreamReader(TestCodePath);
+            using var source = new FileSource(fileReader);
+            var scanner = new Scanner(source);
 
             // This really isn't the most elegant way to handle these errors,
             // but it's easy and rather simple to implement.
