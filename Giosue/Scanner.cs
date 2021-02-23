@@ -259,7 +259,7 @@ namespace Giosue
                 tokenType = TokenType.Integer;
                 if (!int.TryParse(lexeme, out var @int))
                 {
-                    throw new FormatException($"Could not parse '{@int}' to {nameof(Int32)}");
+                    throw new FormatException($"Could not parse '{lexeme}' to {nameof(Int32)}");
                 }
                 parsedNumber = @int;
             }

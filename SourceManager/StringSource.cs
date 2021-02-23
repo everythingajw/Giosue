@@ -93,7 +93,7 @@ namespace SourceManager
         public void ClearToken()
         {
             _currentToken = null;
-            TokenStartIndex = CurrentCharacterIndex + 1;
+            TokenStartIndex = CurrentCharacterIndex;
             CurrentCharacterIndex = TokenStartIndex;
         }
 
