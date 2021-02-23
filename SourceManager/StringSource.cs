@@ -62,31 +62,63 @@ namespace SourceManager
         /// <inheritdoc/>
         public bool AdvanceIfMatches(char c, out char consumed)
         {
-            throw new NotImplementedException();
+            consumed = default;
+            
+            if (IsAtEnd)
+            {
+                return false;
+            }
+            if (Peek(out var current) && current != c)
+            {
+                return false;
+            }
+
+            // This is safe because we already checked if 
+            // we reached the end of the source.
+            Advance(out consumed);
+            
+            return true;
         }
 
         /// <inheritdoc/>
         public void ClearToken()
         {
-            throw new NotImplementedException();
+            TokenStartIndex = CurrentCharacterIndex + 1;
+            CurrentCharacterIndex = TokenStartIndex;
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            throw new NotImplementedException();
+            // TODO: What should be cleaned up here?
         }
 
         /// <inheritdoc/>
         public bool Peek(out char current)
         {
-            throw new NotImplementedException();
+            current = default;
+
+            if (IsAtEnd)
+            {
+                return false;
+            }
+
+            current = Source[CurrentCharacterIndex];
+            return true;
         }
 
         /// <inheritdoc/>
         public bool PeekNext(out char next)
         {
-            throw new NotImplementedException();
+            next = default;
+
+            if (CurrentCharacterIndex + 1 >= Source.Length)
+            {
+                return false;
+            }
+
+            next = Source[CurrentCharacterIndex + 1];
+            return true;
         }
     }
 }
