@@ -92,6 +92,7 @@ namespace SourceManager
         /// <inheritdoc/>
         public void ClearToken()
         {
+            _currentToken = null;
             TokenStartIndex = CurrentCharacterIndex + 1;
             CurrentCharacterIndex = TokenStartIndex;
         }
