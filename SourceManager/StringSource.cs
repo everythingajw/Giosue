@@ -10,9 +10,9 @@ namespace SourceManager
     {
         private string Source { get; } = null;
 
-        private int TokenStartIndex { get; } = 0;
+        private int TokenStartIndex { get; set; } = 0;
 
-        private int CurrentCharacterIndex { get; } = 0;
+        private int CurrentCharacterIndex { get; set; } = 0;
 
         /// <inheritdoc/>
         public bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
@@ -48,7 +48,15 @@ namespace SourceManager
         /// <inheritdoc/>
         public bool Advance(out char consumed)
         {
-            throw new NotImplementedException();
+            consumed = default;
+
+            if (IsAtEnd)
+            {
+                return false;
+            }
+
+            consumed = Source[CurrentCharacterIndex++];
+            return true;
         }
 
         /// <inheritdoc/>
