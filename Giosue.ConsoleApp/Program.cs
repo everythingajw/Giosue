@@ -37,18 +37,18 @@ namespace Giosue.ConsoleApp
             {
                 // Show any unexpected characters
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.WriteLine();
-                Console.WriteLine(e.Message);
-                Console.WriteLine($"Character: '{e.UnexpectedCharacter}'");
-                Console.WriteLine($"Line: {e.Line}");
+                Console.Error.WriteLine();
+                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine($"Character: '{e.UnexpectedCharacter}'");
+                Console.Error.WriteLine($"Line: {e.Line}");
             }
             catch (Exception e)
             {
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.WriteLine();
-                Console.WriteLine("An error occurred");
-                Console.WriteLine(e.Message);
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("An error occurred");
+                Console.Error.WriteLine(e.Message);
             }
 
             Console.WriteLine("\nPress any key to continue...");
@@ -57,8 +57,16 @@ namespace Giosue.ConsoleApp
 
         private static void PrettyPrintTokens(IEnumerable<Token> tokens)
         {
+            var tokenList = tokens.ToList();
+
+            if (!tokenList.Any())
+            {
+                Console.Error.WriteLine("No tokens to print.");
+                return;
+            }
+
             // Stringify the tokens
-            var stringifiedTokenFields = tokens.Select(t =>
+            var stringifiedTokenFields = tokenList.Select(t =>
                 new string[]
                 {
                     t?.Type.ToString() ?? "",
@@ -106,9 +114,9 @@ namespace Giosue.ConsoleApp
             Console.WriteLine("".PadLeft(headers.Sum(h => h.Length), '-'));
 
             // Print the tokens
-            foreach (var tokenList in stringifiedTokenFields)
+            foreach (var tokenFieldList in stringifiedTokenFields)
             {
-                var paddedFields = tokenList.Select((t, i) => t.PadRight(columnWidths[i])).ToArray();
+                var paddedFields = tokenFieldList.Select((t, i) => t.PadRight(columnWidths[i])).ToArray();
                 Console.WriteLine(string.Join(" | ", paddedFields));
             }
         }
