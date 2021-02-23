@@ -17,11 +17,10 @@ namespace Giosue.ConsoleApp
 
             Console.WriteLine(TestCodePath);
 
-            //using var fileReader = new StreamReader(TestCodePath);
-            //using var source = new FileSource(fileReader);
-            using var source = new StringSource(File.ReadAllText(TestCodePath));
+            using var fileReader = new StreamReader(TestCodePath);
+            using var source = new FileSource(fileReader);
+            //using var source = new StringSource(File.ReadAllText(TestCodePath));
             var scanner = new Scanner(source);
-            var errorOccurred = false;
 
             // This really isn't the most elegant way to handle these errors,
             // but it's easy and rather simple to implement.
@@ -37,7 +36,6 @@ namespace Giosue.ConsoleApp
             }
             catch (UnexpectedCharacterException e)
             {
-                errorOccurred = true;
                 // Show any unexpected characters
                 PrettyPrintTokens(scanner.GetTokens());
                 Console.Error.WriteLine();
@@ -48,27 +46,12 @@ namespace Giosue.ConsoleApp
             }
             catch (Exception e)
             {
-                errorOccurred = true;
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
                 Console.Error.WriteLine();
                 Console.Error.WriteLine("An error occurred");
                 Console.Error.WriteLine(e.Message);
             }
-
-            //if (errorOccurred)
-            //{
-            //    source.Buffer.ToList().ForEach(c => Console.Write(c switch { '\n' => "\\n", '\r' => "\\r", _ => c }));
-            //    Console.WriteLine();
-            //    source.Buffer.ToList().Take(605).ToList().ForEach(c => Console.Write($"{(int)c} "));
-            //    for (int i = 0; i < source.CurrentCharacterIndex; i++)
-            //    {
-            //        Console.Write(source.Buffer[i]);
-            //    }
-            //    Console.WriteLine();
-            //    Console.WriteLine($"{nameof(source.TokenStartIndex)}: {source.TokenStartIndex}");
-            //    Console.WriteLine($"{nameof(source.CurrentCharacterIndex)}: {source.CurrentCharacterIndex}");
-            //}
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
