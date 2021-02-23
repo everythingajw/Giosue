@@ -27,7 +27,7 @@ namespace Giosue.ConsoleApp
             {
                 // Try scanning
                 var tokens = scanner.ScanTokens();
-                
+
                 // Print tokens if successful
                 PrettyPrintTokens(tokens);
                 Console.WriteLine();
@@ -58,25 +58,42 @@ namespace Giosue.ConsoleApp
         private static void PrettyPrintTokens(IEnumerable<Token> tokens)
         {
             // Stringify the tokens
-            var stringifiedTokens = tokens.Select(t => (t.Type.ToString(), t?.Lexeme?.ToString() ?? "", t?.Literal?.ToString() ?? "", t.Line.ToString()));
+            var stringifiedTokenFields = tokens.Select(t =>
+                new string[]
+                {
+                    t?.Type.ToString() ?? "",
+                    t?.Lexeme?.ToString() ?? "",
+                    t?.Literal?.ToString() ?? "",
+                    t?.Line.ToString() ?? ""
+                }).ToList();
 
             // Calculate the length for each column
-            var columnLengths = new int[]
-            {
-                stringifiedTokens.Max(t => t.Item1.Length),
-                stringifiedTokens.Max(t => t.Item2.Length),
-                stringifiedTokens.Max(t => t.Item3.Length),
-                stringifiedTokens.Max(t => t.Item4.Length),
-            };
+            var columnWidths = 
+                // Indexes into each array of fields
+                Enumerable.Range(0, stringifiedTokenFields.First().Length)
+                // Select the maximum length for each field
+                .Select(i => stringifiedTokenFields.Max(tokenFields => tokenFields[i].Length))
+                .ToList();
 
             // Get the column headers
             var headers = new string[]
             {
-                $"{nameof(Token.Type).PadRight(columnLengths[0])} | ",
-                $"{nameof(Token.Lexeme).PadRight(columnLengths[1])} | ",
-                $"{nameof(Token.Literal).PadRight(columnLengths[2])} | ",
-                $"{nameof(Token.Line).PadRight(columnLengths[3])}"
+                $"{nameof(Token.Type)}",
+                $"{nameof(Token.Lexeme)}",
+                $"{nameof(Token.Literal)}",
+                $"{nameof(Token.Line)}"
             };
+
+            for (int i = 0; i < columnWidths.Count; i++)
+            {
+                columnWidths[i] = Math.Max(columnWidths[i] + 1, headers[i].Length);
+            }
+
+            // Add separators for the columns
+            for (int i = 0; i < headers.Length - 1; i++)
+            {
+                headers[i] = $"{headers[i].PadRight(columnWidths[i], ' ')} | ";
+            }
 
             // Write the headers
             foreach (var header in headers)
@@ -89,13 +106,10 @@ namespace Giosue.ConsoleApp
             Console.WriteLine("".PadLeft(headers.Sum(h => h.Length), '-'));
 
             // Print the tokens
-            foreach (var token in stringifiedTokens)
+            foreach (var tokenList in stringifiedTokenFields)
             {
-                Console.Write($"{token.Item1.PadRight(columnLengths[0])} | ");
-                Console.Write($"{token.Item2.PadRight(columnLengths[1])} | ");
-                Console.Write($"{token.Item3.PadRight(columnLengths[2])} | ");
-                Console.Write($"{token.Item4.PadRight(columnLengths[3])}");
-                Console.WriteLine();
+                var paddedFields = tokenList.Select((t, i) => t.PadRight(columnWidths[i])).ToArray();
+                Console.WriteLine(string.Join(" | ", paddedFields));
             }
         }
     }
