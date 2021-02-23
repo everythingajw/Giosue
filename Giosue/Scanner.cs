@@ -242,8 +242,29 @@ namespace Giosue
             }
 
             var lexeme = Source.CurrentToken;
-            
-            return hasFractionalPart ? (TokenType.Float, double.Parse(lexeme)) : (TokenType.Integer, int.Parse(lexeme));
+            var tokenType = TokenType.None;
+            object parsedNumber = null;
+
+            if (hasFractionalPart)
+            {
+                tokenType = TokenType.Float;
+                if (!double.TryParse(lexeme, out var @double))
+                {
+                    throw new FormatException($"Could not parse '{lexeme}' to {nameof(Double)}");
+                }
+                parsedNumber = @double;
+            } 
+            else
+            {
+                tokenType = TokenType.Integer;
+                if (!int.TryParse(lexeme, out var @int))
+                {
+                    throw new FormatException($"Could not parse '{@int}' to {nameof(Int32)}");
+                }
+                parsedNumber = @int;
+            }
+
+            return (tokenType, parsedNumber);
         }
 
         /// <summary>
