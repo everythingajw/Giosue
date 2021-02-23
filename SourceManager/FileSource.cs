@@ -73,8 +73,6 @@ namespace SourceManager
             }
         }
 
-        // TODO: Ability to construct a Source from a string
-
         /// <summary>
         /// Creates a new <see cref="FileSource"/>
         /// </summary>
