@@ -63,11 +63,12 @@ namespace SourceManager
         {
             get
             {
-                if(_currentToken == null)
+                if (_currentToken == null)
                 {
-                    var segment = new char[CurrentTokenLength];
-                    Array.Copy(Buffer, TokenStartIndex, segment, 0, CurrentTokenLength);
-                    _currentToken = new string(segment);
+                    //var segment = new char[CurrentTokenLength];
+                    //Array.Copy(Buffer, TokenStartIndex, segment, 0, CurrentTokenLength);
+                    var sub = new ArraySegment<char>(Buffer, TokenStartIndex, CurrentTokenLength).ToArray();
+                    _currentToken = new string(sub);
                 }
                 return _currentToken;
             }
@@ -169,16 +170,20 @@ namespace SourceManager
         /// <returns>True if the <see cref="FileSource"/> was successfully advanced, false otherwise.</returns>
         public bool Advance(out char consumed)
         {
-            ReadNextIntoBufferIfNecessary();
-            
             consumed = default;
+
+            // Every time the source is advanced, the current token needs to be changed.
+            _currentToken = null;
+
+            ReadNextIntoBufferIfNecessary();
 
             if (IsAtEnd)
             {
                 return false;
             }
 
-            consumed = Buffer[CurrentCharacterIndex++];
+            consumed = Buffer[CurrentCharacterIndex];
+            CurrentCharacterIndex++;
             return true;
         }
 

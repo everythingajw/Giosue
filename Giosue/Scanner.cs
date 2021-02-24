@@ -292,17 +292,25 @@ namespace Giosue
         /// <returns>The type of the identifier.</returns>
         private TokenType Identifier()
         {
-            if (Source.Peek(out var current))
-            {
-                while (current.IsAsciiAlphanumericOrUnderscore())
+            char current = default;
+            //if (Source.Peek(out current))
+            //{
+                while (true)
                 {
-                    if (!Source.Advance(out _))
+                    Source.Peek(out current);
+                    if (current.IsAsciiAlphanumericOrUnderscore())
+                    {
+                        if (!Source.Advance(out _))
+                        {
+                            break;
+                        }
+                    } 
+                    else
                     {
                         break;
                     }
-                    Source.Peek(out current);
                 }
-            }
+            //}
 
             var lexeme = Source.CurrentToken;
             var tokenType = TokenType.Identifier;
