@@ -223,22 +223,35 @@ namespace Giosue
         /// <returns>A pair of the type of the number and the parsed number itself.</returns>
         private (TokenType, object) Number()
         {
-            char current = default;
-            while (Source.Peek(out current) && current.IsAsciiDigit())
+            if (Source.Peek(out char current))
             {
-                Source.Advance(out _);
+                while (current.IsAsciiDigit())
+                {
+                    Source.Advance(out _);
+                }
             }
 
-            var hasFractionalPart = Source.Peek(out current) && current == '.';
-            
-            if (hasFractionalPart && Source.PeekNext(out char next) && next.IsAsciiDigit())
+            var hasFractionalPart = false;
+            if (Source.Peek(out current))
+            {
+                hasFractionalPart = current == '.';
+            }
+
+            var hasNext = Source.PeekNext(out char next);
+            if (hasFractionalPart && hasNext && next.IsAsciiDigit())
             {
                 // Consume the '.'
                 Source.Advance(out _);
 
-                while (Source.Peek(out current) && current.IsAsciiDigit())
+                if (Source.Peek(out current))
                 {
-                    Source.Advance(out _);
+                    while (current.IsAsciiDigit())
+                    {
+                        if (!Source.Advance(out current))
+                        {
+                            break;
+                        }
+                    }
                 }
             }
 
