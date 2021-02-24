@@ -227,7 +227,11 @@ namespace Giosue
             {
                 while (current.IsAsciiDigit())
                 {
-                    Source.Advance(out _);
+                    if (!Source.Advance(out _))
+                    {
+                        break;
+                    }
+                    Source.Peek(out current);
                 }
             }
 
@@ -247,10 +251,11 @@ namespace Giosue
                 {
                     while (current.IsAsciiDigit())
                     {
-                        if (!Source.Advance(out current))
+                        if (!Source.Advance(out _))
                         {
                             break;
                         }
+                        Source.Peek(out current);
                     }
                 }
             }
