@@ -250,9 +250,12 @@ namespace SourceManager
             {
                 return false;
             }
-            if (Peek(out var current) && current != c)
+            if (Peek(out var current))
             {
-                return false;
+                if (current != c)
+                {
+                    return false;
+                }
             }
 
             // This is safe because we already checked that we're not at the end
