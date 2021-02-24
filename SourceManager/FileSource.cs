@@ -96,6 +96,9 @@ namespace SourceManager
             {
                 BufferEndIndex = BufferLength;
             }
+
+            // Account for zero-indexing
+            BufferEndIndex--;
         }
 
         /// <inheritdoc/>
@@ -175,7 +178,7 @@ namespace SourceManager
                 return false;
             }
 
-            consumed = (char)Reader.Read();
+            consumed = Buffer[CurrentCharacterIndex++];
             return true;
         }
 
@@ -193,7 +196,7 @@ namespace SourceManager
                 return false;
             }
 
-            current = (char)Reader.Peek();
+            current = Buffer[CurrentCharacterIndex];
             return true;
         }
 
