@@ -40,10 +40,14 @@ namespace SourceManager
         /// </summary>
         private int? BufferEndIndex { get; set; } = null;
 
+        // Do not add 1.
+        // Since the character at CurrentCharacterIndex has not been consumed,
+        // it's not added to the current token and is therefore not counted
+        // towards the current token's length.
         /// <summary>
         /// The length of the current token.
         /// </summary>
-        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex + 1;
+        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex;
 
         // The buffer is empty if the end index is the same as the index of the current character.
         /// <summary>
