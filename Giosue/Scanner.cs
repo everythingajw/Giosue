@@ -220,7 +220,7 @@ namespace Giosue
 
             if (Source.IsAtEnd)
             {
-                throw new Exception($"Unterminated string at line {Line}.");
+                throw new UnterminatedStringException(Line, $"Unterminated string at line {Line}");
             }
 
             // The closing ".
