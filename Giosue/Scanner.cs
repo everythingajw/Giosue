@@ -207,7 +207,7 @@ namespace Giosue
                     {
                         if (current == '\n')
                         {
-                            throw new Exception("Multi-line strings are not supported.");
+                            throw new NotSupportedException("Multi-line strings are not supported.");
                         }
                     }
                     if (!Source.Advance(out _))
