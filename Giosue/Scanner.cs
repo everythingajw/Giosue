@@ -106,71 +106,74 @@ namespace Giosue
         {
             if (!Source.Advance(out var ch))
             {
+                // On failure to advance, don't bother clearing the token.
+                // TODO: Should this be an exception?
                 return;
             }
-
-            if (SingleCharacterTokens.TryGetValue(ch, out var type))
+            else if (SingleCharacterTokens.TryGetValue(ch, out var type))
             {
                 AddToken(type);
-                return;
             }
-
-            switch (ch)
+            else
             {
-                // Whitespace and newlines
-                case ' ':
-                case '\r':
-                case '\t':
-                    break;
-                case '\n':
-                    Line++;
-                    break;
-                
-                case '-': 
-                    if (Source.AdvanceIfMatches('-', out _))
-                    {
-                        Comment();
-                    }
-                    else
-                    {
-                        AddToken(TokenType.Minus);
-                    }
-                    break;
-                
-                // Comparison operators
-                case '!': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.BangEqual : TokenType.Bang); break;
-                case '=': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.EqualEqual : TokenType.Equal); break;
-                case '<': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.LessEqual : TokenType.Less); break;
-                case '>': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.GreaterEqual : TokenType.Greater); break;
 
-                // Boolean and bitwise operators
-                case '&': AddToken(Source.AdvanceIfMatches('&', out _) ? TokenType.AndAnd : TokenType.And); break;
-                case '|': AddToken(Source.AdvanceIfMatches('|', out _) ? TokenType.PipePipe : TokenType.Pipe); break;
-                case '^': AddToken(Source.AdvanceIfMatches('^', out _) ? TokenType.CaretCaret : TokenType.Caret); break;
-                
-                // Strings, numbers, and identifiers
-                case StringTerminator:
-                    {
-                        var parsedString = String();
-                        AddToken(TokenType.String, parsedString);
+                switch (ch)
+                {
+                    // Whitespace and newlines
+                    case ' ':
+                    case '\r':
+                    case '\t':
                         break;
-                    }
-                case var c when c.IsAsciiDigit():
-                    {
-                        var (numberType, parsedNumber) = Number();
-                        AddToken(numberType, parsedNumber);
+                    case '\n':
+                        Line++;
                         break;
-                    }
-                case var c when c.IsAsciiAlphanumericOrUnderscore():
-                    { 
-                        var tokenType = Identifier();
-                        AddToken(tokenType);
-                        break; 
-                    }
-                
-                // Catch all
-                default:
-                    throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
+
+                    case '-':
+                        if (Source.AdvanceIfMatches('-', out _))
+                        {
+                            Comment();
+                        }
+                        else
+                        {
+                            AddToken(TokenType.Minus);
+                        }
+                        break;
+
+                    // Comparison operators
+                    case '!': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.BangEqual : TokenType.Bang); break;
+                    case '=': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.EqualEqual : TokenType.Equal); break;
+                    case '<': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.LessEqual : TokenType.Less); break;
+                    case '>': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.GreaterEqual : TokenType.Greater); break;
+
+                    // Boolean and bitwise operators
+                    case '&': AddToken(Source.AdvanceIfMatches('&', out _) ? TokenType.AndAnd : TokenType.And); break;
+                    case '|': AddToken(Source.AdvanceIfMatches('|', out _) ? TokenType.PipePipe : TokenType.Pipe); break;
+                    case '^': AddToken(Source.AdvanceIfMatches('^', out _) ? TokenType.CaretCaret : TokenType.Caret); break;
+
+                    // Strings, numbers, and identifiers
+                    case StringTerminator:
+                        {
+                            var parsedString = String();
+                            AddToken(TokenType.String, parsedString);
+                            break;
+                        }
+                    case var c when c.IsAsciiDigit():
+                        {
+                            var (numberType, parsedNumber) = Number();
+                            AddToken(numberType, parsedNumber);
+                            break;
+                        }
+                    case var c when c.IsAsciiAlphanumericOrUnderscore():
+                        {
+                            var tokenType = Identifier();
+                            AddToken(tokenType);
+                            break;
+                        }
+
+                    // Catch all
+                    default:
+                        throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
+                }
             }
 
             // We scanned one token. Clear out the token from the source
