@@ -69,7 +69,7 @@ namespace Giosue
         /// The line that the current character is on.
         /// </summary>
         private int Line { get; set; } = 1;
-        
+
         /// <summary>
         /// Creates a new <see cref="Scanner"/>.
         /// </summary>
@@ -88,6 +88,11 @@ namespace Giosue
             while (!Source.IsAtEnd)
             {
                 ScanToken();
+                
+                // We scanned one token. Clear out the token from the source
+                // so the next token can be read.
+                // Do this here - ScanToken should handle scanning the token and that's it.
+                Source.ClearToken();
             }
 
             Tokens.Add(new Token(TokenType.EOF, "", null, Line));
@@ -110,75 +115,70 @@ namespace Giosue
                 // TODO: Should this be an exception?
                 return;
             }
-            else if (SingleCharacterTokens.TryGetValue(ch, out var type))
+
+            if (SingleCharacterTokens.TryGetValue(ch, out var type))
             {
                 AddToken(type);
+                return;
             }
-            else
+            
+            switch (ch)
             {
+                // Whitespace and newlines
+                case ' ':
+                case '\r':
+                case '\t':
+                    break;
+                case '\n':
+                    Line++;
+                    break;
 
-                switch (ch)
-                {
-                    // Whitespace and newlines
-                    case ' ':
-                    case '\r':
-                    case '\t':
+                case '-':
+                    if (Source.AdvanceIfMatches('-', out _))
+                    {
+                        Comment();
+                    }
+                    else
+                    {
+                        AddToken(TokenType.Minus);
+                    }
+                    break;
+
+                // Comparison operators
+                case '!': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.BangEqual : TokenType.Bang); break;
+                case '=': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.EqualEqual : TokenType.Equal); break;
+                case '<': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.LessEqual : TokenType.Less); break;
+                case '>': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.GreaterEqual : TokenType.Greater); break;
+
+                // Boolean and bitwise operators
+                case '&': AddToken(Source.AdvanceIfMatches('&', out _) ? TokenType.AndAnd : TokenType.And); break;
+                case '|': AddToken(Source.AdvanceIfMatches('|', out _) ? TokenType.PipePipe : TokenType.Pipe); break;
+                case '^': AddToken(Source.AdvanceIfMatches('^', out _) ? TokenType.CaretCaret : TokenType.Caret); break;
+
+                // Strings, numbers, and identifiers
+                case StringTerminator:
+                    {
+                        var parsedString = String();
+                        AddToken(TokenType.String, parsedString);
                         break;
-                    case '\n':
-                        Line++;
+                    }
+                case var c when c.IsAsciiDigit():
+                    {
+                        var (numberType, parsedNumber) = Number();
+                        AddToken(numberType, parsedNumber);
                         break;
-
-                    case '-':
-                        if (Source.AdvanceIfMatches('-', out _))
-                        {
-                            Comment();
-                        }
-                        else
-                        {
-                            AddToken(TokenType.Minus);
-                        }
+                    }
+                case var c when c.IsAsciiAlphanumericOrUnderscore():
+                    {
+                        var tokenType = Identifier();
+                        AddToken(tokenType);
                         break;
+                    }
 
-                    // Comparison operators
-                    case '!': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.BangEqual : TokenType.Bang); break;
-                    case '=': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.EqualEqual : TokenType.Equal); break;
-                    case '<': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.LessEqual : TokenType.Less); break;
-                    case '>': AddToken(Source.AdvanceIfMatches('=', out _) ? TokenType.GreaterEqual : TokenType.Greater); break;
-
-                    // Boolean and bitwise operators
-                    case '&': AddToken(Source.AdvanceIfMatches('&', out _) ? TokenType.AndAnd : TokenType.And); break;
-                    case '|': AddToken(Source.AdvanceIfMatches('|', out _) ? TokenType.PipePipe : TokenType.Pipe); break;
-                    case '^': AddToken(Source.AdvanceIfMatches('^', out _) ? TokenType.CaretCaret : TokenType.Caret); break;
-
-                    // Strings, numbers, and identifiers
-                    case StringTerminator:
-                        {
-                            var parsedString = String();
-                            AddToken(TokenType.String, parsedString);
-                            break;
-                        }
-                    case var c when c.IsAsciiDigit():
-                        {
-                            var (numberType, parsedNumber) = Number();
-                            AddToken(numberType, parsedNumber);
-                            break;
-                        }
-                    case var c when c.IsAsciiAlphanumericOrUnderscore():
-                        {
-                            var tokenType = Identifier();
-                            AddToken(tokenType);
-                            break;
-                        }
-
-                    // Catch all
-                    default:
-                        throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
-                }
+                // Catch all
+                default:
+                    throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
             }
-
-            // We scanned one token. Clear out the token from the source
-            // so the next token can be read.
-            Source.ClearToken();
         }
 
         /// <summary>
@@ -198,20 +198,31 @@ namespace Giosue
         /// <returns>The scanned string.</returns>
         private string String()
         {
-            while (Source.Peek(out var current) && current != StringTerminator && !Source.IsAtEnd)
+            if (Source.Peek(out var current))
             {
-                if (Source.Peek(out current) && current == '\n')
+                while (current != StringTerminator && !Source.IsAtEnd)
                 {
-                    throw new Exception("Multi-line strings are not supported.");
+                    //if (Source.Peek(out current) && current == '\n')
+                    if (Source.Peek(out current))
+                    {
+                        if (current == '\n')
+                        {
+                            throw new Exception("Multi-line strings are not supported.");
+                        }
+                    }
+                    if (!Source.Advance(out _))
+                    {
+                        break;
+                    }
+                    Source.Peek(out current);
                 }
-                Source.Advance(out _);
             }
-            
+
             if (Source.IsAtEnd)
             {
                 throw new Exception($"Unterminated string at line {Line}.");
             }
-            
+
             // The closing ".
             Source.Advance(out _);
 
@@ -226,7 +237,7 @@ namespace Giosue
         /// <returns>A pair of the type of the number and the parsed number itself.</returns>
         private (TokenType, object) Number()
         {
-            if (Source.Peek(out char current))
+            if (Source.Peek(out var current))
             {
                 while (current.IsAsciiDigit())
                 {
@@ -244,7 +255,7 @@ namespace Giosue
                 hasFractionalPart = current == '.';
             }
 
-            var hasNext = Source.PeekNext(out char next);
+            var hasNext = Source.PeekNext(out var next);
             if (hasFractionalPart && hasNext && next.IsAsciiDigit())
             {
                 // Consume the '.'
@@ -275,7 +286,7 @@ namespace Giosue
                     throw new FormatException($"Could not parse '{lexeme}' to {nameof(Double)}");
                 }
                 parsedNumber = @double;
-            } 
+            }
             else
             {
                 tokenType = TokenType.Integer;
@@ -295,25 +306,17 @@ namespace Giosue
         /// <returns>The type of the identifier.</returns>
         private TokenType Identifier()
         {
-            char current = default;
-            //if (Source.Peek(out current))
-            //{
-                while (true)
+            if (Source.Peek(out var current))
+            {
+                while (current.IsAsciiAlphanumericOrUnderscore())
                 {
-                    Source.Peek(out current);
-                    if (current.IsAsciiAlphanumericOrUnderscore())
-                    {
-                        if (!Source.Advance(out _))
-                        {
-                            break;
-                        }
-                    } 
-                    else
+                    if (!Source.Advance(out _))
                     {
                         break;
                     }
+                    Source.Peek(out current);
                 }
-            //}
+            }
 
             var lexeme = Source.CurrentToken;
             var tokenType = TokenType.Identifier;
@@ -333,9 +336,16 @@ namespace Giosue
         private void Comment()
         {
             // Completely ignore comments.
-            while (Source.Peek(out var current) && current != '\n')
+            if (Source.Peek(out var current))
             {
-                Source.Advance(out _);
+                while (current != '\n')
+                {
+                    if (!Source.Advance(out _))
+                    {
+                        break;
+                    }
+                    Source.Peek(out current);
+                }
             }
         }
     }
