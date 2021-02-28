@@ -20,7 +20,7 @@ namespace SourceManager
         /// The source stream for the data.
         /// </summary>
         private StreamReader Reader { get; } = null;
-
+         
         /// <summary>
         /// The current data that we're working with.
         /// </summary>
