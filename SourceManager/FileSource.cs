@@ -41,20 +41,15 @@ namespace SourceManager
         /// </summary>
         private int? BufferEndIndex { get; set; } = null;
 
-        // Do not add 1.
-        // Since the character at CurrentCharacterIndex has not been consumed,
-        // it's not added to the current token and is therefore not counted
-        // towards the current token's length.
         /// <summary>
         /// The length of the current token.
         /// </summary>
-        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex;
+        private int CurrentTokenLength => throw new NotImplementedException();
 
-        // The buffer is empty if the end index is the same as the index of the current character.
         /// <summary>
         /// Indicates if there are more characters to be read.
         /// </summary>
-        public bool IsAtEnd => BufferEndIndex == CurrentCharacterIndex;
+        public bool IsAtEnd => throw new NotImplementedException();
 
         /// <summary>
         /// Backing field for <see cref="CurrentToken"/>.
@@ -123,56 +118,7 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBuffer()
         {
-            Console.WriteLine("Read next into buffer");
-            Console.WriteLine($"tsi: {TokenStartIndex}");
-            Console.WriteLine($"cci: {CurrentCharacterIndex}");
-            var oldTokenLength = CurrentTokenLength;
-
-            File.Delete(@"D:\tmp\d\beforemove_dump.txt");
-            File.WriteAllText(@"D:\tmp\d\beforemove_dump.txt", string.Join('\n', Buffer));
-
-            // First, we need to move the current token to the beginning.
-            //for (int bufferFront = 0, currentTokenIndex = TokenStartIndex; 
-            //     currentTokenIndex < CurrentCharacterIndex; 
-            //     bufferFront++, currentTokenIndex++)
-            //{
-            //    Buffer[bufferFront] = Buffer[currentTokenIndex];
-            //    Console.WriteLine($"move {currentTokenIndex} -> {bufferFront}");
-            //}
-
-            var tempArray = new char[CurrentTokenLength];
-            Array.Copy(Buffer, TokenStartIndex, tempArray, 0, CurrentTokenLength);
-            Array.Copy(tempArray, 0, Buffer, 0, tempArray.Length);
-
-            // Update the indexes accordingly
-            TokenStartIndex = 0;
-            CurrentCharacterIndex = oldTokenLength - 1;
-            Console.WriteLine($"tsi: {TokenStartIndex}");
-            Console.WriteLine($"cci: {CurrentCharacterIndex}");
-
-            File.Delete(@"D:\tmp\d\aftermove_dump.txt");
-            File.WriteAllText(@"D:\tmp\d\aftermove_dump.txt", string.Join('\n', Buffer));
-
-            // Now that we've copied the current token, read the next bit
-            // of data into the buffer.
-            var charactersToRead = BufferLength - CurrentCharacterIndex;
-            var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex + 1, 10);
-
-            for (int i = CurrentTokenLength + charactersRead; i < BufferLength; i++)
-            {
-                Buffer[i] = '\0';
-            }
-
-            // If the number of characters read does not equal the number
-            // of characters required to fill the buffer, that's the end.
-            if (charactersToRead < charactersRead)
-            {
-                // To find the index of the end of the buffer, we take the length
-                // of the current token we copied initially (which is at the beginning
-                // of the array) and the number of characters just read (which is 
-                // directly after the current token) and add them together.
-                BufferEndIndex = CurrentTokenLength + charactersToRead;
-            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -180,10 +126,7 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBufferIfNecessary()
         {
-            if (CurrentCharacterIndex >= BufferLength)
-            {
-                ReadNextIntoBuffer();
-            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
