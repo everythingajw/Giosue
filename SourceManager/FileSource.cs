@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SourceManager
@@ -93,17 +94,12 @@ namespace SourceManager
 
             // If the total contents of the base stream fits into the buffer, then
             // initialize the buffer end index to the end of the content.
+            Console.WriteLine(reader.BaseStream.Length);
             if (reader.BaseStream.Length < BufferLength)
             {
-                BufferEndIndex = (int?)reader.BaseStream.Length;
+                // Account for zero-indexing
+                BufferEndIndex = (int?)reader.BaseStream.Length - 1;
             }
-            else
-            {
-                BufferEndIndex = BufferLength;
-            }
-
-            // Account for zero-indexing
-            BufferEndIndex--;
         }
 
         /// <inheritdoc/>
@@ -127,22 +123,45 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBuffer()
         {
+            Console.WriteLine("Read next into buffer");
+            Console.WriteLine($"tsi: {TokenStartIndex}");
+            Console.WriteLine($"cci: {CurrentCharacterIndex}");
+            var oldTokenLength = CurrentTokenLength;
+
+            File.Delete(@"D:\tmp\d\beforemove_dump.txt");
+            File.WriteAllText(@"D:\tmp\d\beforemove_dump.txt", string.Join('\n', Buffer));
+
             // First, we need to move the current token to the beginning.
-            for (int bufferFront = 0, currentTokenIndex = TokenStartIndex; 
-                 currentTokenIndex < CurrentTokenLength; 
-                 bufferFront++, currentTokenIndex++)
-            {
-                Buffer[bufferFront] = Buffer[currentTokenIndex];
-            }
+            //for (int bufferFront = 0, currentTokenIndex = TokenStartIndex; 
+            //     currentTokenIndex < CurrentCharacterIndex; 
+            //     bufferFront++, currentTokenIndex++)
+            //{
+            //    Buffer[bufferFront] = Buffer[currentTokenIndex];
+            //    Console.WriteLine($"move {currentTokenIndex} -> {bufferFront}");
+            //}
+
+            var tempArray = new char[CurrentTokenLength];
+            Array.Copy(Buffer, TokenStartIndex, tempArray, 0, CurrentTokenLength);
+            Array.Copy(tempArray, 0, Buffer, 0, tempArray.Length);
 
             // Update the indexes accordingly
             TokenStartIndex = 0;
-            CurrentCharacterIndex = CurrentTokenLength - 1;
+            CurrentCharacterIndex = oldTokenLength - 1;
+            Console.WriteLine($"tsi: {TokenStartIndex}");
+            Console.WriteLine($"cci: {CurrentCharacterIndex}");
+
+            File.Delete(@"D:\tmp\d\aftermove_dump.txt");
+            File.WriteAllText(@"D:\tmp\d\aftermove_dump.txt", string.Join('\n', Buffer));
 
             // Now that we've copied the current token, read the next bit
             // of data into the buffer.
-            var charactersToRead = BufferLength - CurrentCharacterIndex - 1;
-            var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex + 1, charactersToRead);
+            var charactersToRead = BufferLength - CurrentCharacterIndex;
+            var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex + 1, 10);
+
+            for (int i = CurrentTokenLength + charactersRead; i < BufferLength; i++)
+            {
+                Buffer[i] = '\0';
+            }
 
             // If the number of characters read does not equal the number
             // of characters required to fill the buffer, that's the end.
@@ -199,6 +218,8 @@ namespace SourceManager
         public bool Peek(out char current)
         {
             current = default;
+
+            ReadNextIntoBufferIfNecessary();
 
             if (IsAtEnd)
             {

@@ -9,7 +9,7 @@ namespace Giosue.ConsoleApp
 {
     class Program
     {
-        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\..\about-giosue\TestCode\BasicCode.gsu");
+        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\..\about-giosue\TestCode\MoveTokenInBuffer.gsu");
 
         static void Main(string[] args)
         {
