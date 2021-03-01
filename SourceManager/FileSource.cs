@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SourceManager.Exceptions;
 
 namespace SourceManager
 {
@@ -124,6 +125,12 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBuffer()
         {
+            // First check that the token is not too long.
+            if (CurrentTokenLength >= BufferLength)
+            {
+                throw new TokenTooLongException(CurrentToken, $"The current token is too long. The maximum token length is {BufferLength}.");
+            }
+
             // Because the tokens will be moved around in the buffer,
             // the current token needs to be reset.
             _currentToken = null;
