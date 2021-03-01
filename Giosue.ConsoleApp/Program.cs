@@ -58,27 +58,7 @@ namespace Giosue.ConsoleApp
             Console.ReadKey();
         }
 
-        private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens, bool trimColumns, int columnLength, string continuationString = "...")
-        {
-            var stringifiedTokens = StringifyTokens(tokens);
-
-            if (!stringifiedTokens.Any())
-            {
-                return new();
-            }
-
-            if (trimColumns)
-            {
-                return stringifiedTokens.Select(fields => {
-                    return fields
-                    .Select(t => t.Length > columnLength ? $"{t.Substring(0, columnLength - continuationString.Length)}{continuationString}" : t)
-                    .ToList();
-                }).ToList();
-            }
-            return stringifiedTokens;            
-        }
-
-        private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens)
+        private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens, int? columnLength = null, string continuationString = "...")
         {
             var tokenList = tokens.ToList();
 
@@ -87,7 +67,7 @@ namespace Giosue.ConsoleApp
                 return new();
             }
 
-            return tokenList.Select(t =>
+            var stringifiedTokens = tokenList.Select(t =>
                 new List<string>()
                 {
                     t?.Type.ToString() ?? "",
@@ -96,6 +76,22 @@ namespace Giosue.ConsoleApp
                     t?.Line.ToString() ?? ""
                 }
             ).ToList();
+
+            if (columnLength.HasValue)
+            {
+                var columnLengthValue = columnLength.Value;
+                continuationString ??= "";
+                return stringifiedTokens.Select(fields => 
+                {
+                    return fields
+                    .Select(t => t.Length > columnLengthValue ? $"{t.Substring(0, columnLengthValue - continuationString.Length)}{continuationString}" : t)
+                    .ToList();
+                }).ToList();
+            } 
+            else
+            {
+                return stringifiedTokens;
+            }
         }
 
         private static void PrettyPrintTokens(IEnumerable<Token> tokens)
@@ -109,7 +105,7 @@ namespace Giosue.ConsoleApp
             }
 
             // Stringify the tokens
-            var stringifiedTokenFields = StringifyTokens(tokenList, true, MaxStringifiedTokenLength);
+            var stringifiedTokenFields = StringifyTokens(tokenList, MaxStringifiedTokenLength);
 
             // Calculate the length for each column
             var columnWidths =
