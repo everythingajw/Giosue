@@ -58,6 +58,46 @@ namespace Giosue.ConsoleApp
             Console.ReadKey();
         }
 
+        private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens, bool trimColumns, int columnLength, string continuationString = "...")
+        {
+            var stringifiedTokens = StringifyTokens(tokens);
+
+            if (!stringifiedTokens.Any())
+            {
+                return new();
+            }
+
+            if (trimColumns)
+            {
+                return stringifiedTokens.Select(fields => {
+                    return fields
+                    .Select(t => t.Length > columnLength ? $"{t.Substring(0, columnLength - continuationString.Length)}{continuationString}" : t)
+                    .ToList();
+                }).ToList();
+            }
+            return stringifiedTokens;            
+        }
+
+        private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens)
+        {
+            var tokenList = tokens.ToList();
+
+            if (!tokenList.Any())
+            {
+                return new();
+            }
+
+            return tokenList.Select(t =>
+                new List<string>()
+                {
+                    t?.Type.ToString() ?? "",
+                    t?.Lexeme?.ToString() ?? "",
+                    t?.Literal?.ToString() ?? "",
+                    t?.Line.ToString() ?? ""
+                }
+            ).ToList();
+        }
+
         private static void PrettyPrintTokens(IEnumerable<Token> tokens)
         {
             var tokenList = tokens.ToList();
@@ -69,18 +109,7 @@ namespace Giosue.ConsoleApp
             }
 
             // Stringify the tokens
-            var stringifiedTokenFields = tokenList.Select(t =>
-                new string[]
-                {
-                    t?.Type.ToString() ?? "",
-                    t?.Lexeme?.ToString() ?? "",
-                    t?.Literal?.ToString() ?? "",
-                    t?.Line.ToString() ?? ""
-                }.Select(t =>
-                {
-                    // Trim the token down if it's longer than 50 characters.
-                    return t.Length >= MaxStringifiedTokenLength ? $"{t.Substring(0, MaxStringifiedTokenLength - 3)}..." : t;
-                }).ToList()).ToList();
+            var stringifiedTokenFields = StringifyTokens(tokenList, true, MaxStringifiedTokenLength);
 
             // Calculate the length for each column
             var columnWidths =
