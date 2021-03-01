@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Giosue.Exceptions;
 using SourceManager;
+using SourceManager.Exceptions;
 
 namespace Giosue.ConsoleApp
 {
@@ -53,6 +54,21 @@ namespace Giosue.ConsoleApp
                 Console.Error.WriteLine(e.Message);
                 Console.Error.WriteLine($"Character: '{e.UnexpectedCharacter}'");
                 Console.Error.WriteLine($"Line: {e.Line}");
+            }
+            catch (UnterminatedStringException e)
+            {
+                PrettyPrintTokens(scanner.GetTokens());
+                Console.Error.WriteLine();
+                Console.Error.WriteLine(e.GetType());
+                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine($"Line: {e.Line}");
+            }
+            catch (TokenTooLongException e)
+            {
+                PrettyPrintTokens(scanner.GetTokens());
+                Console.Error.WriteLine();
+                Console.Error.WriteLine(e.GetType());
+                Console.Error.WriteLine(e.Message);
             }
             catch (Exception e)
             {
