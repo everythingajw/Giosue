@@ -10,13 +10,22 @@ namespace Giosue.ConsoleApp
     class Program
     {
         const int MaxStringifiedTokenLength = 50;
-        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\..\about-giosue\TestCode\MoveTokenInBuffer.gsu");
+        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\MoveTokenInBuffer.gsu");
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
-            Console.WriteLine(TestCodePath);
+            Console.WriteLine($"Test code: {TestCodePath}");
+            
+            if (!File.Exists(TestCodePath))
+            {
+                Console.Error.WriteLine("Test code not found.");
+                Environment.Exit(1);
+            }
+            else if (Directory.Exists(TestCodePath))
+            {
+                Console.Error.WriteLine("Test code exists but is a directory");
+                Environment.Exit(1);
+            }
 
             using var fileReader = new StreamReader(TestCodePath);
             using var source = new FileSource(fileReader);
