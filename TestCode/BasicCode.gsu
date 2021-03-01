@@ -1,0 +1,30 @@
+intero i1 = 0;
+virgola v1 = 0.0;
+virgola division1 = 0.0 / 1.0;
+bool b1 = vero;
+stringa s1 = "my string";
+stringa s2 = ""; -- Empty string test
+bool logic1 = (i1 > v1) && b1 || ((i1 + v1) <= 0) ^^ vero;
+
+intero i2 = i1;
+
+
+-- This line has a lot of characters that shouldn't do anything because this is a comment: `1234567890-=~!@#$%^&*()_+{}|[]\;':",./<>?
+
+
+-- These next 5 lines are invalid code. 
+-- Regardless, the scanner should just throw it away.
+-- mentre (i2 < 10) 
+-- {
+--     i2 = i2 + 1;
+-- }
+
+
+intero principale()
+{
+    virgola i3 = 0;
+    mentre (i3 != 10.0) 
+    {
+        i3 = i3 + 1.0;
+    }
+}
