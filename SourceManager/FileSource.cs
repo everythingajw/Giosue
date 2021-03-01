@@ -44,12 +44,12 @@ namespace SourceManager
         /// <summary>
         /// The length of the current token.
         /// </summary>
-        private int CurrentTokenLength => throw new NotImplementedException();
+        private int CurrentTokenLength => CurrentCharacterIndex - TokenStartIndex;
 
         /// <summary>
         /// Indicates if there are more characters to be read.
         /// </summary>
-        public bool IsAtEnd => throw new NotImplementedException();
+        public bool IsAtEnd => BufferEndIndex.HasValue && CurrentCharacterIndex >= BufferEndIndex;
 
         /// <summary>
         /// Backing field for <see cref="CurrentToken"/>.
@@ -118,7 +118,39 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBuffer()
         {
-            throw new NotImplementedException();
+            // First, move the current token to the beginning of the
+            // buffer.
+            for (int i = TokenStartIndex, bufferFront = 0; 
+                i < CurrentCharacterIndex; 
+                i++, bufferFront++)
+            {
+                Buffer[bufferFront] = Buffer[i];
+            }
+
+            // For debugging
+            var oldTokenLength = CurrentTokenLength;
+
+            // The character at CurrentCharacterIndex is not included
+            // in the token. 
+            CurrentCharacterIndex = CurrentTokenLength;
+            TokenStartIndex = 0;
+
+            // For debugging
+            // The token lengths should be the same after reading.
+            if (oldTokenLength != CurrentTokenLength)
+            {
+                throw new Exception($"Token lengths are not equal. Before:{oldTokenLength} After:{CurrentTokenLength}");
+            }
+
+            var charactersToRead = BufferLength - CurrentTokenLength;
+
+            var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex, charactersToRead);
+            
+            // If all characters read fit in the buffer, then set the end of the buffer.
+            if (charactersRead + charactersToRead < BufferLength)
+            {
+                BufferEndIndex = charactersRead + charactersToRead;
+            }
         }
 
         /// <summary>
@@ -126,7 +158,10 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBufferIfNecessary()
         {
-            throw new NotImplementedException();
+            if (CurrentCharacterIndex >= BufferLength)
+            {
+                ReadNextIntoBuffer();
+            }
         }
 
         /// <summary>
