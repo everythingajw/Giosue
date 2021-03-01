@@ -9,6 +9,7 @@ namespace Giosue.ConsoleApp
 {
     class Program
     {
+        const int MaxStringifiedTokenLength = 50;
         static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\..\about-giosue\TestCode\MoveTokenInBuffer.gsu");
 
         static void Main(string[] args)
@@ -75,12 +76,16 @@ namespace Giosue.ConsoleApp
                     t?.Lexeme?.ToString() ?? "",
                     t?.Literal?.ToString() ?? "",
                     t?.Line.ToString() ?? ""
-                }).ToList();
+                }.Select(t =>
+                {
+                    // Trim the token down if it's longer than 50 characters.
+                    return t.Length >= MaxStringifiedTokenLength ? $"{t.Substring(0, MaxStringifiedTokenLength - 3)}..." : t;
+                }).ToList()).ToList();
 
             // Calculate the length for each column
             var columnWidths =
                 // Indexes into each array of fields
-                Enumerable.Range(0, stringifiedTokenFields.First().Length)
+                Enumerable.Range(0, stringifiedTokenFields.First().Count)
                 // Select the maximum length for each field
                 .Select(i => stringifiedTokenFields.Max(tokenFields => tokenFields[i].Length))
                 .ToList();
@@ -94,6 +99,7 @@ namespace Giosue.ConsoleApp
                 $"{nameof(Token.Line)}"
             };
 
+            // Take the maximum possible length for each column.
             for (int i = 0; i < columnWidths.Count; i++)
             {
                 columnWidths[i] = Math.Max(columnWidths[i] + 1, headers[i].Length);
@@ -113,7 +119,7 @@ namespace Giosue.ConsoleApp
             Console.WriteLine();
 
             // Make a line between the headers and the data
-            Console.WriteLine("".PadLeft(headers.Sum(h => h.Length), '-'));
+            Console.WriteLine(new string('-', headers.Sum(h => h.Length)));
 
             // Print the tokens
             foreach (var tokenFieldList in stringifiedTokenFields)
