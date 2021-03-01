@@ -6,6 +6,12 @@ using System.Text;
 
 namespace SourceManager
 {
+    // Design comments:
+    // The `FileSource` pulls its data from a file, represented by a `StreamReader`.
+    // When the `FileSource` is constructed, up to `BufferLength` characters are read
+    // from the file into the internal char[] `Buffer`.
+    // The current token is everything from `TokenStartIndex` up to and not including
+    // the character at `CurrentCharacterIndex`.
     /// <summary>
     /// Represents a source for data.
     /// </summary>
@@ -151,9 +157,9 @@ namespace SourceManager
             var charactersRead = Reader.ReadBlock(Buffer, CurrentCharacterIndex, charactersToRead);
             
             // If all characters read fit in the buffer, then set the end of the buffer.
-            if (charactersRead + charactersToRead < BufferLength)
+            if (charactersRead <= charactersToRead)
             {
-                BufferEndIndex = charactersRead + charactersToRead;
+                BufferEndIndex = CurrentTokenLength + charactersRead;
             }
         }
 
