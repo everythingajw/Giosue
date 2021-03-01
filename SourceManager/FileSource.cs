@@ -118,6 +118,10 @@ namespace SourceManager
         /// </summary>
         private void ReadNextIntoBuffer()
         {
+            // Because the tokens will be moved around in the buffer,
+            // the current token needs to be reset.
+            _currentToken = null;
+
             // First, move the current token to the beginning of the
             // buffer.
             for (int i = TokenStartIndex, bufferFront = 0; 
