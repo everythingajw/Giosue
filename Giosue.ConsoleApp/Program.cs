@@ -150,6 +150,9 @@ namespace Giosue.ConsoleApp
             };
 
             // Take the maximum possible length for each column.
+            // If a field for a token evaluates to a zero-length string,
+            // the column will look weird because the header is larger
+            // than the token.
             for (int i = 0; i < columnWidths.Count; i++)
             {
                 columnWidths[i] = Math.Max(columnWidths[i] + 1, headers[i].Length);
