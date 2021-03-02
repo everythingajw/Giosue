@@ -58,7 +58,7 @@ namespace Giosue
         /// <summary>
         /// The source code for the <see cref="Scanner"/>.
         /// </summary>
-        private Source Source { get; }
+        private ISource Source { get; }
 
         /// <summary>
         /// The list of tokens produced after scanning.
@@ -74,7 +74,7 @@ namespace Giosue
         /// Creates a new <see cref="Scanner"/>.
         /// </summary>
         /// <param name="source">The source code for the <see cref="Scanner"/>.</param>
-        public Scanner(Source source)
+        public Scanner(ISource source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source), "The source for a scanner cannot be null.");
         }
