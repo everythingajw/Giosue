@@ -16,7 +16,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source for data.
     /// </summary>
-    public class FileSource : ISource
+    public class FileSource : Source, IDisposable
     {
         /// <summary>
         /// The length of the internal buffer for characters read.
@@ -36,12 +36,12 @@ namespace SourceManager
         /// <summary>
         /// The starting index of the current token.
         /// </summary>
-        private int TokenStartIndex { get; set; } = 0;
+        protected override int TokenStartIndex { get; set; } = 0;
 
         /// <summary>
         /// The index of the current character.
         /// </summary>
-        private int CurrentCharacterIndex { get; set; } = 0;
+        protected override int CurrentCharacterIndex { get; set; } = 0;
 
         /// <summary>
         /// The index of the end of <see cref="Buffer"/>
@@ -56,17 +56,12 @@ namespace SourceManager
         /// <summary>
         /// Indicates if there are more characters to be read.
         /// </summary>
-        public bool IsAtEnd => BufferEndIndex.HasValue && CurrentCharacterIndex >= BufferEndIndex;
-
-        /// <summary>
-        /// Backing field for <see cref="CurrentToken"/>.
-        /// </summary>
-        private string _currentToken;
+        public override bool IsAtEnd => BufferEndIndex.HasValue && CurrentCharacterIndex >= BufferEndIndex;
 
         /// <summary>
         /// The current token.
         /// </summary>
-        public string CurrentToken
+        public override string CurrentToken
         {
             get
             {
@@ -85,7 +80,7 @@ namespace SourceManager
         /// Creates a new <see cref="FileSource"/>
         /// </summary>
         /// <param name="reader">The <see cref="StreamReader"/> that provides the data for the <see cref="FileSource"/>.</param>
-        public FileSource(StreamReader reader)
+        public FileSource(StreamReader reader) : base()
         {
             Reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
@@ -113,7 +108,7 @@ namespace SourceManager
         /// <summary>
         /// Clears the current token and prepares for reading the next token.
         /// </summary>
-        public void ClearToken()
+        public override void ClearToken()
         {
             _currentToken = null;
             TokenStartIndex = CurrentCharacterIndex;
@@ -186,7 +181,7 @@ namespace SourceManager
         /// </summary>
         /// <param name="consumed">The consumed character.</param>
         /// <returns>True if the <see cref="FileSource"/> was successfully advanced, false otherwise.</returns>
-        public bool Advance(out char consumed)
+        public override bool Advance(out char consumed)
         {
             consumed = default;
 
@@ -210,7 +205,7 @@ namespace SourceManager
         /// </summary>
         /// <param name="current">The current character.</param>
         /// <returns>True if the current character was successfully read, false otherwise.</returns>
-        public bool Peek(out char current)
+        public override bool Peek(out char current)
         {
             current = default;
 
@@ -230,7 +225,7 @@ namespace SourceManager
         /// </summary>
         /// <param name="next">The character after the current character.</param>
         /// <returns>True if the character after the current character was successfully read, false otherwise.</returns>
-        public bool PeekNext(out char next)
+        public override bool PeekNext(out char next)
         {
             next = default;
 
@@ -267,7 +262,7 @@ namespace SourceManager
         /// <param name="c">The character to match.</param>
         /// <param name="consumed">The consumed character.</param>
         /// <returns>True if the current character matched <paramref name="c"/> and it was consumed, false otherwise.</returns>
-        public bool AdvanceIfMatches(char c, out char consumed)
+        public override bool AdvanceIfMatches(char c, out char consumed)
         {
             consumed = default;
 

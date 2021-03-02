@@ -31,14 +31,31 @@ namespace SourceManager
         public abstract bool IsAtEnd { get; }
 
         /// <summary>
+        /// Backing field for <see cref="CurrentToken"/>.
+        /// </summary>
+        protected string _currentToken;
+
+        /// <summary>
         /// The current token.
         /// </summary>
         public abstract string CurrentToken { get; }
 
+        protected Source()
+        {
+            TokenStartIndex = 0;
+            CurrentCharacterIndex = 0;
+            _currentToken = null;
+        }
+
         /// <summary>
         /// Clears the current token and prepares for reading the next token.
         /// </summary>
-        public abstract void ClearToken();
+        public virtual void ClearToken()
+        {
+            _currentToken = null;
+            TokenStartIndex = CurrentCharacterIndex;
+            CurrentCharacterIndex = TokenStartIndex;
+        }
 
         /// <summary>
         /// Consumes one character.

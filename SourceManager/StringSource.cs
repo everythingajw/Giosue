@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SourceManager
 {
-    public class StringSource : Source
+    public class StringSource : Source, IDisposable
     {
         /// <summary>
         /// The source string for the tokens.
@@ -16,23 +16,18 @@ namespace SourceManager
         /// <summary>
         /// The starting index of the current token.
         /// </summary>
-        private int TokenStartIndex { get; set; } = 0;
+        protected override int TokenStartIndex { get; set; } = 0;
 
         /// <summary>
         /// The index of the current character.
         /// </summary>
-        private int CurrentCharacterIndex { get; set; } = 0;
+        protected override int CurrentCharacterIndex { get; set; } = 0;
 
         /// <inheritdoc/>
-        public bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
-
-        /// <summary>
-        /// Backing field for <see cref="CurrentToken"/>.
-        /// </summary>
-        private string _currentToken = null;
+        public override bool IsAtEnd => CurrentCharacterIndex >= Source.Length;
 
         /// <inheritdoc/>
-        public string CurrentToken 
+        public override string CurrentToken 
         {
             get
             {
@@ -49,13 +44,13 @@ namespace SourceManager
         /// Creates a new <see cref="StringSource"/>.
         /// </summary>
         /// <param name="source">The <see cref="string"/> that provides a source for the <see cref="StringSource"/>.</param>
-        public StringSource(string source)
+        public StringSource(string source) : base()
         {
             Source = source ?? throw new ArgumentNullException(nameof(source), $"The source string for a {nameof(StringSource)} cannot be null.");
         }
 
         /// <inheritdoc/>
-        public bool Advance(out char consumed)
+        public override bool Advance(out char consumed)
         {
             consumed = default;
             _currentToken = null;
@@ -70,7 +65,7 @@ namespace SourceManager
         }
 
         /// <inheritdoc/>
-        public bool AdvanceIfMatches(char c, out char consumed)
+        public override bool AdvanceIfMatches(char c, out char consumed)
         {
             consumed = default;
             
@@ -95,21 +90,13 @@ namespace SourceManager
         }
 
         /// <inheritdoc/>
-        public void ClearToken()
-        {
-            _currentToken = null;
-            TokenStartIndex = CurrentCharacterIndex;
-            CurrentCharacterIndex = TokenStartIndex;
-        }
-
-        /// <inheritdoc/>
         public void Dispose()
         {
             // TODO: What should be cleaned up here?
         }
 
         /// <inheritdoc/>
-        public bool Peek(out char current)
+        public override bool Peek(out char current)
         {
             current = default;
 
@@ -123,7 +110,7 @@ namespace SourceManager
         }
 
         /// <inheritdoc/>
-        public bool PeekNext(out char next)
+        public override bool PeekNext(out char next)
         {
             next = default;
 
