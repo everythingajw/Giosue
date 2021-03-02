@@ -159,6 +159,8 @@ namespace Giosue.ConsoleApp
             }
 
             // Add separators for the columns
+            // Skip the last column so it doesn't look like there's a
+            // column after the last column.
             for (int i = 0; i < headers.Length - 1; i++)
             {
                 headers[i] = $"{headers[i].PadRight(columnWidths[i], ' ')} | ";
