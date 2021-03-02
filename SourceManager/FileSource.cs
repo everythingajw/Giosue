@@ -281,6 +281,7 @@ namespace SourceManager
                 {
                     return false;
                 }
+                return false;
             }
 
             // This is safe because we already checked that we're not at the end
