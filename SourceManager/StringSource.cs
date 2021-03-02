@@ -58,6 +58,7 @@ namespace SourceManager
         public bool Advance(out char consumed)
         {
             consumed = default;
+            _currentToken = null;
 
             if (IsAtEnd)
             {
@@ -77,8 +78,12 @@ namespace SourceManager
             {
                 return false;
             }
-            if (Peek(out var current) && current != c)
+            if (Peek(out var current))
             {
+                if (current != c)
+                {
+                    return false;
+                }
                 return false;
             }
 
