@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SourceManager
 {
-    public class StringSource : ISource
+    public class StringSource : Source
     {
         /// <summary>
         /// The source string for the tokens.

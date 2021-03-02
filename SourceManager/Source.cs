@@ -9,7 +9,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source.
     /// </summary>
-    public interface ISource : IDisposable
+    public interface Source : IDisposable
     {
         /// <summary>
         /// Indicates if there are more characters to be read.
@@ -30,7 +30,7 @@ namespace SourceManager
         /// Consumes one character.
         /// </summary>
         /// <param name="consumed">The consumed character.</param>
-        /// <returns>True if the <see cref="ISource"/> was successfully advanced, false otherwise.</returns>
+        /// <returns>True if the <see cref="Source"/> was successfully advanced, false otherwise.</returns>
         bool Advance(out char consumed);
 
         /// <summary>
