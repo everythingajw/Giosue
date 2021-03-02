@@ -106,16 +106,6 @@ namespace SourceManager
         }
 
         /// <summary>
-        /// Clears the current token and prepares for reading the next token.
-        /// </summary>
-        public override void ClearToken()
-        {
-            _currentToken = null;
-            TokenStartIndex = CurrentCharacterIndex;
-            CurrentCharacterIndex = TokenStartIndex;
-        }
-
-        /// <summary>
         /// Reads the next amount of characters into <see cref="Buffer"/>.
         /// </summary>
         private void ReadNextIntoBuffer()
