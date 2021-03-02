@@ -19,12 +19,12 @@ namespace Giosue.ConsoleApp
             
             if (!File.Exists(TestCodePath))
             {
-                Console.Error.WriteLine("Test code not found.");
+                ErrorWriteLine("Test code not found.");
                 Environment.Exit(1);
             }
             else if (Directory.Exists(TestCodePath))
             {
-                Console.Error.WriteLine("Test code exists but is a directory");
+                ErrorWriteLine("Test code exists but is a directory");
                 Environment.Exit(1);
             }
 
@@ -49,38 +49,57 @@ namespace Giosue.ConsoleApp
             {
                 // Show any unexpected characters
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.Error.WriteLine();
-                Console.Error.WriteLine(e.GetType());
-                Console.Error.WriteLine(e.Message);
-                Console.Error.WriteLine($"Character: '{e.UnexpectedCharacter}'");
-                Console.Error.WriteLine($"Line: {e.Line}");
+                ErrorWriteLine("", e.GetType(), e.Message, $"Character: '{e.UnexpectedCharacter}'", $"Line: {e.Line}");
             }
             catch (UnterminatedStringException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.Error.WriteLine();
-                Console.Error.WriteLine(e.GetType());
-                Console.Error.WriteLine(e.Message);
-                Console.Error.WriteLine($"Line: {e.Line}");
+                ErrorWriteLine("", e.GetType(), e.Message, $"Line: {e.Line}");
             }
             catch (TokenTooLongException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.Error.WriteLine();
-                Console.Error.WriteLine(e.GetType());
-                Console.Error.WriteLine(e.Message);
+                ErrorWriteLine("", e.GetType(), e.Message);
             }
             catch (Exception e)
             {
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("An error occurred");
-                Console.Error.WriteLine(e.Message);
+                ErrorWriteLine("", "An error occurred", e.Message);
             }
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Writes a <see cref="string"/> to <see cref="Console.Error"/> with a newline.
+        /// </summary>
+        /// <param name="s">The <see cref="string"/> to write.</param>
+        private static void ErrorWriteLine(string s = "")
+        {
+            Console.Error.WriteLine(s);
+        }
+
+        /// <summary>
+        /// Writes an <see cref="object"/> to <see cref="Console.Error"/> with a newline.
+        /// </summary>
+        /// <param name="obj">The <see cref="object"/> to print</param>
+        private static void ErrorWriteLine(object obj)
+        {
+            Console.Error.WriteLine(obj);
+        }
+
+        /// <summary>
+        /// Writes multiple <see cref="object"/>s to <see cref="Console.Error"/> with a newline.
+        /// </summary>
+        /// <param name="objs">The objects to print</param>
+        private static void ErrorWriteLine(params object[] objs)
+        {
+            foreach (var obj in objs)
+            {
+                ErrorWriteLine(obj);
+            }
         }
 
         private static List<List<string>> StringifyTokens(IEnumerable<Token> tokens, int? columnLength = null, string continuationString = "...")
