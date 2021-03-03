@@ -13,7 +13,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source.
     /// </summary>
-    public abstract class Source
+    public abstract class Source : IDisposable
     {
         /// <summary>
         /// The starting index of the current token.
@@ -56,6 +56,8 @@ namespace SourceManager
             TokenStartIndex = CurrentCharacterIndex;
             CurrentCharacterIndex = TokenStartIndex;
         }
+
+        public abstract void Dispose();
 
         /// <summary>
         /// Consumes one character.

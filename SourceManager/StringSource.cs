@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SourceManager
 {
-    public class StringSource : Source, IDisposable
+    public class StringSource : Source
     {
         /// <summary>
         /// The source string for the tokens.
@@ -90,7 +90,7 @@ namespace SourceManager
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             // TODO: What should be cleaned up here?
         }

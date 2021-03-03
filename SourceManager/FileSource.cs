@@ -16,7 +16,7 @@ namespace SourceManager
     /// <summary>
     /// Represents a source for data.
     /// </summary>
-    public class FileSource : Source, IDisposable
+    public class FileSource : Source
     {
         /// <summary>
         /// The length of the internal buffer for characters read.
@@ -100,7 +100,7 @@ namespace SourceManager
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             Reader.Dispose();
         }
