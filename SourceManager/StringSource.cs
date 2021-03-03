@@ -79,7 +79,6 @@ namespace SourceManager
                 {
                     return false;
                 }
-                return false;
             }
 
             // This is safe because we already checked if 
