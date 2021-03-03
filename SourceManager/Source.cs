@@ -57,6 +57,7 @@ namespace SourceManager
             CurrentCharacterIndex = TokenStartIndex;
         }
 
+        /// <inheritdoc/>
         public abstract void Dispose();
 
         /// <summary>
