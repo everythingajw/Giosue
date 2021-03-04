@@ -13,7 +13,8 @@ import os
 
 INDENT = "    "
 BASE_EXPRESSION_CLASS_NAME = "Expression"
-VISITOR_INTERFACE_NAME = "IVisitor<T>"
+GENERIC_PARAMETER = "T"
+VISITOR_INTERFACE_NAME = f"IVisitor<{GENERIC_PARAMETER}>"
 YES_RESPONSES = ("yes", "y")
 NO_RESPONSES = ("no", "n")
 ALL_YES_NO_RESPONSES = (*YES_RESPONSES, *NO_RESPONSES)
@@ -68,7 +69,7 @@ class SyntaxTree:
         visitor_call = indent([f"return visitor.Visit{self.name}{self.base_class_name}(this);"])
         
         return [
-            f"public T Accept({VISITOR_INTERFACE_NAME} visitor)",
+            f"public override {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor)",
             "{",
             *visitor_call,
             "}"
@@ -127,6 +128,15 @@ args = parser.parse_args()
 
 tree_namespace = str(args.namespace).strip()
 
+using_statements: List[str] = list(
+    map(lambda u : f"{u}\n", 
+        [
+            "using Giosue;",
+            f"using {tree_namespace};"
+        ]
+    )
+)
+
 output_dir = Path(args.output_dir).resolve()
 
 if not output_dir.exists():
@@ -168,10 +178,6 @@ if len(os.listdir(str(output_dir))) != 0:
                     file.rmdir()
             else:
                 file.unlink()
-
-using_statements: List[str] = [
-    "using Giosue;"
-]
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -285,7 +291,7 @@ syntax_trees: List[SyntaxTree] = [
 ]
 
 visitor_interface_methods = [
-    f"T Visit{tree.name}{tree.base_class_name}({tree.name} expression);" for tree in syntax_trees
+    f"{GENERIC_PARAMETER} Visit{tree.name}{tree.base_class_name}({tree.name} expression);" for tree in syntax_trees
 ]
 
 visitor_interface = "\n".join(
@@ -305,26 +311,26 @@ namespace {tree_namespace}
 {{
     public abstract class {BASE_EXPRESSION_CLASS_NAME}
     {{
-        public abstract T Accept<T>({VISITOR_INTERFACE_NAME} visitor);
+        public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);
     }}
 }}
 """
 
-# tr = SyntaxTree(tree_namespace, "Name", BASE_EXPRESSION_CLASS_NAME, [Field("string", "MyField", "myField")])
-# print(tr.generate_tree())
-
 with open(output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
+    f.write("\n\n")
     f.write(visitor_interface)
 
 with open(output_dir / "Expression.cs", "w") as f:
     f.writelines(using_statements)
+    f.write("\n\n")
     f.write(base_class)
 
 for tree in syntax_trees:
     output_file_path = output_dir / f"{tree.name}.cs"
     with open(output_file_path, "w") as f:
         f.writelines(using_statements)
+        f.write("\n\n")
         f.write(tree.generate_tree())
 
 print("OK.", file=sys.stderr)

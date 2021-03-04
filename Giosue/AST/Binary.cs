@@ -1,4 +1,8 @@
-using Giosue;namespace Giosue.AST
+using Giosue;
+using Giosue.AST;
+
+
+namespace Giosue.AST
 {
     public class Binary : Expression
     {
@@ -13,7 +17,7 @@ using Giosue;namespace Giosue.AST
             this.Right = right;
         }
     
-        public T Accept(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitBinaryExpression(this);
         }

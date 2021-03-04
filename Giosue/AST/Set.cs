@@ -1,4 +1,8 @@
-using Giosue;namespace Giosue.AST
+using Giosue;
+using Giosue.AST;
+
+
+namespace Giosue.AST
 {
     public class Set : Expression
     {
@@ -13,7 +17,7 @@ using Giosue;namespace Giosue.AST
             this.Value = @value;
         }
     
-        public T Accept(IVisitor<T> visitor)
+        public override T Accept<T>(IVisitor<T> visitor)
         {
             return visitor.VisitSetExpression(this);
         }

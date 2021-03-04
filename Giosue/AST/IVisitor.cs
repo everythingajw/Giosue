@@ -1,4 +1,8 @@
-using Giosue;namespace Giosue.AST
+using Giosue;
+using Giosue.AST;
+
+
+namespace Giosue.AST
 {
     public interface IVisitor<T>
     {
