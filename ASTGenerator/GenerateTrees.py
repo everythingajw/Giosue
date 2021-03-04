@@ -131,6 +131,10 @@ tree_namespace = str(args.namespace).strip()
 using_statements: List[str] = list(
     map(lambda u : f"{u}\n", 
         [
+            "using System;",
+            "using System.Collections.Generic;",
+            "using System.Linq;",
+            "using System.Text;",
             "using Giosue;",
             f"using {tree_namespace};"
         ]
@@ -306,31 +310,34 @@ visitor_interface = "\n".join(
     )
 )
 
-base_class = f"""
-namespace {tree_namespace}
-{{
-    public abstract class {BASE_EXPRESSION_CLASS_NAME}
-    {{
-        public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);
-    }}
-}}
-"""
+base_class_methods = [f"public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);"]
+base_class = "\n".join(
+    add_namespace(
+        [
+            f"public abstract class {BASE_EXPRESSION_CLASS_NAME}",
+            "{",
+            *indent(base_class_methods),
+            "}"
+        ],
+        tree_namespace
+    )
+)
 
 with open(output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
-    f.write("\n\n")
+    f.write("\n")
     f.write(visitor_interface)
 
 with open(output_dir / "Expression.cs", "w") as f:
     f.writelines(using_statements)
-    f.write("\n\n")
+    f.write("\n")
     f.write(base_class)
 
 for tree in syntax_trees:
     output_file_path = output_dir / f"{tree.name}.cs"
     with open(output_file_path, "w") as f:
         f.writelines(using_statements)
-        f.write("\n\n")
+        f.write("\n")
         f.write(tree.generate_tree())
 
 print("OK.", file=sys.stderr)
