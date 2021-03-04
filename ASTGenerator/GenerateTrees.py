@@ -66,18 +66,18 @@ class SyntaxTree:
             f"public class {self.name} : {self.base_class_name}",
             "{",
             *fields,
-            "\n",
+            "",
             *constructor,
             "}"
         ]
 
     def generate_namespace(self):
-        class_ = "\n".join(indent(self.generate_class()))
+        class_ = indent(self.generate_class())
 
         return [
             f"namespace {self.namespace}",
             "{",
-            f"{class_}",
+            *class_,
             "}"
         ]
 
@@ -85,13 +85,13 @@ class SyntaxTree:
         return "\n".join(self.generate_namespace())
 
 
-# parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
-# # parser.add_argument('integers', metavar='N', type=int, nargs='+',
-# #                     help='an integer for the accumulator')
-# # parser.add_argument('--sum', dest='accumulate', action='store_const',
-# #                     const=sum, default=max,
-# #                     help='sum the integers (default: find the max)')
-# parser.add_argument('--generate-abstract-class', help="Generate the abstract base 'Expression' class.")
+parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
+# parser.add_argument('integers', metavar='N', type=int, nargs='+',
+#                     help='an integer for the accumulator')
+# parser.add_argument('--sum', dest='accumulate', action='store_const',
+#                     const=sum, default=max,
+#                     help='sum the integers (default: find the max)')
+parser.add_argument('--generate-abstract-class', help="Generate the abstract base 'Expression' class.")
 
 # args = parser.parse_args()
 
