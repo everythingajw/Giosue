@@ -6,7 +6,9 @@
 # ));
 
 from typing import *
+from pathlib import Path
 import argparse
+import sys
 
 INDENT = "    "
 BASE_EXPRESSION_CLASS_NAME = "Expression"
@@ -109,17 +111,26 @@ class SyntaxTree:
         return "\n".join(self.generate_namespace())
 
 
-# parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
+parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
 
-# parser.add_argument("--namespace", dest="namespace", type=str, required=True,
-#                     help="The namespace that contains the trees.")
+parser.add_argument("--namespace", dest="namespace", type=str, required=True,
+                    help="The namespace that contains the trees.")
 
-# parser.add_argument('--output-dir', dest="output_dir", type=str, required=True, 
-#                     help="The location where the tree files should go.")
+parser.add_argument('--output-dir', dest="output_dir", type=str, required=True, 
+                    help="The location where the tree files should go.")
 
-# args = parser.parse_args()
+args = parser.parse_args()
 
-tree_namespace = "namespc"  # args["namespace"]
+tree_namespace = str(args.namespace).strip()
+
+output_dir = Path(args.output_dir)
+
+if not output_dir.exists():
+    print("The output directory does not exist.", file=sys.stderr)
+    exit(1)
+elif not output_dir.is_dir():
+    print("The output directory is not a directory.", file=sys.stderr)
+    exit(2)
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -265,4 +276,6 @@ print(visitor_interface)
 print(base_class)
 
 for tree in syntax_trees:
-    print(tree.generate_tree())
+    output_file_path = output_dir / f"{tree.name}.cs"
+    with open(output_file_path, "w") as f:
+        f.write(tree.generate_tree())
