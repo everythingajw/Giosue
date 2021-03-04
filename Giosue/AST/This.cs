@@ -1,4 +1,4 @@
-namespace MyAST
+using Giosue;namespace Giosue.AST
 {
     public class This : Expression
     {

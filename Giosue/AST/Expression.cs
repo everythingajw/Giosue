@@ -1,5 +1,5 @@
-
-namespace MyAST
+using Giosue;
+namespace Giosue.AST
 {
     public abstract class Expression
     {

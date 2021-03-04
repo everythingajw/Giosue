@@ -9,10 +9,14 @@ from typing import *
 from pathlib import Path
 import argparse
 import sys
+import os
 
 INDENT = "    "
 BASE_EXPRESSION_CLASS_NAME = "Expression"
 VISITOR_INTERFACE_NAME = "IVisitor<T>"
+YES_RESPONSES = ("yes", "y")
+NO_RESPONSES = ("no", "n")
+ALL_YES_NO_RESPONSES = (*YES_RESPONSES, *NO_RESPONSES)
 
 
 def indent(block: List[str], indent = INDENT):  # -> List[str]:
@@ -133,13 +137,41 @@ elif not output_dir.is_dir():
     exit(2)
 
 response = None
-while response not in ("y", "n", ""):
+while response != "" and response not in ALL_YES_NO_RESPONSES:
     print(f"Writing AST to {output_dir}. OK? (y/N) ", file=sys.stderr, end='')
-    response = input().lower()
+    response = input().strip().lower()
 
-if response in ("n", ""):
+if response == "" or response in NO_RESPONSES:
     print("Exit", file=sys.stderr)
     exit(3)
+
+if len(os.listdir(str(output_dir))) != 0:
+    print("Warning: output directory is not empty", file=sys.stderr)
+    response = None
+    while response != "" and response not in ALL_YES_NO_RESPONSES:
+        print("Remove contents before continuing? (y/N) ", file=sys.stderr, end="")
+        response = input().strip().lower()
+    
+    if response == "" or response in NO_RESPONSES:
+        print("Keeping directory contents", file=sys.stderr)
+    
+    # Response is yes
+    else:
+        print("Removing directory contents", file=sys.stderr)
+        for file in output_dir.rglob("*"):
+            if file.is_dir():
+                response = None
+                while response != "" and response not in ALL_YES_NO_RESPONSES:
+                    print(f"{file} is a directory. Remove anyway? (y/N) ", file=sys.stderr, end="")
+                    response = input().strip().lower()
+                if response != "" and response in YES_RESPONSES:
+                    file.rmdir()
+            else:
+                file.unlink()
+
+using_statements: List[str] = [
+    "using Giosue;"
+]
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -282,14 +314,17 @@ namespace {tree_namespace}
 # print(tr.generate_tree())
 
 with open(output_dir / "IVisitor.cs", "w") as f:
+    f.writelines(using_statements)
     f.write(visitor_interface)
 
 with open(output_dir / "Expression.cs", "w") as f:
+    f.writelines(using_statements)
     f.write(base_class)
 
 for tree in syntax_trees:
     output_file_path = output_dir / f"{tree.name}.cs"
     with open(output_file_path, "w") as f:
+        f.writelines(using_statements)
         f.write(tree.generate_tree())
 
 print("OK.", file=sys.stderr)
