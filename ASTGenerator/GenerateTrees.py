@@ -123,14 +123,23 @@ args = parser.parse_args()
 
 tree_namespace = str(args.namespace).strip()
 
-output_dir = Path(args.output_dir)
+output_dir = Path(args.output_dir).resolve()
 
 if not output_dir.exists():
-    print("The output directory does not exist.", file=sys.stderr)
+    print("Error: the output directory does not exist.", file=sys.stderr)
     exit(1)
 elif not output_dir.is_dir():
-    print("The output directory is not a directory.", file=sys.stderr)
+    print("Error: the output directory is not a directory.", file=sys.stderr)
     exit(2)
+
+response = None
+while response not in ("y", "n", ""):
+    print(f"Writing AST to {output_dir}. OK? (y/N) ", file=sys.stderr, end='')
+    response = input().lower()
+
+if response in ("n", ""):
+    print("Exit", file=sys.stderr)
+    exit(3)
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -272,10 +281,15 @@ namespace {tree_namespace}
 # tr = SyntaxTree(tree_namespace, "Name", BASE_EXPRESSION_CLASS_NAME, [Field("string", "MyField", "myField")])
 # print(tr.generate_tree())
 
-print(visitor_interface)
-print(base_class)
+with open(output_dir / "IVisitor.cs", "w") as f:
+    f.write(visitor_interface)
+
+with open(output_dir / "Expression.cs", "w") as f:
+    f.write(base_class)
 
 for tree in syntax_trees:
     output_file_path = output_dir / f"{tree.name}.cs"
     with open(output_file_path, "w") as f:
         f.write(tree.generate_tree())
+
+print("OK.", file=sys.stderr)
