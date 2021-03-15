@@ -25,6 +25,20 @@ namespace Giosue
             return true;
         }
 
+        private bool AreEqual(object a, object b)
+        {
+            if (a == null)
+            {
+                if (b == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            return a.Equals(b);
+        }
+
         public object VisitAssignExpression(Assign expression)
         {
             throw new NotImplementedException();
@@ -35,6 +49,7 @@ namespace Giosue
             var left = EvaluateExpression(expression.Left);
             var right = EvaluateExpression(expression.Right);
 
+            // Oh boy. This needs help.
             switch (expression.Operator.Type)
             {
                 case TokenType.Minus:
@@ -81,7 +96,6 @@ namespace Giosue
                         }
                         break;
                     }
-
                 case TokenType.GreaterEqual:
                     {
                         if (left is double ld && right is double rd)
@@ -118,6 +132,10 @@ namespace Giosue
                         }
                         break;
                     }
+                case TokenType.BangEqual:
+                    return !AreEqual(left, right);
+                case TokenType.Equal:
+                    return AreEqual(left, right);
             }
 
             return null;
