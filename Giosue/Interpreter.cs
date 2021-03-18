@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Giosue.AST;
+using Giosue.Exceptions;
 
 namespace Giosue
 {
@@ -62,7 +63,7 @@ namespace Giosue
                         {
                             return leftInt - rightInt;
                         }
-                        break;
+                        throw new MismatchedTypeException(left.GetType(), new() { typeof(int), typeof(double) }, right.GetType(), new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
                     }
                 case TokenType.Slash:
                     {
