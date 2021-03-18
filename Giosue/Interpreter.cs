@@ -40,7 +40,16 @@ namespace Giosue
             return a.Equals(b);
         }
 
-        public MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
+        private static int? Compare(object left, object right)
+        {
+            if (left is IComparable l && right is IComparable r)
+            {
+                return l.CompareTo(r);
+            }
+            return null;
+        }
+
+        private MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
         {
             return new MismatchedTypeException(leftType, new() { typeof(int), typeof(double) }, rightType, new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
         }
