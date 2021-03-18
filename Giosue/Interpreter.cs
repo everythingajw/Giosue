@@ -49,7 +49,23 @@ namespace Giosue
             return null;
         }
 
-        private MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
+        private static int CompareNumbers(object left, object right)
+        {
+            if (left is int li && right is int ri)
+            {
+                // This will have a value because int is IComparable
+                return CompareObjects(li, ri).Value;
+            }
+            if (left is double ld && right is double rd)
+            {
+                // This will have a value because double is IComparable
+                return CompareObjects(ld, rd).Value;
+            }
+
+            throw MustBeIntOrDouble(left.GetType(), right.GetType());
+        }
+
+        private static MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
         {
             return new MismatchedTypeException(leftType, new() { typeof(int), typeof(double) }, rightType, new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
         }
@@ -105,51 +121,19 @@ namespace Giosue
                     }
                 case TokenType.Greater:
                     {
-                        if (left is double ld && right is double rd)
-                        {
-                            return ld > rd;
-                        }
-                        if (left is int li && right is int ri)
-                        {
-                            return li > ri;
-                        }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        return CompareNumbers(left, right) > 0;
                     }
                 case TokenType.GreaterEqual:
                     {
-                        if (left is double ld && right is double rd)
-                        {
-                            return ld >= rd;
-                        }
-                        if (left is int li && right is int ri)
-                        {
-                            return li >= ri;
-                        }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        return CompareNumbers(left, right) >= 0;
                     }
                 case TokenType.Less:
                     {
-                        if (left is double ld && right is double rd)
-                        {
-                            return ld < rd;
-                        }
-                        if (left is int li && right is int ri)
-                        {
-                            return li < ri;
-                        }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        return CompareNumbers(left, right) < 0;
                     }
                 case TokenType.LessEqual:
                     {
-                        if (left is double ld && right is double rd)
-                        {
-                            return ld <= rd;
-                        }
-                        if (left is int li && right is int ri)
-                        {
-                            return li <= ri;
-                        }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        return CompareNumbers(left, right) <= 0;
                     }
                 case TokenType.BangEqual:
                     return !AreEqual(left, right);
