@@ -40,6 +40,11 @@ namespace Giosue
             return a.Equals(b);
         }
 
+        public MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
+        {
+            return new MismatchedTypeException(leftType, new() { typeof(int), typeof(double) }, rightType, new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
+        }
+
         public object VisitAssignExpression(Assign expression)
         {
             throw new NotImplementedException();
@@ -63,15 +68,19 @@ namespace Giosue
                         {
                             return leftInt - rightInt;
                         }
-                        throw new MismatchedTypeException(left.GetType(), new() { typeof(int), typeof(double) }, right.GetType(), new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.Slash:
                     {
-                        if (left is double l && right is double r)
+                        if (left is double ld && right is double rd)
                         {
-                            return l / r;
+                            return ld / rd;
                         }
-                        break;
+                        if (left is int li && right is int ri)
+                        {
+                            return (double)li / (double)ri;
+                        }
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.Star:
                     {
@@ -83,7 +92,7 @@ namespace Giosue
                         {
                             return leftInt * rightInt;
                         }
-                        break;
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.Greater:
                     {
@@ -95,7 +104,7 @@ namespace Giosue
                         {
                             return li > ri;
                         }
-                        break;
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.GreaterEqual:
                     {
@@ -107,7 +116,7 @@ namespace Giosue
                         {
                             return li >= ri;
                         }
-                        break;
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.Less:
                     {
@@ -119,7 +128,7 @@ namespace Giosue
                         {
                             return li < ri;
                         }
-                        break;
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.LessEqual:
                     {
@@ -131,7 +140,7 @@ namespace Giosue
                         {
                             return li <= ri;
                         }
-                        break;
+                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.BangEqual:
                     return !AreEqual(left, right);
