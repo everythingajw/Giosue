@@ -40,7 +40,7 @@ namespace Giosue
             return a.Equals(b);
         }
 
-        private static int? Compare(object left, object right)
+        private static int? CompareObjects(object left, object right)
         {
             if (left is IComparable l && right is IComparable r)
             {
