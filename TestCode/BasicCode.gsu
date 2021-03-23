@@ -5,6 +5,7 @@ bool b1 = vero;
 stringa s1 = "my string";
 stringa s2 = ""; -- Empty string test
 bool logic1 = (i1 > v1) && b1 || ((i1 + v1) <= 0) ^^ vero;
+stringa concat = "concat " @ "me"; -- Concatenation test
 
 intero i2 = i1;
 
