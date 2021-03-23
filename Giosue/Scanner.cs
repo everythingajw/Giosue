@@ -40,6 +40,7 @@ namespace Giosue
             { '+', TokenType.Plus },
             { '*', TokenType.Star },
             { '/', TokenType.Slash },
+            { '@', TokenType.At },
         };
 
         // FUTURE

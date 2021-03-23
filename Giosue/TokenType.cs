@@ -71,6 +71,11 @@ namespace Giosue
         /// </summary>
         Star,
 
+        /// <summary>
+        /// The character <c>@</c>.
+        /// </summary>
+        At,
+
         #endregion Single character tokens
 
         #region Logical and bitwise operators
