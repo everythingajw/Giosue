@@ -8,21 +8,21 @@ namespace Giosue.Exceptions
 {
     public class MismatchedTypeException : Exception
     {
-        public Type ActualLeftType { get; }
-        public List<Type> ExpectedLeftTypes { get; }
-        public Type ActualRightType { get; }
-        public List<Type> ExpectedRightTypes { get; }
+        public List<Type> ExpectedTypes { get; }
+        public Type ActualType { get; }
 
         public MismatchedTypeException() { }
         public MismatchedTypeException(string message) : base(message) { }
         public MismatchedTypeException(string message, Exception inner) : base(message, inner) { }
 
-        public MismatchedTypeException(Type actualLeftType, List<Type> expectedLeftTypes, Type actualRightType, List<Type> expectedRightTypes, string message = null, Exception inner = null) : this(message, inner)
+        public MismatchedTypeException(Type expectedType, Type actualType, string message = null, Exception inner = null) : this(new List<Type>() { expectedType }, actualType, message, inner)
         {
-            ActualLeftType = actualLeftType;
-            ExpectedLeftTypes = expectedLeftTypes;
-            ActualRightType = actualRightType;
-            ExpectedRightTypes = expectedRightTypes;
+        }
+
+        public MismatchedTypeException(List<Type> expectedTypes, Type actualType, string message = null, Exception inner = null) : this(message, inner)
+        {
+            ExpectedTypes = expectedTypes;
+            ActualType = actualType;
         }
     }
 }

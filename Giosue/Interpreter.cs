@@ -51,23 +51,26 @@ namespace Giosue
 
         private static int CompareNumbers(object left, object right)
         {
-            if (left is int li && right is int ri)
+            if (left is int li)
             {
-                // This will have a value because int is IComparable
-                return CompareObjects(li, ri).Value;
+                if (right is int ri)
+                {
+                    // This will have a value because int is IComparable
+                    return CompareObjects(li, ri).Value;
+                }
+                throw new MismatchedTypeException(typeof(int), right.GetType());
             }
-            if (left is double ld && right is double rd)
+            if (left is double ld)
             {
-                // This will have a value because double is IComparable
-                return CompareObjects(ld, rd).Value;
+                if (right is double rd)
+                {
+                    // This will have a value because double is IComparable
+                    return CompareObjects(ld, rd).Value;
+                }
+                throw new MismatchedTypeException(typeof(double), right.GetType());
             }
 
-            throw MustBeIntOrDouble(left.GetType(), right.GetType());
-        }
-
-        private static MismatchedTypeException MustBeIntOrDouble(Type leftType, Type rightType)
-        {
-            return new MismatchedTypeException(leftType, new() { typeof(int), typeof(double) }, rightType, new() { typeof(int), typeof(double) }, $"The operands for addition must be {nameof(Int32)} or {nameof(Double)}.");
+            throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
         }
 
         public object VisitAssignExpression(Assign expression)
@@ -85,39 +88,64 @@ namespace Giosue
             {
                 case TokenType.Minus:
                     {
-                        if (left is double leftDouble && right is double rightDouble)
+                        if (left is double leftDouble)
                         {
-                            return leftDouble - rightDouble;
+                            if (right is double rightDouble)
+                            {
+                                return leftDouble - rightDouble;
+                            }
+                            throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
-                        if (left is int leftInt && right is int rightInt)
+                        if (left is int leftInt)
                         {
-                            return leftInt - rightInt;
+                            if (right is int rightInt)
+                            {
+                                return leftInt - rightInt;
+                            }
+                            throw new MismatchedTypeException(typeof(int), right.GetType());
                         }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
                     }
                 case TokenType.Slash:
                     {
-                        if (left is double ld && right is double rd)
+                        if (left is double)
                         {
-                            return ld / rd;
+                            if (right is double)
+                            {
+                                return (double)((double)left / (double)right);
+                            }
+                            throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
-                        if (left is int li && right is int ri)
+                        if (left is int)
                         {
-                            return (double)li / (double)ri;
+                            if (right is int)
+                            {
+                                return (double)((double)left / (double)right);
+                            }
+                            throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        
+                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
                     }
                 case TokenType.Star:
                     {
-                        if (left is double leftDouble && right is double rightDouble)
+                        if (left is double leftDouble)
                         {
-                            return leftDouble * rightDouble;
+                            if (right is double rightDouble)
+                            {
+                                return leftDouble * rightDouble;
+                            }
+                            throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
-                        if (left is int leftInt && right is int rightInt)
+                        if (left is int leftInt)
                         {
-                            return leftInt * rightInt;
+                            if (right is int rightInt)
+                            {
+                                return leftInt * rightInt;
+                            }
+                            throw new MismatchedTypeException(typeof(int), right.GetType());
                         }
-                        throw MustBeIntOrDouble(left.GetType(), right.GetType());
+                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
                     }
                 case TokenType.Greater:
                     return CompareNumbers(left, right) > 0;
