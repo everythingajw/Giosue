@@ -11,7 +11,7 @@ namespace Giosue.ConsoleApp
     class Program
     {
         const int MaxStringifiedTokenLength = 50;
-        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\MoveTokenInBuffer.gsu");
+        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\BasicCode.gsu");
 
         static void Main(string[] args)
         {
