@@ -120,21 +120,13 @@ namespace Giosue
                         throw MustBeIntOrDouble(left.GetType(), right.GetType());
                     }
                 case TokenType.Greater:
-                    {
-                        return CompareNumbers(left, right) > 0;
-                    }
+                    return CompareNumbers(left, right) > 0;
                 case TokenType.GreaterEqual:
-                    {
-                        return CompareNumbers(left, right) >= 0;
-                    }
+                    return CompareNumbers(left, right) >= 0;
                 case TokenType.Less:
-                    {
-                        return CompareNumbers(left, right) < 0;
-                    }
+                    return CompareNumbers(left, right) < 0;
                 case TokenType.LessEqual:
-                    {
-                        return CompareNumbers(left, right) <= 0;
-                    }
+                    return CompareNumbers(left, right) <= 0;
                 case TokenType.BangEqual:
                     return !AreEqual(left, right);
                 case TokenType.Equal:
