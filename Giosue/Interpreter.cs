@@ -108,11 +108,11 @@ namespace Giosue
                     }
                 case TokenType.Slash:
                     {
-                        if (left is double)
+                        if (left is double ld)
                         {
-                            if (right is double)
+                            if (right is double rd)
                             {
-                                return (double)((double)left / (double)right);
+                                return (double)(ld / rd);
                             }
                             throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
