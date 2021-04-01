@@ -42,6 +42,11 @@ namespace Giosue
 
         private static int? CompareObjects(object left, object right)
         {
+            // By the rules of IComparable.CompareTo, 0 means two objects are equal
+            if (left == null && right == null)
+            {
+                return 0;
+            }
             if (left is IComparable l && right is IComparable r)
             {
                 return l.CompareTo(r);
