@@ -14,7 +14,7 @@ namespace Giosue
         {
             return expression.Accept(this);
         }
-        
+
         private bool IsTruthy(object expression)
         {
             if (expression is bool b)
@@ -91,12 +91,12 @@ namespace Giosue
                     throw new MismatchedTypeException(typeof(double), right.GetType());
                 default:
                     throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
-            }            
+            }
         }
 
         //private static int Add(int l, int r) => l + r;
         //private static double Add(double l, double r) => l + r;
-        
+
         //private static int Subtract(int l, int r) => l - r;
         //private static double Subtract(double l, double r) => l - r;
 
@@ -157,7 +157,7 @@ namespace Giosue
                             }
                             throw new MismatchedTypeException(typeof(double), right.GetType());
                         }
-                        
+
                         throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
                     }
                 case TokenType.Star:
@@ -242,7 +242,12 @@ namespace Giosue
             var right = EvaluateExpression(expression.Right);
             return expression.Operator.Type switch
             {
-                TokenType.Minus => -(double)right,
+                TokenType.Minus => right switch
+                {
+                    double d => -d,
+                    int i => -i,
+                    _ => null,
+                },
                 TokenType.Bang => !IsTruthy(right),
                 _ => null,
             };
