@@ -78,6 +78,34 @@ namespace Giosue
             throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
         }
 
+        private static void ThrowIfNotNumbers(object left, object right)
+        {
+            switch (left, right)
+            {
+                case (int _, int _):
+                case (double _, double _):
+                    break;
+                case (int _, _):
+                    throw new MismatchedTypeException(typeof(int), right.GetType());
+                case (double _, _):
+                    throw new MismatchedTypeException(typeof(double), right.GetType());
+                default:
+                    throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
+            }            
+        }
+
+        //private static int Add(int l, int r) => l + r;
+        //private static double Add(double l, double r) => l + r;
+        
+        //private static int Subtract(int l, int r) => l - r;
+        //private static double Subtract(double l, double r) => l - r;
+
+        //private static int Multiply(int l, int r) => l * r;
+        //private static double Multiply(double l, double r) => l * r;
+
+        //private static double Divide(int l, int r) => Divide((double)l, (double)r);
+        //private static double Divide(double l, double r) => l / r;
+
         public object VisitAssignExpression(Assign expression)
         {
             throw new NotImplementedException();
