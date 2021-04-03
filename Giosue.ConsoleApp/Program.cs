@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Giosue.Exceptions;
+using Giosue.ReturnCodes;
 using SourceManager;
 using SourceManager.Exceptions;
 
@@ -35,9 +36,11 @@ namespace Giosue.ConsoleApp
             //using var source = new StringSource(File.ReadAllText(TestCodePath));
 
             var scanResult = ScanCode(source, out var scannedTokens);
-            if (scanResult != 0)
+            if (scanResult != GiosueReturnCode.AllOK)
             {
-                return scanResult;
+                ErrorWriteLine($"Error: {scanResult}");
+                ErrorWriteLine($"Code: {(int)scanResult}");
+                return (int)scanResult;
             }
 
             // Scanning successful. Interpret the code.
@@ -45,10 +48,10 @@ namespace Giosue.ConsoleApp
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
-            return 0;
+            return (int)GiosueReturnCode.AllOK;
         }
 
-        private static int ScanCode(Source s, out List<Token> scannedTokens)
+        private static GiosueReturnCode ScanCode(Source s, out List<Token> scannedTokens)
         {
             scannedTokens = default;
             var scanner = new Scanner(s);
@@ -62,33 +65,33 @@ namespace Giosue.ConsoleApp
                 //PrettyPrintTokens(tokens);
                 Console.WriteLine();
                 Console.WriteLine("Scanning successful.");
-                return 0;
+                return GiosueReturnCode.AllOK;
             }
             catch (UnexpectedCharacterException e)
             {
                 // Show any unexpected characters
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message, $"Character: '{e.UnexpectedCharacter}'", $"Line: {e.Line}");
-                return 2;
+                return GiosueReturnCode.UnexpectedCharacter;
             }
             catch (UnterminatedStringException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message, $"Line: {e.Line}");
-                return 3;
+                return GiosueReturnCode.UnterminatedString;
             }
             catch (TokenTooLongException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message);
-                return 4;
+                return GiosueReturnCode.TokenTooLong;
             }
             catch (Exception e)
             {
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", "An error occurred", e.Message);
-                return 1;
+                return GiosueReturnCode.UnknownException;
             }
         }
 
