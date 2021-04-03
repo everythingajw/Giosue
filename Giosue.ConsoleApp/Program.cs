@@ -13,63 +13,83 @@ namespace Giosue.ConsoleApp
         const int MaxStringifiedTokenLength = 50;
         static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\BasicCode.gsu");
 
-        static void Main(string[] args)
+        // TODO: Clean up return codes
+
+        static int Main(string[] args)
         {
             Console.WriteLine($"Test code: {TestCodePath}");
-            
+
             if (!File.Exists(TestCodePath))
             {
                 ErrorWriteLine("Test code not found.");
-                Environment.Exit(1);
+                return 1;
             }
             else if (Directory.Exists(TestCodePath))
             {
                 ErrorWriteLine("Test code exists but is a directory");
-                Environment.Exit(1);
+                return 1;
             }
 
             using var fileReader = new StreamReader(TestCodePath);
             using var source = new FileSource(fileReader);
             //using var source = new StringSource(File.ReadAllText(TestCodePath));
-            var scanner = new Scanner(source);
 
-            // This really isn't the most elegant way to handle these errors,
-            // but it's easy and rather simple to implement.
+            var scanResult = ScanCode(source, out var scannedTokens);
+            if (scanResult != 0)
+            {
+                return scanResult;
+            }
+
+            // Scanning successful. Interpret the code.
+
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+            return 0;
+        }
+
+        private static int ScanCode(Source s, out List<Token> scannedTokens)
+        {
+            scannedTokens = default;
+            var scanner = new Scanner(s);
+
             try
             {
                 // Try scanning
-                var tokens = scanner.ScanTokens();
+                scannedTokens = scanner.ScanTokens();
 
                 // Print tokens if successful
-                PrettyPrintTokens(tokens);
+                //PrettyPrintTokens(tokens);
                 Console.WriteLine();
                 Console.WriteLine("Scanning successful.");
+                return 0;
             }
             catch (UnexpectedCharacterException e)
             {
                 // Show any unexpected characters
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message, $"Character: '{e.UnexpectedCharacter}'", $"Line: {e.Line}");
+                return 2;
             }
             catch (UnterminatedStringException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message, $"Line: {e.Line}");
+                return 3;
             }
             catch (TokenTooLongException e)
             {
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", e.GetType(), e.Message);
+                return 4;
             }
             catch (Exception e)
             {
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", "An error occurred", e.Message);
+                return 1;
             }
-
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
         }
 
         /// <summary>
@@ -125,13 +145,13 @@ namespace Giosue.ConsoleApp
             {
                 var columnLengthValue = columnLength.Value;
                 continuationString ??= "";
-                return stringifiedTokens.Select(fields => 
+                return stringifiedTokens.Select(fields =>
                 {
                     return fields
                     .Select(t => t.Length > columnLengthValue ? $"{t.Substring(0, columnLengthValue - continuationString.Length)}{continuationString}" : t)
                     .ToList();
                 }).ToList();
-            } 
+            }
             else
             {
                 return stringifiedTokens;
