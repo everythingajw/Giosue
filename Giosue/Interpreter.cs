@@ -111,90 +111,89 @@ namespace Giosue
             throw new NotImplementedException();
         }
 
+        private enum NumericType
+        {
+            None,
+            Integer,
+            Double
+        }
+
         public object VisitBinaryExpression(Binary expression)
         {
             var left = EvaluateExpression(expression.Left);
             var right = EvaluateExpression(expression.Right);
 
-            // Oh boy. This needs help.
             switch (expression.Operator.Type)
             {
-                case TokenType.Minus:
-                    {
-                        if (left is double leftDouble)
-                        {
-                            if (right is double rightDouble)
-                            {
-                                return leftDouble - rightDouble;
-                            }
-                            throw new MismatchedTypeException(typeof(double), right.GetType());
-                        }
-                        if (left is int leftInt)
-                        {
-                            if (right is int rightInt)
-                            {
-                                return leftInt - rightInt;
-                            }
-                            throw new MismatchedTypeException(typeof(int), right.GetType());
-                        }
-                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
-                    }
-                case TokenType.Slash:
-                    {
-                        if (left is double ld)
-                        {
-                            if (right is double rd)
-                            {
-                                return (double)(ld / rd);
-                            }
-                            throw new MismatchedTypeException(typeof(double), right.GetType());
-                        }
-                        if (left is int)
-                        {
-                            if (right is int)
-                            {
-                                return (double)((double)left / (double)right);
-                            }
-                            throw new MismatchedTypeException(typeof(double), right.GetType());
-                        }
-
-                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
-                    }
-                case TokenType.Star:
-                    {
-                        if (left is double leftDouble)
-                        {
-                            if (right is double rightDouble)
-                            {
-                                return leftDouble * rightDouble;
-                            }
-                            throw new MismatchedTypeException(typeof(double), right.GetType());
-                        }
-                        if (left is int leftInt)
-                        {
-                            if (right is int rightInt)
-                            {
-                                return leftInt * rightInt;
-                            }
-                            throw new MismatchedTypeException(typeof(int), right.GetType());
-                        }
-                        throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
-                    }
-                case TokenType.Greater:
-                    return CompareNumbers(left, right) > 0;
-                case TokenType.GreaterEqual:
-                    return CompareNumbers(left, right) >= 0;
-                case TokenType.Less:
-                    return CompareNumbers(left, right) < 0;
-                case TokenType.LessEqual:
-                    return CompareNumbers(left, right) <= 0;
-                case TokenType.BangEqual:
-                    return !AreEqual(left, right);
-                case TokenType.Equal:
-                    return AreEqual(left, right);
+                case TokenType.Greater: return CompareNumbers(left, right) > 0;
+                case TokenType.GreaterEqual: return CompareNumbers(left, right) >= 0;
+                case TokenType.Less: return CompareNumbers(left, right) < 0;
+                case TokenType.LessEqual: return CompareNumbers(left, right) <= 0;
+                case TokenType.BangEqual: return !AreEqual(left, right);
+                case TokenType.Equal: return AreEqual(left, right);
+                default: break;
             }
 
-            return null;
+            var numericType = NumericType.None;
+            int leftInt = 0;
+            int rightInt = 0;
+            double leftDouble = 0;
+            double rightDouble = 0;
+
+            if (left is int i1)
+            {
+                if (right is int i2)
+                {
+                    numericType = NumericType.Integer;
+                    leftInt = i1;
+                    rightInt = i2;
+                }
+                else
+                {
+                    throw new MismatchedTypeException(typeof(int), right.GetType());
+                }
+            }
+            else if (left is double d1)
+            {
+                if (right is double d2)
+                {
+                    numericType = NumericType.Double;
+                    leftDouble = d1;
+                    rightDouble = d2;
+                }
+                else
+                {
+                    throw new MismatchedTypeException(typeof(double), right.GetType());
+                }
+            }
+            else
+            {
+                throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
+            }
+
+            return (expression.Operator.Type, numericType) switch
+            {
+                (_, NumericType.None) => throw new NotImplementedException(),
+                (var t, NumericType.Integer) => t switch
+                {
+                    TokenType.Plus => leftInt + rightInt,
+                    TokenType.Minus => leftInt - rightInt,
+                    TokenType.Star => leftInt * rightInt,
+                    TokenType.Slash => (double)((double)leftInt / (double)rightInt),
+                    _ => throw new NotImplementedException()
+                },
+                (var t, NumericType.Double) => t switch
+                {
+                    TokenType.Plus => leftDouble + rightDouble,
+                    TokenType.Minus => leftDouble - rightDouble,
+                    TokenType.Star => leftDouble * rightDouble,
+                    TokenType.Slash => (double)((double)leftDouble / (double)rightDouble),
+                    _ => throw new NotImplementedException()
+                },
+                _ => throw new NotImplementedException()
+            };
+            
+            // return null;
         }
 
         public object VisitCallExpression(Call expression)
