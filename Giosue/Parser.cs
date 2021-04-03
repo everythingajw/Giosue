@@ -7,6 +7,10 @@ using Giosue.AST;
 
 namespace Giosue
 {
+    // TODO: Documentation
+    /// <summary>
+    /// 
+    /// </summary>
     public class Parser
     {
         /// <summary>
@@ -25,11 +29,19 @@ namespace Giosue
         /// </summary>
         private bool IsAtEnd => (CurrentTokenIndex >= Tokens.Count) || (Tokens.Last().Type == TokenType.EOF);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokens"></param>
         public Parser(List<Token> tokens)
         {
             Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens), $"The source tokens for a {nameof(Parser)} cannot be null");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Expression Parse()
         {
             try
@@ -42,11 +54,21 @@ namespace Giosue
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Expression()
         {
             return Equality();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="tokens"></param>
+        /// <returns></returns>
         private Expression BinaryExpression(Func<Expression> callback, params TokenType[] tokens)
         {
             var expression = callback();
@@ -67,26 +89,46 @@ namespace Giosue
             return expression;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Equality()
         {
             return BinaryExpression(Comparison, TokenType.BangEqual, TokenType.EqualEqual);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Comparison()
         {
             return BinaryExpression(Term, TokenType.GreaterEqual, TokenType.LessEqual, TokenType.LessEqual);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Term()
         {
             return BinaryExpression(Factor, TokenType.Minus, TokenType.Plus);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Factor()
         {
             return BinaryExpression(Unary, TokenType.Slash, TokenType.Star);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Unary()
         {
             if (AdvanceIfMatches(out _, TokenType.Bang, TokenType.Minus))
@@ -100,6 +142,10 @@ namespace Giosue
             return Primary();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Primary()
         {
             if (AdvanceIfMatches(out _, TokenType.Falso))
@@ -140,6 +186,13 @@ namespace Giosue
             throw ParseException(current, "Expected expression.");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokenType"></param>
+        /// <param name="message"></param>
+        /// <param name="consumed"></param>
+        /// <returns></returns>
         private bool AdvanceIfMatchesOrCrashIfNotMatches(TokenType tokenType, string message, out Token consumed)
         {
             consumed = default;
@@ -157,6 +210,12 @@ namespace Giosue
             throw ParseException(current, message);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         private static Exception ParseException(Token token, string message)
         {
             // The book handles exceptions differently than I do.\
