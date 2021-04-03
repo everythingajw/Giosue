@@ -10,6 +10,21 @@ namespace Giosue
 {
     class Interpreter : IVisitor<object>
     {
+        public object Interpret(Expression expression)
+        {
+            return EvaluateExpression(expression);
+        }
+
+        private string Stringify(object obj)
+        {
+            if (obj == null)
+            {
+                return "niente";
+            }
+
+            return obj?.ToString() ?? "niente";
+        }
+
         private object EvaluateExpression(Expression expression)
         {
             return expression.Accept(this);
