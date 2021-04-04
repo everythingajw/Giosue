@@ -9,7 +9,7 @@ namespace Giosue.Exceptions
     public enum ScannerExceptionType : int
     {
         AllOK = 0,
-        Unknown = 1
+        Unknown = 1,
         UnexpectedCharacter,
         UnterminatedString
     }
@@ -20,13 +20,16 @@ namespace Giosue.Exceptions
 
         public override ScannerExceptionType ExceptionType { get; }
 
+        public int Line { get; }
+
         //public ScannerException() { }
         //public ScannerException(string message) : base(message) { }
         //public ScannerException(string message, Exception inner) : base(message, inner) { }
-        public ScannerException(GiosueExceptionCategory category, ParserExceptionType exceptionType, string message) : base(message)
+        public ScannerException(GiosueExceptionCategory category, ScannerExceptionType exceptionType, int line, string message) : base(message)
         {
             Category = category;
             ExceptionType = exceptionType;
+            Line = line;
         }
     }
 }
