@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Giosue.AST;
 using Giosue.Exceptions;
 using Giosue.ReturnCodes;
@@ -38,8 +39,9 @@ namespace Giosue.ConsoleApp
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception occurred somewhere. Good luck finding it!");
-                Console.WriteLine(e);
+                var thisMethod = MethodBase.GetCurrentMethod();
+                ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: Exception occurred somewhere. Good luck finding it!");
+                ErrorWriteLine(e);
             }
 
             Console.WriteLine("\nPress any key to continue...");
@@ -139,7 +141,9 @@ namespace Giosue.ConsoleApp
             catch (ScannerException e)
             {
                 // PrettyPrintTokens(scanner.GetTokens());
-                ErrorWriteLine("Scanner exception", $"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}", $"Line: {e.Line}");
+                var thisMethod = MethodBase.GetCurrentMethod();
+                ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: scanner exception");
+                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}", $"Line: {e.Line}");
                 return e;
             }
         }
@@ -158,7 +162,9 @@ namespace Giosue.ConsoleApp
             }
             catch (ParserException e)
             {
-                ErrorWriteLine("Parser exception", $"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
+                var thisMethod = MethodBase.GetCurrentMethod();
+                ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: parser exception");
+                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
                 return e;
             }
         }
