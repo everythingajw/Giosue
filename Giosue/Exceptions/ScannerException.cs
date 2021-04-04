@@ -16,8 +16,6 @@ namespace Giosue.Exceptions
 
     public class ScannerException : GiosueException<ScannerExceptionType>
     {
-        public override GiosueExceptionCategory Category { get; }
-
         public override ScannerExceptionType ExceptionType { get; }
 
         public int Line { get; }
@@ -25,9 +23,9 @@ namespace Giosue.Exceptions
         //public ScannerException() { }
         //public ScannerException(string message) : base(message) { }
         //public ScannerException(string message, Exception inner) : base(message, inner) { }
-        public ScannerException(GiosueExceptionCategory category, ScannerExceptionType exceptionType, int line, string message) : base(message)
+        public ScannerException(ScannerExceptionType exceptionType, int line, string message) : base(message)
         {
-            Category = category;
+            Category = GiosueExceptionCategory.Scanner;
             ExceptionType = exceptionType;
             Line = line;
         }

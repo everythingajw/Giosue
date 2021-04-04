@@ -13,8 +13,6 @@ namespace Giosue.Exceptions
     }
     public class ParserException : GiosueException<ParserExceptionType>
     {
-        public override GiosueExceptionCategory Category { get; }
-
         public override ParserExceptionType ExceptionType { get; }
 
         //public ParserException() : this(default, default, default, default) { }
@@ -25,9 +23,9 @@ namespace Giosue.Exceptions
 
         //public ParserException(GiosueExceptionCategory category, ParserExceptionType exceptionType) : this(category, exceptionType, default, default) { }
 
-        public ParserException(GiosueExceptionCategory category, ParserExceptionType exceptionType, string message) : base(message)
+        public ParserException(ParserExceptionType exceptionType, string message) : base(message)
         {
-            Category = category;
+            Category = GiosueExceptionCategory.Parser;
             ExceptionType = exceptionType;
         }
 
