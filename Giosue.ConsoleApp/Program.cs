@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Giosue.AST;
 using Giosue.Exceptions;
 using Giosue.ReturnCodes;
 using SourceManager;
@@ -91,6 +92,23 @@ namespace Giosue.ConsoleApp
                 // Show any other errors
                 PrettyPrintTokens(scanner.GetTokens());
                 ErrorWriteLine("", "An error occurred", e.Message);
+                return GiosueReturnCode.UnknownException;
+            }
+        }
+
+        private static GiosueReturnCode ParseCode(List<Token> code, out Expression expression)
+        {
+            expression = default;
+            var parser = new Parser(code);
+
+            try
+            {
+                expression = parser.Parse();
+                return GiosueReturnCode.AllOK;
+            }
+            catch (Exception e)
+            {
+                ErrorWriteLine(e, e.Message);
                 return GiosueReturnCode.UnknownException;
             }
         }
