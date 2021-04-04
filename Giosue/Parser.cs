@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Giosue.AST;
@@ -48,9 +49,12 @@ namespace Giosue
             {
                 return Expression();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Exception somewhere. Good luck finding it!");
+                var thisMethod = MethodBase.GetCurrentMethod();
+                Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {e.GetType()} occurred during parsing");
+                Console.Error.WriteLine(e);
+                Console.Error.WriteLine();
                 return null;
             }
         }
