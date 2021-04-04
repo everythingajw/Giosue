@@ -21,14 +21,24 @@ namespace Giosue.Exceptions
         /// The category of the exception.
         /// </summary>
         public abstract GiosueExceptionCategory Category { get; }
-        
+
         /// <summary>
         /// The subtype of the exception that occurred.
         /// </summary>
         public abstract T ExceptionType { get; }
 
-        public GiosueException() { }
-        public GiosueException(string message) : base(message) { }
-        public GiosueException(string message, Exception inner) : base(message, inner) { }
+
+
+        //protected GiosueException() : base() { }
+
+        protected GiosueException(string message) : base(message) { }
+
+        //protected GiosueException(string message, Exception inner) : base(message, inner) { }
+
+        //protected GiosueException(GiosueExceptionCategory category, T exceptionType) : this() { }
+
+        //protected GiosueException(GiosueExceptionCategory category, T exceptionType, string message) : this(message) { }
+
+        //protected GiosueException(GiosueExceptionCategory category, T exceptionType, string message, Exception inner) : this(message, inner) { }
     }
 }

@@ -16,8 +16,17 @@ namespace Giosue.Exceptions
 
     public class ScannerException : GiosueException<ScannerExceptionType>
     {
-        public ScannerException() { }
-        public ScannerException(string message) : base(message) { }
-        public ScannerException(string message, Exception inner) : base(message, inner) { }
+        public override GiosueExceptionCategory Category { get; }
+
+        public override ScannerExceptionType ExceptionType { get; }
+
+        //public ScannerException() { }
+        //public ScannerException(string message) : base(message) { }
+        //public ScannerException(string message, Exception inner) : base(message, inner) { }
+        public ScannerException(GiosueExceptionCategory category, ParserExceptionType exceptionType, string message) : base(message)
+        {
+            Category = category;
+            ExceptionType = exceptionType;
+        }
     }
 }

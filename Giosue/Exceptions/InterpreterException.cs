@@ -15,13 +15,18 @@ namespace Giosue.Exceptions
 
     public class InterpreterException : GiosueException<InterpreterExceptionType>
     {
-        public override GiosueExceptionCategory Category => throw new NotImplementedException();
+        public override GiosueExceptionCategory Category { get; }
 
-        public override InterpreterExceptionType ExceptionType => throw new NotImplementedException();
+        public override InterpreterExceptionType ExceptionType { get; }
 
-        public InterpreterException() { }
-        public InterpreterException(string message) : base(message) { }
-        public InterpreterException(string message, Exception inner) : base(message, inner) { }
+        //public InterpreterException() { }
+        //public InterpreterException(string message) : base(message) { }
+        //public InterpreterException(string message, Exception inner) : base(message, inner) { }
+        public InterpreterException(GiosueExceptionCategory category, InterpreterExceptionType exceptionType, string message) : base(message)
+        {
+            Category = category;
+            ExceptionType = exceptionType;
+        }
     }
 }
 
