@@ -16,7 +16,8 @@ namespace Giosue
             {
                 // A touch of reflection so I can print out what methods are causing exceptions.
                 var thisMethod = MethodBase.GetCurrentMethod();
-                Console.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
+                Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
+                Console.Error.WriteLine();
             }
             return expression?.Accept(this);
         }
