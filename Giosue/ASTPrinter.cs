@@ -9,6 +9,25 @@ namespace Giosue
 {
     class ASTPrinter : IVisitor<string>
     {
+        public string StringifyExpression(Expression expression)
+        {
+            return expression.Accept(this);
+        }
+
+        private string Parenthesize(string name, params Expression[] expressions)
+        {
+            var sb = new StringBuilder('(').Append(name);
+
+            foreach (var expression in expressions)
+            {
+                sb.Append(' ').Append(expression.Accept(this));
+            }
+
+            sb.Append(')');
+
+            return sb.ToString();
+        }
+
         public string VisitAssignExpression(Assign expression)
         {
             throw new NotImplementedException();
@@ -16,7 +35,7 @@ namespace Giosue
 
         public string VisitBinaryExpression(Binary expression)
         {
-            throw new NotImplementedException();
+            return Parenthesize(expression.Operator.Lexeme, expression.Left, expression.Right);
         }
 
         public string VisitCallExpression(Call expression)
@@ -31,12 +50,12 @@ namespace Giosue
 
         public string VisitGroupingExpression(Grouping expression)
         {
-            throw new NotImplementedException();
+            return Parenthesize("group", expression.Expression);
         }
 
         public string VisitLiteralExpression(Literal expression)
         {
-            throw new NotImplementedException();
+            return expression.Value?.ToString() ?? "niente";
         }
 
         public string VisitLogicalExpression(Logical expression)
@@ -61,7 +80,7 @@ namespace Giosue
 
         public string VisitUnaryExpression(Unary expression)
         {
-            throw new NotImplementedException();
+            return Parenthesize(expression.Operator.Lexeme, expression.Right);
         }
 
         public string VisitVariableExpression(Variable expression)
