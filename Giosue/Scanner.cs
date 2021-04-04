@@ -208,6 +208,8 @@ namespace Giosue
                     {
                         if (current == '\n')
                         {
+                            // TODO: Turn this into a custom form of GiosueException down the line.
+                            // For right now, this will work.
                             throw new NotSupportedException("Multi-line strings are not supported.");
                         }
                     }
@@ -284,7 +286,7 @@ namespace Giosue
                 tokenType = TokenType.Float;
                 if (!double.TryParse(lexeme, out var @double))
                 {
-                    throw new FormatException($"Could not parse '{lexeme}' to {nameof(Double)}");
+                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Could not parse '{lexeme}' to {nameof(Double)}");
                 }
                 parsedNumber = @double;
             }
@@ -293,7 +295,7 @@ namespace Giosue
                 tokenType = TokenType.Integer;
                 if (!int.TryParse(lexeme, out var @int))
                 {
-                    throw new FormatException($"Could not parse '{lexeme}' to {nameof(Int32)}");
+                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Could not parse '{lexeme}' to {nameof(Int32)}");
                 }
                 parsedNumber = @int;
             }
