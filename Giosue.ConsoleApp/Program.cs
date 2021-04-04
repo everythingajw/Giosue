@@ -58,13 +58,22 @@ namespace Giosue.ConsoleApp
                 Console.Out.Flush();
 
                 var input = Console.ReadLine();
-                if (input == null)
+                switch (input)
                 {
-                    break;
+                    case null:
+                    case "#q;;":
+                    case "#quit;;":
+                    case "#exit;;":
+                        // Using goto is a bit cleaner here.
+                        goto omega;
+                    default:
+                        break;
                 }
+
                 RunString(input);
             }
 
+            omega:
             return GiosueExceptionCategory.AllOK;
         }
 
