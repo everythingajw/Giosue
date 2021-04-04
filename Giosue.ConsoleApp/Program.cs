@@ -19,6 +19,18 @@ namespace Giosue.ConsoleApp
 
         static int Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                RunREPL();
+            } 
+            else if (args.Length == 1)
+            {
+                // Treat it as a path. Run the file.
+            }
+            else
+            {
+                // Print usage 
+            }
             Console.WriteLine($"Test code: {TestCodePath}");
 
             if (!File.Exists(TestCodePath))
@@ -50,6 +62,47 @@ namespace Giosue.ConsoleApp
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
             return (int)GiosueReturnCode.AllOK;
+        }
+
+        private static GiosueReturnCode RunREPL()
+        {
+
+        }
+
+        private static GiosueReturnCode RunFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                ErrorWriteLine("Error: file not found");
+                return GiosueReturnCode.FileNotFound;
+            }
+        }
+
+        private static GiosueReturnCode RunString(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return GiosueReturnCode.AllOK;
+            }
+        }
+
+        private static GiosueReturnCode RunCodeFromSource(Source s)
+        {
+            var scanResult = ScanCode(s, out var scannedTokens);
+            if (scanResult != GiosueReturnCode.AllOK)
+            {
+                return scanResult;
+            }
+
+            var parseResult = ParseCode(scannedTokens, out var parsedExpression);
+            if (parseResult != GiosueReturnCode.AllOK)
+            {
+                return parseResult;
+            }
+
+            // For now, just stringify the parsed code.
+
+            return GiosueReturnCode.AllOK;
         }
 
         private static GiosueReturnCode ScanCode(Source s, out List<Token> scannedTokens)
