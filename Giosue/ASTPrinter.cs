@@ -7,7 +7,7 @@ using Giosue.AST;
 
 namespace Giosue
 {
-    class ASTPrinter : IVisitor<string>
+    public class ASTPrinter : IVisitor<string>
     {
         public string StringifyExpression(Expression expression)
         {
