@@ -19,7 +19,7 @@ namespace Giosue.ConsoleApp
 
         static int Main(string[] args)
         {
-            var returnCode = GiosueReturnCode.AllOK;
+            var returnCode = GiosueExceptionCategory.AllOK;
 
             if (args.Length == 0)
             {
@@ -32,7 +32,7 @@ namespace Giosue.ConsoleApp
             else
             {
                 ErrorWriteLine("Usage: giosue.exe [path-to-file]");
-                returnCode = GiosueReturnCode.UnknownException;
+                returnCode = GiosueExceptionCategory.Unknown;
             }
 
             Console.WriteLine("\nPress any key to continue...");
@@ -40,7 +40,7 @@ namespace Giosue.ConsoleApp
             return (int)returnCode;
         }
 
-        private static GiosueReturnCode RunREPL()
+        private static GiosueExceptionCategory RunREPL()
         {
             var inputNumber = 1;
             while (true)
@@ -55,27 +55,21 @@ namespace Giosue.ConsoleApp
                 {
                     break;
                 }
-                ShowIfError(RunString(input));
+                RunString(input);
             }
 
-            return GiosueReturnCode.AllOK;
+            return GiosueExceptionCategory.AllOK;
         }
 
-        private static void ShowIfError(GiosueReturnCode c)
-        {
-            if (c != GiosueReturnCode.AllOK)
-            {
-                ErrorWriteLine($"Error: {c}");
-                ErrorWriteLine($"Code: {(int)c}");
-            }
-        }
-
-        private static GiosueReturnCode RunFile(string path)
+        private static GiosueExceptionCategory RunFile(string path)
         {
             if (!File.Exists(path))
             {
                 ErrorWriteLine("Error: file not found");
-                return GiosueReturnCode.FileNotFound;
+                
+                // Temporary
+                // TODO: Source exceptions
+                throw new FileNotFoundException();
             }
 
             using var reader = new StreamReader(path);
@@ -83,82 +77,58 @@ namespace Giosue.ConsoleApp
             return RunCodeFromSource(source);
         }
 
-        private static GiosueReturnCode RunString(string s)
+        private static GiosueExceptionCategory RunString(string s)
         {
             if (string.IsNullOrEmpty(s))
             {
-                return GiosueReturnCode.AllOK;
+                return GiosueExceptionCategory.AllOK;
             }
 
             using var source = new StringSource(s);
             return RunCodeFromSource(source);
         }
 
-        private static GiosueReturnCode RunCodeFromSource(Source s)
+        private static GiosueExceptionCategory RunCodeFromSource(Source s)
         {
             var scanResult = ScanCode(s, out var scannedTokens);
-            if (scanResult != GiosueReturnCode.AllOK)
+            if (scanResult != null)
             {
-                return scanResult;
+                return scanResult.Category;
             }
 
             var parseResult = ParseCode(scannedTokens, out var parsedExpression);
-            if (parseResult != GiosueReturnCode.AllOK)
+            if (parseResult != null)
             {
-                return parseResult;
+                return parseResult.Category;
             }
 
             // For now, just stringify the parsed code.
             Console.WriteLine(new ASTPrinter().StringifyExpression(parsedExpression));
 
-            return GiosueReturnCode.AllOK;
+            return GiosueExceptionCategory.AllOK;
         }
 
-        private static GiosueReturnCode ScanCode(Source s, out List<Token> scannedTokens)
+        private static ScannerException ScanCode(Source s, out List<Token> scannedTokens)
         {
             scannedTokens = default;
             var scanner = new Scanner(s);
 
             try
             {
-                // Try scanning
                 scannedTokens = scanner.ScanTokens();
 
-                // Print tokens if successful
-                //PrettyPrintTokens(tokens);
-                Console.WriteLine();
-                Console.WriteLine("Scanning successful.");
-                return GiosueReturnCode.AllOK;
+                // Success; no exceptions occurred.
+                return null;
             }
-            catch (UnexpectedCharacterException e)
+            catch (ScannerException e)
             {
-                // Show any unexpected characters
-                PrettyPrintTokens(scanner.GetTokens());
-                ErrorWriteLine("", e.GetType(), e.Message, $"Character: '{e.UnexpectedCharacter}'", $"Line: {e.Line}");
-                return GiosueReturnCode.UnexpectedCharacter;
-            }
-            catch (UnterminatedStringException e)
-            {
-                PrettyPrintTokens(scanner.GetTokens());
-                ErrorWriteLine("", e.GetType(), e.Message, $"Line: {e.Line}");
-                return GiosueReturnCode.UnterminatedString;
-            }
-            catch (TokenTooLongException e)
-            {
-                PrettyPrintTokens(scanner.GetTokens());
-                ErrorWriteLine("", e.GetType(), e.Message);
-                return GiosueReturnCode.TokenTooLong;
-            }
-            catch (Exception e)
-            {
-                // Show any other errors
-                PrettyPrintTokens(scanner.GetTokens());
-                ErrorWriteLine("", "An error occurred", e.Message);
-                return GiosueReturnCode.UnknownException;
+                // PrettyPrintTokens(scanner.GetTokens());
+                ErrorWriteLine("Scanner exception", $"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}", $"Line: {e.Line}");
+                return e;
             }
         }
 
-        private static GiosueReturnCode ParseCode(List<Token> code, out Expression expression)
+        private static ParserException ParseCode(List<Token> code, out Expression expression)
         {
             expression = default;
             var parser = new Parser(code);
@@ -166,12 +136,14 @@ namespace Giosue.ConsoleApp
             try
             {
                 expression = parser.Parse();
-                return GiosueReturnCode.AllOK;
+                
+                // Success; no exceptions occurred.
+                return null;
             }
-            catch (Exception e)
+            catch (ParserException e)
             {
-                ErrorWriteLine(e, e.Message);
-                return GiosueReturnCode.UnknownException;
+                ErrorWriteLine("Parser exception", $"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
+                return e;
             }
         }
 

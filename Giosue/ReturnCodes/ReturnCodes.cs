@@ -11,9 +11,8 @@ namespace Giosue.ReturnCodes
         AllOK = 0,
         UnknownException = 1,
         FileNotFound = 2,
-        UnexpectedCharacter = 3,
-        UnterminatedString = 4,
-        MismatchedTypes = 5,
-        TokenTooLong = 6
+        ScannerException = 3,
+        ParserException = 4,
+        InterpreterException = 5,
     }
 }
