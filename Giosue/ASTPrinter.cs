@@ -16,7 +16,7 @@ namespace Giosue
 
         private string Parenthesize(string name, params Expression[] expressions)
         {
-            var sb = new StringBuilder('(').Append(name);
+            var sb = new StringBuilder("(").Append(name);
 
             foreach (var expression in expressions)
             {
