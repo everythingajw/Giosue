@@ -178,7 +178,7 @@ namespace Giosue
 
                 // Catch all
                 default:
-                    throw new UnexpectedCharacterException(Line, ch, "Unexpected character.");
+                    throw new ScannerException(ScannerExceptionType.UnexpectedCharacter, Line, $"Unexpected character '{ch}'");
             }
         }
 
@@ -221,7 +221,7 @@ namespace Giosue
 
             if (Source.IsAtEnd)
             {
-                throw new UnterminatedStringException(Line, $"Unterminated string at line {Line}");
+                throw new ScannerException(ScannerExceptionType.UnterminatedString, Line, "Unterminated string.");
             }
 
             // The closing ".
