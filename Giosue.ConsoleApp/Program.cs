@@ -19,54 +19,55 @@ namespace Giosue.ConsoleApp
 
         static int Main(string[] args)
         {
+            var returnCode = GiosueReturnCode.AllOK;
+
             if (args.Length == 0)
             {
-                RunREPL();
+                returnCode = RunREPL();
             } 
             else if (args.Length == 1)
             {
-                // Treat it as a path. Run the file.
+                returnCode = RunFile(args[0]);
             }
             else
             {
-                // Print usage 
+                ErrorWriteLine("Usage: giosue.exe [path-to-file]");
+                returnCode = GiosueReturnCode.UnknownException;
             }
-            Console.WriteLine($"Test code: {TestCodePath}");
-
-            if (!File.Exists(TestCodePath))
-            {
-                ErrorWriteLine("Test code not found.");
-                return 1;
-            }
-            else if (Directory.Exists(TestCodePath))
-            {
-                ErrorWriteLine("Test code exists but is a directory");
-                return 1;
-            }
-
-            using var fileReader = new StreamReader(TestCodePath);
-            using var source = new FileSource(fileReader);
-            //using var source = new StringSource(File.ReadAllText(TestCodePath));
-
-            var scanResult = ScanCode(source, out var scannedTokens);
-            if (scanResult != GiosueReturnCode.AllOK)
-            {
-                ErrorWriteLine($"Error: {scanResult}");
-                ErrorWriteLine($"Code: {(int)scanResult}");
-                return (int)scanResult;
-            }
-
-            // Scanning successful. Interpret the code.
-
 
             Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
-            return (int)GiosueReturnCode.AllOK;
+            return (int)returnCode;
         }
 
         private static GiosueReturnCode RunREPL()
         {
+            var inputNumber = 1;
+            while (true)
+            {
+                Console.Write($"In [{inputNumber++:00#}]> ");
+                
+                // Make sure the prompt is written to the console.
+                Console.Out.Flush();
 
+                var input = Console.ReadLine();
+                if (input == null)
+                {
+                    break;
+                }
+                ShowIfError(RunString(input));
+            }
+
+            return GiosueReturnCode.AllOK;
+        }
+
+        private static void ShowIfError(GiosueReturnCode c)
+        {
+            if (c != GiosueReturnCode.AllOK)
+            {
+                ErrorWriteLine($"Error: {c}");
+                ErrorWriteLine($"Code: {(int)c}");
+            }
         }
 
         private static GiosueReturnCode RunFile(string path)
@@ -76,6 +77,10 @@ namespace Giosue.ConsoleApp
                 ErrorWriteLine("Error: file not found");
                 return GiosueReturnCode.FileNotFound;
             }
+
+            using var reader = new StreamReader(path);
+            using var source = new FileSource(reader);
+            return RunCodeFromSource(source);
         }
 
         private static GiosueReturnCode RunString(string s)
@@ -84,6 +89,9 @@ namespace Giosue.ConsoleApp
             {
                 return GiosueReturnCode.AllOK;
             }
+
+            using var source = new StringSource(s);
+            return RunCodeFromSource(source);
         }
 
         private static GiosueReturnCode RunCodeFromSource(Source s)
@@ -101,6 +109,7 @@ namespace Giosue.ConsoleApp
             }
 
             // For now, just stringify the parsed code.
+            Console.WriteLine(new ASTPrinter().StringifyExpression(parsedExpression));
 
             return GiosueReturnCode.AllOK;
         }

@@ -27,7 +27,7 @@ namespace Giosue
         /// <summary>
         /// Tests if there are any more tokens to parse.
         /// </summary>
-        private bool IsAtEnd => (CurrentTokenIndex >= Tokens.Count) || (Tokens.Last().Type == TokenType.EOF);
+        private bool IsAtEnd => (CurrentTokenIndex >= Tokens.Count) || (Tokens[CurrentTokenIndex].Type == TokenType.EOF);
 
         /// <summary>
         /// 
@@ -50,6 +50,7 @@ namespace Giosue
             }
             catch (Exception)
             {
+                Console.WriteLine("Exception somewhere. Good luck finding it!");
                 return null;
             }
         }
