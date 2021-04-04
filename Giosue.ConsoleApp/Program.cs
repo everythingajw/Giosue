@@ -20,19 +20,26 @@ namespace Giosue.ConsoleApp
         static int Main(string[] args)
         {
             var returnCode = GiosueExceptionCategory.AllOK;
-
-            if (args.Length == 0)
+            try
             {
-                returnCode = RunREPL();
-            } 
-            else if (args.Length == 1)
-            {
-                returnCode = RunFile(args[0]);
+                if (args.Length == 0)
+                {
+                    returnCode = RunREPL();
+                }
+                else if (args.Length == 1)
+                {
+                    returnCode = RunFile(args[0]);
+                }
+                else
+                {
+                    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
+                    returnCode = GiosueExceptionCategory.Unknown;
+                }
             }
-            else
+            catch (Exception e)
             {
-                ErrorWriteLine("Usage: giosue.exe [path-to-file]");
-                returnCode = GiosueExceptionCategory.Unknown;
+                Console.WriteLine("Exception occurred somewhere. Good luck finding it!");
+                Console.WriteLine(e);
             }
 
             Console.WriteLine("\nPress any key to continue...");

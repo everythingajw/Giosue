@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Giosue.AST;
@@ -11,7 +12,13 @@ namespace Giosue
     {
         public string StringifyExpression(Expression expression)
         {
-            return expression.Accept(this);
+            if (expression == null)
+            {
+                // A touch of reflection so I can print out what methods are causing exceptions.
+                var thisMethod = MethodBase.GetCurrentMethod();
+                Console.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
+            }
+            return expression?.Accept(this);
         }
 
         private string Parenthesize(string name, params Expression[] expressions)
