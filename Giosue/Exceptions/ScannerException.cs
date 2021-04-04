@@ -10,8 +10,9 @@ namespace Giosue.Exceptions
     {
         AllOK = 0,
         Unknown = 1,
-        UnexpectedCharacter,
-        UnterminatedString
+        UnexpectedCharacter = 2,
+        UnterminatedString = 3,
+        MalformedNumericLiteral = 4,
     }
 
     public class ScannerException : GiosueException<ScannerExceptionType>
