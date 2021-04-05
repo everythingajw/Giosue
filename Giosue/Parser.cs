@@ -101,7 +101,16 @@ namespace Giosue
         /// <returns></returns>
         private Expression Equality()
         {
-            return BinaryExpression(Comparison, TokenType.BangEqual, TokenType.EqualEqual);
+            return BinaryExpression(BooleanExpression, TokenType.BangEqual, TokenType.EqualEqual);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Expression BooleanExpression()
+        {
+            return BinaryExpression(Comparison, TokenType.AndAnd, TokenType.PipePipe, TokenType.CaretCaret);
         }
 
         /// <summary>
