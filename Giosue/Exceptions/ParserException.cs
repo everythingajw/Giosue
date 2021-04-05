@@ -15,6 +15,8 @@ namespace Giosue.Exceptions
     {
         public override ParserExceptionType ExceptionType { get; }
 
+        public Token ErroneousToken { get; }
+
         //public ParserException() : this(default, default, default, default) { }
 
         //public ParserException(string message) : this(default, default, message, default) { }
@@ -23,9 +25,10 @@ namespace Giosue.Exceptions
 
         //public ParserException(GiosueExceptionCategory category, ParserExceptionType exceptionType) : this(category, exceptionType, default, default) { }
 
-        public ParserException(ParserExceptionType exceptionType, string message) : base(message)
+        public ParserException(ParserExceptionType exceptionType, Token erroneousToken, string message) : base(message)
         {
             Category = GiosueExceptionCategory.Parser;
+            ErroneousToken = erroneousToken;
             ExceptionType = exceptionType;
         }
 
