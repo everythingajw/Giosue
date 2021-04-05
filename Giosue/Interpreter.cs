@@ -30,7 +30,7 @@ namespace Giosue
             return expression.Accept(this);
         }
 
-        private bool IsTruthy(object expression)
+        private static bool IsTruthy(object expression)
         {
             if (expression is bool b)
             {
@@ -41,7 +41,7 @@ namespace Giosue
             return true;
         }
 
-        private bool AreEqual(object a, object b)
+        private static bool AreEqual(object a, object b)
         {
             if (a == null)
             {
