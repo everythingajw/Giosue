@@ -191,10 +191,18 @@ namespace Giosue
                 (_, NumericType.None) => throw new NotImplementedException(),
                 (var t, NumericType.Integer) => t switch
                 {
+                    // Regular math operations
                     TokenType.Plus => leftInt + rightInt,
                     TokenType.Minus => leftInt - rightInt,
                     TokenType.Star => leftInt * rightInt,
                     TokenType.Slash => (double)((double)leftInt / (double)rightInt),
+                    
+                    // Bitwise operations
+                    TokenType.And => leftInt & rightInt,
+                    TokenType.Pipe => leftInt | rightInt,
+                    TokenType.Caret => leftInt ^ rightInt,
+
+                    // Everything else
                     _ => throw new NotImplementedException()
                 },
                 (var t, NumericType.Double) => t switch
@@ -203,6 +211,11 @@ namespace Giosue
                     TokenType.Minus => leftDouble - rightDouble,
                     TokenType.Star => leftDouble * rightDouble,
                     TokenType.Slash => (double)((double)leftDouble / (double)rightDouble),
+                    
+                    TokenType.And 
+                    | TokenType.Pipe 
+                    | TokenType.Caret => throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Only {nameof(Int32)} can be used with bitwise operations"),
+
                     _ => throw new NotImplementedException()
                 },
                 _ => throw new NotImplementedException()
