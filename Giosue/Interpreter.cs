@@ -130,7 +130,8 @@ namespace Giosue
         {
             None,
             Integer,
-            Double
+            Double,
+            Boolean,
         }
 
         public object VisitBinaryExpression(Binary expression)
@@ -154,6 +155,8 @@ namespace Giosue
             int rightInt = 0;
             double leftDouble = 0;
             double rightDouble = 0;
+            bool leftBool = false;
+            bool rightBool = false;
 
             if (left is int i1)
             {
@@ -181,9 +184,22 @@ namespace Giosue
                     throw new MismatchedTypeException(typeof(double), right.GetType());
                 }
             }
+            else if (left is bool b1)
+            {
+                if (right is bool b2)
+                {
+                    numericType = NumericType.Boolean;
+                    leftBool = b1;
+                    rightBool = b2;
+                }
+                else
+                {
+                    throw new MismatchedTypeException(typeof(bool), right.GetType());
+                }
+            }
             else
             {
-                throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
+                throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double), typeof(bool) }, left.GetType());
             }
 
             return (expression.Operator.Type, numericType) switch
@@ -215,6 +231,16 @@ namespace Giosue
                     TokenType.And 
                     | TokenType.Pipe 
                     | TokenType.Caret => throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Only {nameof(Int32)} can be used with bitwise operations"),
+
+                    _ => throw new NotImplementedException()
+                },
+                (var t, NumericType.Boolean) => t switch
+                {
+                    TokenType.AndAnd => leftBool && rightBool,
+                    TokenType.PipePipe => leftBool || rightBool,
+                    
+                    // xor is the same as !=
+                    TokenType.CaretCaret => leftBool != rightBool,
 
                     _ => throw new NotImplementedException()
                 },
