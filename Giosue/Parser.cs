@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Giosue.AST;
+using Giosue.Exceptions;
 
 namespace Giosue
 {
@@ -225,7 +226,7 @@ namespace Giosue
         {
             // The book handles exceptions differently than I do.\
             // TODO: Figure this out
-            return new Exception();
+            return new ParserException(ParserExceptionType.Unknown, token, "Invalid token");
         }
 
         /// <summary>
