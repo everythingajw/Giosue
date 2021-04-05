@@ -128,7 +128,16 @@ namespace Giosue
         /// <returns></returns>
         private Expression Factor()
         {
-            return BinaryExpression(Unary, TokenType.Slash, TokenType.Star);
+            return BinaryExpression(Bitwise, TokenType.Slash, TokenType.Star);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Expression Bitwise()
+        {
+            return BinaryExpression(Unary, TokenType.And, TokenType.Pipe, TokenType.Caret);
         }
 
         /// <summary>
