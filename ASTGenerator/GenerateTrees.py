@@ -20,8 +20,8 @@ NO_RESPONSES = ("no", "n")
 ALL_YES_NO_RESPONSES = (*YES_RESPONSES, *NO_RESPONSES)
 
 
-def indent(block: List[str], indent=INDENT):  # -> List[str]:
-    return list(map(lambda f: indent + f, block))
+def indent(block: List[str], spaces=INDENT) -> List[str]:
+    return list(map(lambda line: spaces + line, block))
 
 
 def add_namespace(block, name):
@@ -46,7 +46,7 @@ class Field:
         return f"this.{self.field_name} = {self.constructor_parameter_name};"
 
     def get_field_name(self):
-        return f"public {self.type_name} {self.field_name} " + "{ get; }"
+        return f"public {self.type_name} {self.field_name} {{ get; }}"
 
 
 class SyntaxTree:
