@@ -20,7 +20,7 @@ NO_RESPONSES = ("no", "n")
 ALL_YES_NO_RESPONSES = (*YES_RESPONSES, *NO_RESPONSES)
 
 
-def indent(block: List[str], indent = INDENT):  # -> List[str]:
+def indent(block: List[str], indent=INDENT):  # -> List[str]:
     return list(map(lambda f: indent + f, block))
 
 
@@ -58,23 +58,23 @@ class SyntaxTree:
 
     def generate_constructor_parameters(self):
         return [field.get_constructor_parameter() for field in self.fields]
-    
+
     def generate_fields(self):
         return [field.get_field_name() for field in self.fields]
 
     def generate_field_initializers(self):
         return [field.get_initializer() for field in self.fields]
-    
+
     def generate_visitor_pattern(self):
         visitor_call = indent([f"return visitor.Visit{self.name}{self.base_class_name}(this);"])
-        
+
         return [
             f"public override {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor)",
             "{",
             *visitor_call,
             "}"
         ]
-    
+
     def generate_constructor(self):
         parameters = ", ".join(self.generate_constructor_parameters())
         initializers = indent(self.generate_field_initializers())
@@ -121,7 +121,7 @@ parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
 parser.add_argument("--namespace", dest="namespace", type=str, required=True,
                     help="The namespace that contains the trees.")
 
-parser.add_argument('--output-dir', dest="output_dir", type=str, required=True, 
+parser.add_argument('--ast-output-dir', dest="ast_output_dir", type=str, required=True,
                     help="The location where the tree files should go.")
 
 args = parser.parse_args()
@@ -129,7 +129,7 @@ args = parser.parse_args()
 tree_namespace = str(args.namespace).strip()
 
 using_statements: List[str] = list(
-    map(lambda u : f"{u}\n", 
+    map(lambda u: f"{u}\n",
         [
             "using System;",
             "using System.Collections.Generic;",
@@ -138,41 +138,41 @@ using_statements: List[str] = list(
             "using Giosue;",
             f"using {tree_namespace};"
         ]
-    )
+        )
 )
 
-output_dir = Path(args.output_dir).resolve()
+ast_output_dir = Path(args.ast_output_dir).resolve()
 
-if not output_dir.exists():
+if not ast_output_dir.exists():
     print("Error: the output directory does not exist.", file=sys.stderr)
     exit(1)
-elif not output_dir.is_dir():
+elif not ast_output_dir.is_dir():
     print("Error: the output directory is not a directory.", file=sys.stderr)
     exit(2)
 
 response = None
 while response != "" and response not in ALL_YES_NO_RESPONSES:
-    print(f"Writing AST to {output_dir}. OK? (y/N) ", file=sys.stderr, end='')
+    print(f"Writing AST to {ast_output_dir}. OK? (y/N) ", file=sys.stderr, end='')
     response = input().strip().lower()
 
 if response == "" or response in NO_RESPONSES:
     print("Exit", file=sys.stderr)
     exit(3)
 
-if len(os.listdir(str(output_dir))) != 0:
+if len(os.listdir(str(ast_output_dir))) != 0:
     print("Warning: output directory is not empty", file=sys.stderr)
     response = None
     while response != "" and response not in ALL_YES_NO_RESPONSES:
         print("Remove contents before continuing? (y/N) ", file=sys.stderr, end="")
         response = input().strip().lower()
-    
+
     if response == "" or response in NO_RESPONSES:
         print("Keeping directory contents", file=sys.stderr)
-    
+
     # Response is yes
     else:
         print("Removing directory contents", file=sys.stderr)
-        for file in output_dir.rglob("*"):
+        for file in ast_output_dir.rglob("*"):
             if file.is_dir():
                 response = None
                 while response != "" and response not in ALL_YES_NO_RESPONSES:
@@ -185,18 +185,18 @@ if len(os.listdir(str(output_dir))) != 0:
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
-        tree_namespace, 
-        "Assign", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Assign",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Token", "Name", "name"),
             Field("Expression", "Value", "@value")
         ]
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Binary", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Binary",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Left", "left"),
             Field("Token", "Operator", "@operator"),
@@ -204,9 +204,9 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Call", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Call",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Callee", "callee"),
             Field("Token", "Paren", "paren"),
@@ -214,34 +214,34 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Get", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Get",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Object", "@object"),
             Field("Token", "Name", "name"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Grouping", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Grouping",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Expression", "expression"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Literal", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Literal",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("object", "Value", "@value"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Logical", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Logical",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Left", "left"),
             Field("Token", "Operator", "@operator"),
@@ -249,9 +249,9 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Set", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Set",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Expression", "Object", "@object"),
             Field("Token", "Name", "name"),
@@ -259,35 +259,35 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Super", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Super",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Token", "Keyword", "keyword"),
             Field("Token", "Method", "method"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "This", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "This",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Token", "Keyword", "keyword"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Unary", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Unary",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Token", "Operator", "@operator"),
             Field("Expression", "Right", "right"),
         ],
     ),
     SyntaxTree(
-        tree_namespace, 
-        "Variable", 
-        BASE_EXPRESSION_CLASS_NAME, 
+        tree_namespace,
+        "Variable",
+        BASE_EXPRESSION_CLASS_NAME,
         [
             Field("Token", "Name", "name"),
         ],
@@ -310,7 +310,8 @@ visitor_interface = "\n".join(
     )
 )
 
-base_class_methods = [f"public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);"]
+base_class_methods = [
+    f"public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);"]
 base_class = "\n".join(
     add_namespace(
         [
@@ -323,18 +324,18 @@ base_class = "\n".join(
     )
 )
 
-with open(output_dir / "IVisitor.cs", "w") as f:
+with open(ast_output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
     f.write("\n")
     f.write(visitor_interface)
 
-with open(output_dir / "Expression.cs", "w") as f:
+with open(ast_output_dir / "Expression.cs", "w") as f:
     f.writelines(using_statements)
     f.write("\n")
     f.write(base_class)
 
 for tree in syntax_trees:
-    output_file_path = output_dir / f"{tree.name}.cs"
+    output_file_path = ast_output_dir / f"{tree.name}.cs"
     with open(output_file_path, "w") as f:
         f.writelines(using_statements)
         f.write("\n")
