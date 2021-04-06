@@ -70,11 +70,11 @@ namespace Giosue
         }
 
         /// <summary>
-        /// 
+        /// Parses a binary expression.
         /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="tokens"></param>
-        /// <returns></returns>
+        /// <param name="callback">The function handling the higher precedence operators.</param>
+        /// <param name="tokens">The tokens to be consumed.</param>
+        /// <returns>An <see cref="AST.Expression"/> representing the expression.</returns>
         private Expression BinaryExpression(Func<Expression> callback, params TokenType[] tokens)
         {
             var expression = callback();
