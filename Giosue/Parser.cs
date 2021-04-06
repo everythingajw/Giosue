@@ -269,6 +269,7 @@ namespace Giosue
                     switch (current.Type)
                     {
                         case TokenType.Se:
+                        case TokenType.Oppure:
                         case TokenType.Mentre:
                             return;
                     }
