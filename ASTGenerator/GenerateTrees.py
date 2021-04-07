@@ -16,16 +16,44 @@ from field import Field
 from syntax_tree import SyntaxTree
 
 parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
-parser.add_argument("--ast-namespace", dest="ast_namespace", type=str, required=True,
-                    help="The namespace that contains the trees.")
-parser.add_argument("--ast-output-dir", dest="ast_output_dir", type=str, required=True,
-                    help="The location where the tree files should go.")
-parser.add_argument("--statement-namespace", dest="statement_namespace", type=str, required=True,
-                    help="The namespace that contains the trees.")
-parser.add_argument("--statement-output-dir", dest="statement_output_dir", type=str, required=True,
-                    help="The location where the tree files should go.")
+ast_argument_group = parser.add_argument_group("AST")
+ast_argument_group.add_argument("--generate-ast", dest="generate_ast", action="store_true",
+                                required=False, help="Generate the AST")
+ast_argument_group.add_argument("--ast-namespace", dest="ast_namespace", type=str, required=False,
+                                help="The namespace that contains the trees.")
+ast_argument_group.add_argument("--ast-output-dir", dest="ast_output_dir", type=str, required=False,
+                                help="The location where the tree files should go.")
+
+statement_argument_group = parser.add_argument_group("Statement")
+statement_argument_group.add_argument("--generate-statement", dest="generate_statement", action="store_true",
+                                      required=False, help="Generate the statement tree")
+statement_argument_group.add_argument("--statement-namespace", dest="statement_namespace", type=str, required=False,
+                                      help="The namespace that contains the trees.")
+statement_argument_group.add_argument("--statement-output-dir", dest="statement_output_dir", type=str, required=False,
+                                      help="The location where the tree files should go.")
 
 args = parser.parse_args()
+
+generate_ast = args.generate_ast
+ast_output_dir = args.ast_output_dir
+ast_namespace = args.ast_namespace
+generate_statement = args.generate_statement
+statement_namespace = args.statement_namespace
+statement_output_dir = args.statement_output_dir
+
+if not generate_statement and not generate_statement:
+    print("Nothing to generate. Exit.", file=sys.stderr)
+    exit(1)
+
+# Make sure the arguments are defined correctly
+if generate_ast and (ast_output_dir is None or ast_namespace is None):
+    print(f"Error: {ast_namespace.__name__} and {ast_output_dir.__name__} must be specified to generate the AST",
+          file=sys.stderr)
+    exit(1)
+elif generate_statement and (statement_namespace is None or statement_output_dir is None):
+    print(f"Error: {statement_namespace.__name__} and {statement_output_dir.__name__}" +
+          " must be specified to generate the statement tree.", file=sys.stderr)
+    exit(1)
 
 ast_output_dir = Path(args.ast_output_dir).resolve()
 statement_output_dir = Path(args.statement_output_dir).resolve()
@@ -36,29 +64,19 @@ exists_and_is_directory_or_exit(statement_output_dir)
 if not prompt_yes_no(f"Writing AST to {ast_output_dir}. OK?"):
     print("Exit", file=sys.stderr)
     exit(3)
+if not prompt_yes_no(f"Writing statement tree to {statement_output_dir}. OK?"):
+    print("Exit", file=sys.stderr)
+    exit(3)
 
-if len(os.listdir(str(ast_output_dir))) != 0:
-    print("Warning: output directory is not empty", file=sys.stderr)
-
-    if not prompt_yes_no("Remove contents before continuing?"):
-        print("Keeping directory contents")
-
-    # Response is yes
-    else:
-        print("Removing directory contents", file=sys.stderr)
-        for file in ast_output_dir.rglob("*"):
-            if file.is_dir():
-                if prompt_yes_no(f"{file} is a directory. Recursively remove?"):
-                    print("Removing directory")
-                    shutil.rmtree(str(file))
-                else:
-                    print("Keeping directory")
-            else:
-                file.unlink()
+prompt_to_remove_directory_contents(ast_output_dir)
+prompt_to_remove_directory_contents(statement_output_dir)
 
 # region AST
 
-ast_namespace = str(args.ast_namespace).strip()
+ast_namespace = str(ast_namespace).strip()
+if len(ast_namespace) <= 0:
+    print(f"Error: AST namespace is empty", file=sys.stderr)
+    exit(1)
 
 using_statements: List[str] = list(
     map(lambda u: f"{u}\n",
@@ -218,7 +236,11 @@ ast_base_class = "\n".join(
 
 # region Statement trees
 
-statement_tree_namespace = str(args.statement_namespace).strip()
+statement_tree_namespace = str(statement_namespace).strip()
+
+if len(statement_tree_namespace) <= 0:
+    print("Error: statement tree namespace is empty", file=sys.stderr)
+    exit(1)
 
 statement_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -241,6 +263,7 @@ statement_visitor_interface = add_namespace([
 
 # endregion Statement trees
 
+# Write the AST files
 with open(ast_output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
     f.write("\n")

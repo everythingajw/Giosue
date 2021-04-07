@@ -2,6 +2,8 @@ from typing import List
 from typing import NoReturn
 from pathlib import Path
 from sys import stderr
+import os
+import shutil
 
 INDENT = "    "
 BASE_EXPRESSION_CLASS_NAME = "Expression"
@@ -56,3 +58,24 @@ def prompt_yes_no(prompt: str, default_no: bool = True) -> bool:
     # The response is one of the acceptable yes/no responses, so
     # it's safe to do this check here.
     return response in YES_RESPONSES
+
+
+def prompt_to_remove_directory_contents(directory: Path):
+    if len(os.listdir(str(directory))) != 0:
+        print("Warning: output directory is not empty", file=stderr)
+
+        if not prompt_yes_no("Remove contents before continuing?"):
+            print("Keeping directory contents")
+
+        # Response is yes
+        else:
+            print("Removing directory contents", file=stderr)
+            for file in directory.rglob("*"):
+                if file.is_dir():
+                    if prompt_yes_no(f"{file} is a directory. Recursively remove?"):
+                        print("Removing directory")
+                        shutil.rmtree(str(file))
+                    else:
+                        print("Keeping directory")
+                else:
+                    file.unlink()
