@@ -10,6 +10,7 @@ from pathlib import Path
 import argparse
 import sys
 import os
+import shutil
 from common import *
 from field import Field
 from syntax_tree import SyntaxTree
@@ -60,9 +61,9 @@ if len(os.listdir(str(ast_output_dir))) != 0:
         print("Removing directory contents", file=sys.stderr)
         for file in ast_output_dir.rglob("*"):
             if file.is_dir():
-                if prompt_yes_no(f"{file} is a directory. Remove anyway?"):
+                if prompt_yes_no(f"{file} is a directory. Recursively remove?"):
                     print("Removing directory")
-                    file.rmdir()
+                    shutil.rmtree(str(file))
                 else:
                     print("Keeping directory")
             else:
