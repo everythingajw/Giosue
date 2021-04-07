@@ -45,36 +45,26 @@ statement_output_dir = Path(args.statement_output_dir).resolve()
 exists_and_is_directory_or_exit(ast_output_dir)
 exists_and_is_directory_or_exit(statement_output_dir)
 
-response = None
-while response != "" and response not in ALL_YES_NO_RESPONSES:
-    print(f"Writing AST to {ast_output_dir}. OK? (y/N) ", file=sys.stderr, end='')
-    response = input().strip().lower()
-
-if response == "" or response in NO_RESPONSES:
+if not prompt_yes_no(f"Writing AST to {ast_output_dir}. OK?"):
     print("Exit", file=sys.stderr)
     exit(3)
 
 if len(os.listdir(str(ast_output_dir))) != 0:
     print("Warning: output directory is not empty", file=sys.stderr)
-    response = None
-    while response != "" and response not in ALL_YES_NO_RESPONSES:
-        print("Remove contents before continuing? (y/N) ", file=sys.stderr, end="")
-        response = input().strip().lower()
 
-    if response == "" or response in NO_RESPONSES:
-        print("Keeping directory contents", file=sys.stderr)
+    if not prompt_yes_no("Remove contents before continuing?"):
+        print("Keeping directory contents")
 
     # Response is yes
     else:
         print("Removing directory contents", file=sys.stderr)
         for file in ast_output_dir.rglob("*"):
             if file.is_dir():
-                response = None
-                while response != "" and response not in ALL_YES_NO_RESPONSES:
-                    print(f"{file} is a directory. Remove anyway? (y/N) ", file=sys.stderr, end="")
-                    response = input().strip().lower()
-                if response != "" and response in YES_RESPONSES:
+                if prompt_yes_no(f"{file} is a directory. Remove anyway?"):
+                    print("Removing directory")
                     file.rmdir()
+                else:
+                    print("Keeping directory")
             else:
                 file.unlink()
 
