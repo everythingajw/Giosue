@@ -30,10 +30,10 @@ def add_namespace(block, name):
 
 def exists_and_is_directory_or_exit(p: Path) -> NoReturn:
     if not p.exists():
-        print("Error: the output directory does not exist.", file=sys.stderr)
+        print("Error: the output directory does not exist.", file=stderr)
         exit(1)
     elif not p.is_dir():
-        print("Error: the output directory is not a directory.", file=sys.stderr)
+        print("Error: the output directory is not a directory.", file=stderr)
         exit(2)
 
 
