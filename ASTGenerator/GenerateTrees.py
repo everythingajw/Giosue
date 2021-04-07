@@ -41,10 +41,6 @@ generate_statement = args.generate_statement
 statement_namespace = args.statement_namespace
 statement_output_dir = args.statement_output_dir
 
-if not generate_statement and not generate_statement:
-    print("Nothing to generate. Exit.", file=sys.stderr)
-    exit(1)
-
 # Make sure the arguments are defined correctly
 if generate_ast and (ast_output_dir is None or ast_namespace is None):
     print(f"Error: {ast_namespace.__name__} and {ast_output_dir.__name__} must be specified to generate the AST",
@@ -53,6 +49,10 @@ if generate_ast and (ast_output_dir is None or ast_namespace is None):
 elif generate_statement and (statement_namespace is None or statement_output_dir is None):
     print(f"Error: {statement_namespace.__name__} and {statement_output_dir.__name__}" +
           " must be specified to generate the statement tree.", file=sys.stderr)
+    exit(1)
+else:
+    # generate ast not specified and generate statement not specified
+    print("Nothing to generate. Exit.", file=sys.stderr)
     exit(1)
 
 ast_output_dir = Path(args.ast_output_dir).resolve()
