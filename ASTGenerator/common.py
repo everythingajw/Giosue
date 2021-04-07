@@ -5,6 +5,7 @@ from sys import stderr
 
 INDENT = "    "
 BASE_EXPRESSION_CLASS_NAME = "Expression"
+BASE_STATEMENT_CLASS_NAME = "Statement"
 GENERIC_PARAMETER = "T"
 VISITOR_INTERFACE_NAME = f"IVisitor<{GENERIC_PARAMETER}>"
 YES_RESPONSES = ("yes", "y")

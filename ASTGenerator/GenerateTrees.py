@@ -16,29 +16,16 @@ from field import Field
 from syntax_tree import SyntaxTree
 
 parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
-parser.add_argument("--namespace", dest="namespace", type=str, required=True,
+parser.add_argument("--ast-namespace", dest="ast_namespace", type=str, required=True,
                     help="The namespace that contains the trees.")
 parser.add_argument("--ast-output-dir", dest="ast_output_dir", type=str, required=True,
                     help="The location where the tree files should go.")
+parser.add_argument("--statement-namespace", dest="statement_namespace", type=str, required=True,
+                    help="The namespace that contains the trees.")
 parser.add_argument("--statement-output-dir", dest="statement_output_dir", type=str, required=True,
                     help="The location where the tree files should go.")
 
 args = parser.parse_args()
-
-ast_namespace = str(args.namespace).strip()
-
-using_statements: List[str] = list(
-    map(lambda u: f"{u}\n",
-        [
-            "using System;",
-            "using System.Collections.Generic;",
-            "using System.Linq;",
-            "using System.Text;",
-            "using Giosue;",
-            f"using {ast_namespace};"
-        ]
-        )
-)
 
 ast_output_dir = Path(args.ast_output_dir).resolve()
 statement_output_dir = Path(args.statement_output_dir).resolve()
@@ -68,6 +55,23 @@ if len(os.listdir(str(ast_output_dir))) != 0:
                     print("Keeping directory")
             else:
                 file.unlink()
+
+# region AST
+
+ast_namespace = str(args.ast_namespace).strip()
+
+using_statements: List[str] = list(
+    map(lambda u: f"{u}\n",
+        [
+            "using System;",
+            "using System.Collections.Generic;",
+            "using System.Linq;",
+            "using System.Text;",
+            "using Giosue;",
+            f"using {ast_namespace};"
+        ]
+        )
+)
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
@@ -210,7 +214,32 @@ ast_base_class = "\n".join(
     )
 )
 
-statement_trees: List[SyntaxTree] = []
+# endregion AST
+
+# region Statement trees
+
+statement_tree_namespace = str(args.statement_namespace).strip()
+
+statement_trees: List[SyntaxTree] = [
+    SyntaxTree(
+        statement_tree_namespace,
+        "Expression",
+        BASE_STATEMENT_CLASS_NAME,
+        [
+            Field("Expression", "Expression", "expression")
+        ]
+    ),
+]
+
+statement_visitor_interface_methods = []
+statement_visitor_interface = add_namespace([
+    f"public interface {VISITOR_INTERFACE_NAME}",
+    "{",
+    *indent(statement_visitor_interface_methods),
+    "}"
+], statement_tree_namespace)
+
+# endregion Statement trees
 
 with open(ast_output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
