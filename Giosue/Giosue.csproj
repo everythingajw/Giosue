@@ -8,4 +8,8 @@
     <ProjectReference Include="..\SourceManager\SourceManager.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Statements\" />
+  </ItemGroup>
+
 </Project>
