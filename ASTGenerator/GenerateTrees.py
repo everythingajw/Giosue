@@ -40,13 +40,10 @@ using_statements: List[str] = list(
 )
 
 ast_output_dir = Path(args.ast_output_dir).resolve()
+statement_output_dir = Path(args.statement_output_dir).resolve()
 
-if not ast_output_dir.exists():
-    print("Error: the output directory does not exist.", file=sys.stderr)
-    exit(1)
-elif not ast_output_dir.is_dir():
-    print("Error: the output directory is not a directory.", file=sys.stderr)
-    exit(2)
+exists_and_is_directory_or_exit(ast_output_dir)
+exists_and_is_directory_or_exit(statement_output_dir)
 
 response = None
 while response != "" and response not in ALL_YES_NO_RESPONSES:
