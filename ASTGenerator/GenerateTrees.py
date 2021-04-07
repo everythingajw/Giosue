@@ -70,7 +70,7 @@ def write_tree_to_file(output_dir: Path, confirmation_prompt: str, namespace: st
 
     visitor_interface_methods = [
         f"{GENERIC_PARAMETER} Visit{tree.name}{tree.base_class_name}({tree.name} {visitor_interface_method_parameter});"
-        for tree in syntax_trees
+        for tree in trees
     ]
 
     visitor_interface = add_namespace([
@@ -85,7 +85,7 @@ def write_tree_to_file(output_dir: Path, confirmation_prompt: str, namespace: st
     ]
 
     base_class = add_namespace([
-        f"public abstract {base_class_name}",
+        f"public abstract class {base_class_name}",
         "{",
         *indent(base_class_methods),
         "}"
@@ -242,9 +242,9 @@ if generate_ast:
                        statement_using_statements, "expression", syntax_trees, BASE_EXPRESSION_CLASS_NAME)
 
 if generate_statement:
-    statement_tree_namespace = str(statement_namespace).strip()
+    statement_namespace = str(statement_namespace).strip()
 
-    if len(statement_tree_namespace) <= 0:
+    if len(statement_namespace) <= 0:
         print("Error: statement tree namespace is empty", file=sys.stderr)
         exit(1)
 
@@ -254,23 +254,23 @@ if generate_statement:
         "using System.Linq;",
         "using System.Text;",
         "using Giosue;",
-        f"using {statement_tree_namespace};"
+        f"using {statement_namespace};"
     ]
 
     statement_trees: List[SyntaxTree] = [
         SyntaxTree(
-            statement_tree_namespace,
+            statement_namespace,
             "Expression",
             BASE_STATEMENT_CLASS_NAME,
             [
-                Field("Expression", "Expression", "expression")
+                Field("Expression", "Expr", "expression")
             ]
         ),
     ]
 
     statement_output_dir = Path(statement_output_dir)
     write_tree_to_file(statement_output_dir, f"Writing AST to {statement_output_dir.resolve()}. OK?",
-                       statement_tree_namespace, statement_using_statements, "statement",
+                       statement_namespace, statement_using_statements, "statement",
                        statement_trees, BASE_STATEMENT_CLASS_NAME)
 
 
