@@ -15,11 +15,11 @@ from field import Field
 from syntax_tree import SyntaxTree
 
 parser = argparse.ArgumentParser(description='Generate the ASTs for Giosue.')
-
 parser.add_argument("--namespace", dest="namespace", type=str, required=True,
                     help="The namespace that contains the trees.")
-
-parser.add_argument('--ast-output-dir', dest="ast_output_dir", type=str, required=True,
+parser.add_argument("--ast-output-dir", dest="ast_output_dir", type=str, required=True,
+                    help="The location where the tree files should go.")
+parser.add_argument("--statement-output-dir", dest="statement_output_dir", type=str, required=True,
                     help="The location where the tree files should go.")
 
 args = parser.parse_args()
