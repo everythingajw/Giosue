@@ -32,3 +32,26 @@ def exists_and_is_directory_or_exit(p: Path) -> NoReturn:
     elif not p.is_dir():
         print("Error: the output directory is not a directory.", file=sys.stderr)
         exit(2)
+
+
+def prompt_yes_no(prompt: str, default_no: bool = True) -> bool:
+    """
+    Prompts the user with a yes/no prompt.
+    :param prompt: The question to ask the user
+    :param default_no: Indicates if "no" is the default response
+    :return: True if the user responded "yes", false if they responded "no"
+    """
+
+    response = None
+    yes_no_suffix = "(y/N)" if default_no else "(Y/n)"
+    while response != "" and response not in ALL_YES_NO_RESPONSES:
+        print(f"{prompt} {yes_no_suffix} ", file=stderr, end="")
+        response = input().strip().lower()
+
+    if response == "":
+        # return False if default_no else True
+        return not default_no
+
+    # The response is one of the acceptable yes/no responses, so
+    # it's safe to do this check here.
+    return response in YES_RESPONSES
