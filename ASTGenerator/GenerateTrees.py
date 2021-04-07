@@ -25,7 +25,7 @@ parser.add_argument("--statement-output-dir", dest="statement_output_dir", type=
 
 args = parser.parse_args()
 
-tree_namespace = str(args.namespace).strip()
+ast_namespace = str(args.namespace).strip()
 
 using_statements: List[str] = list(
     map(lambda u: f"{u}\n",
@@ -35,7 +35,7 @@ using_statements: List[str] = list(
             "using System.Linq;",
             "using System.Text;",
             "using Giosue;",
-            f"using {tree_namespace};"
+            f"using {ast_namespace};"
         ]
         )
 )
@@ -71,7 +71,7 @@ if len(os.listdir(str(ast_output_dir))) != 0:
 
 syntax_trees: List[SyntaxTree] = [
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Assign",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -80,7 +80,7 @@ syntax_trees: List[SyntaxTree] = [
         ]
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Binary",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -90,7 +90,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Call",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -100,7 +100,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Get",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -109,7 +109,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Grouping",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -117,7 +117,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Literal",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -125,7 +125,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Logical",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -135,7 +135,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Set",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -145,7 +145,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Super",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -154,7 +154,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "This",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -162,7 +162,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Unary",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -171,7 +171,7 @@ syntax_trees: List[SyntaxTree] = [
         ],
     ),
     SyntaxTree(
-        tree_namespace,
+        ast_namespace,
         "Variable",
         BASE_EXPRESSION_CLASS_NAME,
         [
@@ -180,45 +180,47 @@ syntax_trees: List[SyntaxTree] = [
     ),
 ]
 
-visitor_interface_methods = [
+ast_visitor_interface_methods = [
     f"{GENERIC_PARAMETER} Visit{tree.name}{tree.base_class_name}({tree.name} expression);" for tree in syntax_trees
 ]
 
-visitor_interface = "\n".join(
+ast_visitor_interface = "\n".join(
     add_namespace(
         [
             f"public interface {VISITOR_INTERFACE_NAME}",
             "{",
-            *indent(visitor_interface_methods),
+            *indent(ast_visitor_interface_methods),
             "}"
         ],
-        tree_namespace
+        ast_namespace
     )
 )
 
-base_class_methods = [
+ast_base_class_methods = [
     f"public abstract {GENERIC_PARAMETER} Accept<{GENERIC_PARAMETER}>({VISITOR_INTERFACE_NAME} visitor);"]
-base_class = "\n".join(
+ast_base_class = "\n".join(
     add_namespace(
         [
             f"public abstract class {BASE_EXPRESSION_CLASS_NAME}",
             "{",
-            *indent(base_class_methods),
+            *indent(ast_base_class_methods),
             "}"
         ],
-        tree_namespace
+        ast_namespace
     )
 )
+
+statement_trees: List[SyntaxTree] = []
 
 with open(ast_output_dir / "IVisitor.cs", "w") as f:
     f.writelines(using_statements)
     f.write("\n")
-    f.write(visitor_interface)
+    f.write(ast_visitor_interface)
 
 with open(ast_output_dir / "Expression.cs", "w") as f:
     f.writelines(using_statements)
     f.write("\n")
-    f.write(base_class)
+    f.write(ast_base_class)
 
 for tree in syntax_trees:
     output_file_path = ast_output_dir / f"{tree.name}.cs"
