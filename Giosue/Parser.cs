@@ -48,6 +48,16 @@ namespace Giosue
         {
             try
             {
+                // No tokens means nothing to do.
+                if (Tokens.Count <= 0)
+                {
+                    return null;
+                }
+                // If there's only one EOF token, there's also nothing to do.
+                if (Tokens.Count == 1 && Tokens[0].Type == TokenType.EOF)
+                {
+                    return null;
+                }
                 return Expression();
             }
             catch (Exception e)

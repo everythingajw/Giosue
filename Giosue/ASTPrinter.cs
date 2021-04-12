@@ -14,10 +14,11 @@ namespace Giosue
         {
             if (expression == null)
             {
+                // I don't think I need this anymore - if there's no expression don't print anything.
                 // A touch of reflection so I can print out what methods are causing exceptions.
-                var thisMethod = MethodBase.GetCurrentMethod();
-                Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
-                Console.Error.WriteLine();
+                //var thisMethod = MethodBase.GetCurrentMethod();
+                //Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
+                //Console.Error.WriteLine();
             }
             return expression?.Accept(this);
         }
