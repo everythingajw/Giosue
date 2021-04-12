@@ -121,7 +121,11 @@ namespace Giosue.ConsoleApp
             }
 
             // For now, just stringify the parsed code.
-            Console.WriteLine(new ASTPrinter().StringifyExpression(parsedExpression));
+            var stringified = new ASTPrinter().StringifyExpression(parsedExpression);
+            if (stringified != null)
+            {
+                Console.WriteLine(stringified);
+            }
 
             return GiosueExceptionCategory.AllOK;
         }

@@ -20,7 +20,7 @@ namespace Giosue
                 //Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {nameof(expression)} is null");
                 //Console.Error.WriteLine();
             }
-            return expression?.Accept(this);
+            return expression?.Accept(this) ?? null;
         }
 
         private string Parenthesize(string name, params Expression[] expressions)
