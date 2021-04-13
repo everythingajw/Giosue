@@ -44,8 +44,9 @@ namespace Giosue
         /// 
         /// </summary>
         /// <returns></returns>
-        public Expression Parse()
+        public ParserException Parse(out List<Statements.Statement> statements)
         {
+            statements = new List<Statements.Statement>();
             try
             {
                 // No tokens means nothing to do.
@@ -58,16 +59,37 @@ namespace Giosue
                 {
                     return null;
                 }
-                return Expression();
-            }
-            catch (Exception e)
-            {
-                var thisMethod = MethodBase.GetCurrentMethod();
-                Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {e.GetType()} occurred during parsing");
-                Console.Error.WriteLine(e);
-                Console.Error.WriteLine();
+                while (!IsAtEnd)
+                {
+                    statements.Add(Statement());
+                }
                 return null;
             }
+            catch (ParserException e)
+            {
+                return e;
+            }
+            //catch (Exception e)
+            //{
+            //    var thisMethod = MethodBase.GetCurrentMethod();
+            //    Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {e.GetType()} occurred during parsing");
+            //    Console.Error.WriteLine(e);
+            //    Console.Error.WriteLine();
+            //    return null;
+            //}
+        }
+
+        private Statements.Statement Statement()
+        {
+            return ExpressionStatement();
+        }
+
+        private Statements.Statement ExpressionStatement()
+        {
+            var expression = Expression();
+            Tokens.ForEach(t => Console.WriteLine(t));
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Semicolon, "Expected ';' after expression.", out _);
+            return new Statements.Expression(expression);
         }
 
         /// <summary>
@@ -78,6 +100,8 @@ namespace Giosue
         {
             return Equality();
         }
+
+        #region Binary expression
 
         /// <summary>
         /// Parses a binary expression.
@@ -220,6 +244,8 @@ namespace Giosue
             throw ParseException(current, "Expected expression.");
         }
 
+        #endregion Binary expression
+
         /// <summary>
         /// 
         /// </summary>
@@ -240,7 +266,7 @@ namespace Giosue
             {
                 current = null;
             }
-
+            Console.WriteLine("NOPE");
             throw ParseException(current, message);
         }
 

@@ -55,7 +55,7 @@ namespace Giosue.ConsoleApp
             while (true)
             {
                 Console.Write($"In [{inputNumber++:00#}]> ");
-                
+
                 // Make sure the prompt is written to the console.
                 Console.Out.Flush();
 
@@ -75,7 +75,7 @@ namespace Giosue.ConsoleApp
                 RunString(input);
             }
 
-            omega:
+        omega:
             return GiosueExceptionCategory.AllOK;
         }
 
@@ -84,7 +84,7 @@ namespace Giosue.ConsoleApp
             if (!File.Exists(path))
             {
                 ErrorWriteLine("Error: file not found");
-                
+
                 // Temporary
                 // TODO: Source exceptions
                 throw new FileNotFoundException();
@@ -114,18 +114,14 @@ namespace Giosue.ConsoleApp
                 return scanResult.Category;
             }
 
-            var parseResult = ParseCode(scannedTokens, out var parsedExpression);
+            var parseResult = ParseCode(scannedTokens, out var statements);
             if (parseResult != null)
             {
                 return parseResult.Category;
             }
 
-            // For now, just stringify the parsed code.
-            var stringified = new ASTPrinter().StringifyExpression(parsedExpression);
-            if (stringified != null)
-            {
-                Console.WriteLine(stringified);
-            }
+            var interpreter = new Interpreter();
+            interpreter.Interpret(statements);
 
             return GiosueExceptionCategory.AllOK;
         }
@@ -152,25 +148,20 @@ namespace Giosue.ConsoleApp
             }
         }
 
-        private static ParserException ParseCode(List<Token> code, out Expression expression)
+        private static ParserException ParseCode(List<Token> code, out List<Statements.Statement> statements)
         {
-            expression = default;
+            statements = default;
             var parser = new Parser(code);
+            var parseResult = parser.Parse(out statements);
 
-            try
-            {
-                expression = parser.Parse();
-                
-                // Success; no exceptions occurred.
-                return null;
-            }
-            catch (ParserException e)
+            if (parseResult != null)
             {
                 var thisMethod = MethodBase.GetCurrentMethod();
                 ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: parser exception");
-                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
-                return e;
+                ErrorWriteLine($"Type: {parseResult.ExceptionType}", $"Type code: {(int)parseResult.ExceptionType}");
             }
+
+            return parseResult;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using Giosue.Exceptions;
 
 namespace Giosue
 {
-    class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
+    public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
         public object Interpret(AST.Expression expression)
         {
@@ -16,13 +16,9 @@ namespace Giosue
 
         public void Interpret(List<Statements.Statement> statements)
         {
-            try
+            foreach (var statement in statements)
             {
-                statements.ForEach(s => ExecuteStatement(s));
-            } 
-            catch (Exception)
-            {
-                Console.Error.WriteLine("Error interpreting");
+                ExecuteStatement(statement);
             }
         }
 
@@ -324,7 +320,8 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitExpressionStatement(Statements.Expression statement)
         {
-            throw new NotImplementedException();
+            EvaluateExpression(statement.Expr);
+            return null;
         }
     }
 }

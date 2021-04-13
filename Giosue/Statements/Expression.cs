@@ -9,9 +9,9 @@ namespace Giosue.Statements
 {
     public class Expression : Statement
     {
-        public Expression Expr { get; }
+        public AST.Expression Expr { get; }
     
-        public Expression(Expression expression)
+        public Expression(AST.Expression expression)
         {
             this.Expr = expression;
         }
