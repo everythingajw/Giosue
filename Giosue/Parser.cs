@@ -87,7 +87,6 @@ namespace Giosue
         private Statements.Statement ExpressionStatement()
         {
             var expression = Expression();
-            Tokens.ForEach(t => Console.WriteLine(t));
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Semicolon, "Expected ';' after expression.", out _);
             return new Statements.Expression(expression);
         }
@@ -266,7 +265,7 @@ namespace Giosue
             {
                 current = null;
             }
-            Console.WriteLine("NOPE");
+            
             throw ParseException(current, message);
         }
 
