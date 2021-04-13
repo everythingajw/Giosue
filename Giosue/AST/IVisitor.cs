@@ -9,17 +9,17 @@ namespace Giosue.AST
 {
     public interface IVisitor<T>
     {
-        T VisitAssignExpression(Assign expression);
-        T VisitBinaryExpression(Binary expression);
-        T VisitCallExpression(Call expression);
-        T VisitGetExpression(Get expression);
-        T VisitGroupingExpression(Grouping expression);
-        T VisitLiteralExpression(Literal expression);
-        T VisitLogicalExpression(Logical expression);
-        T VisitSetExpression(Set expression);
-        T VisitSuperExpression(Super expression);
-        T VisitThisExpression(This expression);
-        T VisitUnaryExpression(Unary expression);
-        T VisitVariableExpression(Variable expression);
+        public T VisitAssignExpression(Assign expression);
+        public T VisitBinaryExpression(Binary expression);
+        public T VisitCallExpression(Call expression);
+        public T VisitGetExpression(Get expression);
+        public T VisitGroupingExpression(Grouping expression);
+        public T VisitLiteralExpression(Literal expression);
+        public T VisitLogicalExpression(Logical expression);
+        public T VisitSetExpression(Set expression);
+        public T VisitSuperExpression(Super expression);
+        public T VisitThisExpression(This expression);
+        public T VisitUnaryExpression(Unary expression);
+        public T VisitVariableExpression(Variable expression);
     }
 }

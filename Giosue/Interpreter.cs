@@ -8,7 +8,7 @@ using Giosue.Exceptions;
 
 namespace Giosue
 {
-    class Interpreter : IVisitor<object>
+    class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
         public object Interpret(Expression expression)
         {
@@ -121,7 +121,7 @@ namespace Giosue
         //private static double Divide(int l, int r) => Divide((double)l, (double)r);
         //private static double Divide(double l, double r) => l / r;
 
-        public object VisitAssignExpression(Assign expression)
+        public object AST.IVisitor<object>.VisitAssignExpression(Assign expression)
         {
             throw new NotImplementedException();
         }

@@ -9,6 +9,6 @@ namespace Giosue.Statements
 {
     public interface IVisitor<T>
     {
-        T VisitExpressionStatement(Expression statement);
+        public T VisitExpressionStatement(Expression statement);
     }
 }

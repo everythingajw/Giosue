@@ -69,7 +69,7 @@ def write_tree_to_file(output_dir: Path, confirmation_prompt: str, namespace: st
     prompt_to_remove_directory_contents(output_dir)
 
     visitor_interface_methods = [
-        f"{GENERIC_PARAMETER} Visit{tree.name}{tree.base_class_name}({tree.name} {visitor_interface_method_parameter});"
+        f"public {GENERIC_PARAMETER} Visit{tree.name}{tree.base_class_name}({tree.name} {visitor_interface_method_parameter});"
         for tree in trees
     ]
 
