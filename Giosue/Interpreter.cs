@@ -31,13 +31,8 @@ namespace Giosue
             statement.Accept(this);
         }
 
-        private string Stringify(object obj)
+        private static string Stringify(object obj)
         {
-            if (obj == null)
-            {
-                return "niente";
-            }
-
             return obj?.ToString() ?? "niente";
         }
 
