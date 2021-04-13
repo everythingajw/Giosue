@@ -3,16 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Giosue.AST;
 using Giosue.Exceptions;
 
 namespace Giosue
 {
     class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
-        public object Interpret(Expression expression)
+        public object Interpret(AST.Expression expression)
         {
             return EvaluateExpression(expression);
+        }
+
+        public void Interpret(List<Statements.Statement> statements)
+        {
+            try
+            {
+                statements.ForEach(s => ExecuteStatement(s));
+            } 
+            catch (Exception)
+            {
+                Console.Error.WriteLine("Error interpreting");
+            }
+        }
+
+        private void ExecuteStatement(Statements.Statement statement)
+        {
+            statement.Accept(this);
         }
 
         private string Stringify(object obj)
@@ -25,7 +41,7 @@ namespace Giosue
             return obj?.ToString() ?? "niente";
         }
 
-        private object EvaluateExpression(Expression expression)
+        private object EvaluateExpression(AST.Expression expression)
         {
             return expression.Accept(this);
         }
@@ -121,7 +137,7 @@ namespace Giosue
         //private static double Divide(int l, int r) => Divide((double)l, (double)r);
         //private static double Divide(double l, double r) => l / r;
 
-        public object AST.IVisitor<object>.VisitAssignExpression(Assign expression)
+        object AST.IVisitor<object>.VisitAssignExpression(AST.Assign expression)
         {
             throw new NotImplementedException();
         }
@@ -134,7 +150,7 @@ namespace Giosue
             Boolean,
         }
 
-        public object VisitBinaryExpression(Binary expression)
+        object AST.IVisitor<object>.VisitBinaryExpression(AST.Binary expression)
         {
             var left = EvaluateExpression(expression.Left);
             var right = EvaluateExpression(expression.Right);
@@ -250,47 +266,47 @@ namespace Giosue
             // return null;
         }
 
-        public object VisitCallExpression(Call expression)
+        object AST.IVisitor<object>.VisitCallExpression(AST.Call expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitGetExpression(Get expression)
+        object AST.IVisitor<object>.VisitGetExpression(AST.Get expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitGroupingExpression(Grouping expression)
+        object AST.IVisitor<object>.VisitGroupingExpression(AST.Grouping expression)
         {
             return EvaluateExpression(expression.Expression);
         }
 
-        public object VisitLiteralExpression(Literal expression)
+        object AST.IVisitor<object>.VisitLiteralExpression(AST.Literal expression)
         {
             return expression.Value;
         }
 
-        public object VisitLogicalExpression(Logical expression)
+        object AST.IVisitor<object>.VisitLogicalExpression(AST.Logical expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitSetExpression(Set expression)
+        object AST.IVisitor<object>.VisitSetExpression(AST.Set expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitSuperExpression(Super expression)
+        object AST.IVisitor<object>.VisitSuperExpression(AST.Super expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitThisExpression(This expression)
+        object AST.IVisitor<object>.VisitThisExpression(AST.This expression)
         {
             throw new NotImplementedException();
         }
 
-        public object VisitUnaryExpression(Unary expression)
+        object AST.IVisitor<object>.VisitUnaryExpression(AST.Unary expression)
         {
             var right = EvaluateExpression(expression.Right);
             return expression.Operator.Type switch
@@ -306,7 +322,12 @@ namespace Giosue
             };
         }
 
-        public object VisitVariableExpression(Variable expression)
+        object AST.IVisitor<object>.VisitVariableExpression(AST.Variable expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        object Statements.IVisitor<object>.VisitExpressionStatement(Statements.Expression statement)
         {
             throw new NotImplementedException();
         }
