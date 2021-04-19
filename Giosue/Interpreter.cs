@@ -351,5 +351,10 @@ namespace Giosue
                 Environment = previousEnvironment;
             }
         }
+
+        public object VisitIfStatement(Statements.If statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
