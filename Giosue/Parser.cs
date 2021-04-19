@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Giosue.AST;
 using Giosue.Exceptions;
 
+using Statement = Giosue.Statements.Statement;
+
 namespace Giosue
 {
     // TODO: Documentation
@@ -44,9 +46,9 @@ namespace Giosue
         /// 
         /// </summary>
         /// <returns></returns>
-        public ParserException Parse(out List<Statements.Statement> statements)
+        public ParserException Parse(out List<Statement> statements)
         {
-            statements = new List<Statements.Statement>();
+            statements = new List<Statement>();
             try
             {
                 // No tokens means nothing to do.
@@ -79,9 +81,9 @@ namespace Giosue
             //}
         }
 
-        private List<Statements.Statement> Block()
+        private List<Statement> Block()
         {
-            var statements = new List<Statements.Statement>();
+            var statements = new List<Statement>();
 
             while (!AdvanceIfMatches(out _, TokenType.RightBrace))
             {
@@ -92,12 +94,12 @@ namespace Giosue
             return statements;
         }
 
-        private Statements.Statement IfStatement()
+        private Statement IfStatement()
         {
             throw new NotImplementedException();
         }
 
-        private Statements.Statement Declaration()
+        private Statement Declaration()
         {
             try
             {
@@ -114,7 +116,7 @@ namespace Giosue
             }
         }
 
-        private Statements.Statement VariableDeclaration()
+        private Statement VariableDeclaration()
         {
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Expected variable name.", out var variableNameToken);
 
@@ -128,12 +130,12 @@ namespace Giosue
             return new Statements.Var(variableNameToken, initializer);
         }
 
-        private Statements.Statement Statement()
+        private Statement Statement()
         {
             return ExpressionStatement();
         }
 
-        private Statements.Statement ExpressionStatement()
+        private Statement ExpressionStatement()
         {
             var expression = Expression();
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Semicolon, "Expected ';' after expression.", out _);
