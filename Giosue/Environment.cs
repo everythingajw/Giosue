@@ -26,5 +26,21 @@ namespace Giosue
             return Variables.TryGetValue(name, out value);
         }
 
+        public bool Assign(string name, object value)
+        {
+            if (Variables.TryGetValue(name, out var v))
+            {
+                // Redefine the variable only if the types match
+                if (value.GetType() == v.GetType())
+                {
+                    Define(name, value);
+                    return true;
+                }
+            }
+
+            // Types didn't match or variable doesn't exist.
+            return false;
+        }
+
     }
 }

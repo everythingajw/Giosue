@@ -128,7 +128,26 @@ namespace Giosue
         /// <returns></returns>
         private Expression Expression()
         {
-            return Equality();
+            return Assignment();
+        }
+
+        private Expression Assignment()
+        {
+            var expression = Equality();
+            if (AdvanceIfMatches(out var token, TokenType.Equal))
+            {
+                var value = Assignment();
+
+                if (expression is AST.Variable v)
+                {
+                    var name = v.Name;
+                    return new AST.Assign(name, value);
+                }
+
+                throw new ParserException(ParserExceptionType.Unknown, token, "Invalid assignment target");
+            }
+
+            return expression;
         }
 
         #region Binary expression
