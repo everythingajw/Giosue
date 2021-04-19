@@ -9,7 +9,9 @@ namespace Giosue.Exceptions
     public enum EnvironmentExceptionType
     {
         AllOK = 0,
-
+        Unknown = 1,
+        UndefinedVariable = 2,
+        VariableAlreadyDefined = 3
     }
     
     public class EnvironmentException : GiosueException<EnvironmentExceptionType>
