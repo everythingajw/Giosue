@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Giosue.Exceptions;
 
 namespace Giosue
 {
     public class Environment
     {
-        readonly Environment ParentEnvironment = null;
+        private readonly Environment ParentEnvironment = null;
 
         /// <summary>
         /// The collection of variables.
@@ -23,6 +24,10 @@ namespace Giosue
 
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Environment"/>.
+        /// </summary>
+        /// <param name="parentEnvironment">The parent <see cref="Environment"/>.</param>
         public Environment(Environment parentEnvironment)
         {
             ParentEnvironment = parentEnvironment;
@@ -39,6 +44,22 @@ namespace Giosue
         public void DefineOrOverwrite(string name, object value)
         {
             Variables.Add(name, value);
+        }
+
+        /// <summary>
+        /// Gets a variable's value.
+        /// </summary>
+        /// <param name="name">The name of the variable.</param>
+        /// <returns>The variable's value.</returns>
+        /// <exception cref="EnvironmentException">Thrown if the variable cannot be found.</exception>
+        public object GetValue(string name)
+        {
+            if (TryGetValue(name, out var value))
+            {
+                return value;
+            }
+
+            throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"The variable '{name}' is undefined.");
         }
 
         /// <summary>
@@ -65,6 +86,20 @@ namespace Giosue
 
             // The variable doesn't exist anywhere.
             return false;
+        }
+
+        /// <summary>
+        /// Assigns a variable a value if it exists.
+        /// </summary>
+        /// <param name="name">The name of the variable.</param>
+        /// <param name="value">The value to assign to the variable.</param>
+        /// <exception cref="EnvironmentException">Thrown if the variable is not defined or assignment fails.</exception>
+        public void AssignIfExists(string name, object value)
+        {
+            if (!TryAssignIfExists(name, value))
+            {
+                throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"Undefined variable: '{name}'.");
+            }
         }
 
         /// <summary>
