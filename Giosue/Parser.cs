@@ -98,7 +98,7 @@ namespace Giosue
 
         private Statements.Statement VariableDeclaration()
         {
-            var variableName = AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Expected variable name.", out _);
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Expected variable name.", out var variableNameToken);
 
             AST.Expression initializer = null;
             if (AdvanceIfMatches(out _, TokenType.Integer))
@@ -107,7 +107,7 @@ namespace Giosue
             }
 
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Semicolon, "Expected ';' after variable declaration.", out _);
-            return Statement.Var
+            return new Statements.Var(variableNameToken, initializer);
         }
 
         private Statements.Statement Statement()
@@ -267,6 +267,15 @@ namespace Giosue
                 return new Grouping(expression);
             }
 
+            if (AdvanceIfMatches(out _, TokenType.Identifier))
+            {
+                if (!PreviousToken(out var previous))
+                {
+                    return new AST.Variable(previous);
+                }
+                throw new ParserException(ParserExceptionType.Unknown, null, "Could not get previous token for variable declaration.");
+            }
+
             if (!Peek(out var current))
             {
                 current = null;
@@ -296,7 +305,7 @@ namespace Giosue
             {
                 current = null;
             }
-            
+
             throw ParseException(current, message);
         }
 
