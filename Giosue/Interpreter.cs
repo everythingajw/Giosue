@@ -9,6 +9,8 @@ namespace Giosue
 {
     public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
+        private readonly Environment Environment = new Environment();
+
         public object Interpret(AST.Expression expression)
         {
             return EvaluateExpression(expression);
@@ -321,6 +323,13 @@ namespace Giosue
         object Statements.IVisitor<object>.VisitExpressionStatement(Statements.Expression statement)
         {
             EvaluateExpression(statement.Expr);
+            return null;
+        }
+
+        public object VisitVarStatement(Statements.Var statement)
+        {
+            var value = statement.Initializer == null ? null : EvaluateExpression(statement.Initializer);
+            Environment.Define(statement.Name.Lexeme, value);
             return null;
         }
     }
