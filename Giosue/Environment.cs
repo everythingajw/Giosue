@@ -47,7 +47,7 @@ namespace Giosue
         /// <param name="name">The name of the variable.</param>
         /// <param name="value">The value of the variable.</param>
         /// <returns>True if the variable's value was found, false otherwise.</returns>
-        public bool GetValue(string name, out object value)
+        public bool TryGetValue(string name, out object value)
         {
             value = default;
 
@@ -60,7 +60,7 @@ namespace Giosue
             // Search parent environments after.
             if (ParentEnvironment != null)
             {
-                return ParentEnvironment.GetValue(name, out value);
+                return ParentEnvironment.TryGetValue(name, out value);
             }
 
             // The variable doesn't exist anywhere.
@@ -76,7 +76,7 @@ namespace Giosue
         /// <param name="name">The name of the variable to update.</param>
         /// <param name="value">The variable's new value.</param>
         /// <returns>True if the variable's value was successfully updated, false otherwise.</returns>
-        public bool AssignIfExists(string name, object value)
+        public bool TryAssignIfExists(string name, object value)
         {
             // Try to update the variable in the current environment first
             if (Variables.TryGetValue(name, out var v))
@@ -93,7 +93,7 @@ namespace Giosue
             // assign it in the parent environment
             if (ParentEnvironment != null)
             {
-                return ParentEnvironment.AssignIfExists(name, value);
+                return ParentEnvironment.TryAssignIfExists(name, value);
             }
 
             // Types didn't match or variable doesn't exist anywhere.
