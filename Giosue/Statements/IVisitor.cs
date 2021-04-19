@@ -11,5 +11,6 @@ namespace Giosue.Statements
     {
         public T VisitExpressionStatement(Expression statement);
         public T VisitVarStatement(Var statement);
+        public T VisitBlockStatement(Block statement);
     }
 }

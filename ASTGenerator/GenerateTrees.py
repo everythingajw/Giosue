@@ -275,6 +275,14 @@ if generate_statement:
                 Field("AST.Expression", "Initializer", "initializer")
             ]
         ),
+        SyntaxTree(
+            statement_namespace,
+            "Block",
+            BASE_STATEMENT_CLASS_NAME,
+            [
+                Field("List<Statements.Statement>", "Statements", "statements"),
+            ]
+        ),
     ]
 
     statement_output_dir = Path(statement_output_dir)

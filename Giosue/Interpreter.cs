@@ -332,5 +332,10 @@ namespace Giosue
             Environment.DefineOrOverwrite(statement.Name.Lexeme, value);
             return null;
         }
+
+        public object VisitBlockStatement(Statements.Block statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
