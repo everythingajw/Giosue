@@ -263,7 +263,16 @@ if generate_statement:
             "Expression",
             BASE_STATEMENT_CLASS_NAME,
             [
-                Field("Expression", "Expr", "expression")
+                Field("AST.Expression", "Expr", "expression")
+            ]
+        ),
+        SyntaxTree(
+            statement_namespace,
+            "Var",
+            BASE_STATEMENT_CLASS_NAME,
+            [
+                Field("Token", "Name", "name"),
+                Field("AST.Expression", "Initializer", "initializer")
             ]
         ),
     ]

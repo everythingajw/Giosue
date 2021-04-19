@@ -79,6 +79,37 @@ namespace Giosue
             //}
         }
 
+        private Statements.Statement Declaration()
+        {
+            try
+            {
+                if (AdvanceIfMatches(out _, TokenType.Var))
+                {
+                    return VariableDeclaration();
+                }
+                return Statement();
+            }
+            catch (ParserException)
+            {
+                Synchronize();
+                return null;
+            }
+        }
+
+        private Statements.Statement VariableDeclaration()
+        {
+            var variableName = AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Expected variable name.", out _);
+
+            AST.Expression initializer = null;
+            if (AdvanceIfMatches(out _, TokenType.Integer))
+            {
+                initializer = Expression();
+            }
+
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Semicolon, "Expected ';' after variable declaration.", out _);
+            return Statement.Var
+        }
+
         private Statements.Statement Statement()
         {
             return ExpressionStatement();

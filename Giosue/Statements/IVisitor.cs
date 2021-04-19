@@ -10,5 +10,6 @@ namespace Giosue.Statements
     public interface IVisitor<T>
     {
         public T VisitExpressionStatement(Expression statement);
+        public T VisitVarStatement(Var statement);
     }
 }
