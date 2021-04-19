@@ -9,11 +9,11 @@ namespace Giosue.Statements
 {
     public class If : Statement
     {
-        public Statements.Expression Condition { get; }
+        public AST.Expression Condition { get; }
         public Statements.Statement ThenBranch { get; }
         public Statements.Statement ElseBranch { get; }
     
-        public If(Statements.Expression condition, Statements.Statement thenBranch, Statements.Statement ElseBranch)
+        public If(AST.Expression condition, Statements.Statement thenBranch, Statements.Statement ElseBranch)
         {
             this.Condition = condition;
             this.ThenBranch = thenBranch;

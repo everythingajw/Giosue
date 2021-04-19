@@ -288,7 +288,7 @@ if generate_statement:
             "If",
             BASE_STATEMENT_CLASS_NAME,
             [
-                Field("Statements.Expression", "Condition", "condition"),
+                Field("AST.Expression", "Condition", "condition"),
                 Field("Statements.Statement", "ThenBranch", "thenBranch"),
                 Field("Statements.Statement", "ElseBranch", "ElseBranch"),
             ]

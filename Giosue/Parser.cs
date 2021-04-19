@@ -96,7 +96,17 @@ namespace Giosue
 
         private Statement IfStatement()
         {
-            throw new NotImplementedException();
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.LeftParenthesis, "Expected '(' after 'if'.", out _);
+            var condition = Expression();
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Expected ')' after 'if'.", out _);
+
+            var thenBranch = Statement();
+            Statement elseBranch = default;
+            if (AdvanceIfMatches(out _, TokenType.Oppure))
+            {
+                elseBranch = Statement();
+            }
+            return new Statements.If(condition, thenBranch, elseBranch);
         }
 
         private Statement Declaration()
