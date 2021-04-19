@@ -8,6 +8,8 @@ namespace Giosue
 {
     public class Environment
     {
+        readonly Environment ParentEnvironment = null;
+
         /// <summary>
         /// The collection of variables.
         /// </summary>
@@ -19,6 +21,11 @@ namespace Giosue
         public Environment()
         {
 
+        }
+
+        public Environment(Environment parentEnvironment)
+        {
+            ParentEnvironment = parentEnvironment;
         }
 
         /// <summary>
@@ -43,7 +50,21 @@ namespace Giosue
         public bool GetValue(string name, out object value)
         {
             value = default;
-            return Variables.TryGetValue(name, out value);
+
+            // Search the current environment first.
+            if (Variables.TryGetValue(name, out value))
+            {
+                return true;
+            }
+
+            // Search parent environments after.
+            if (ParentEnvironment != null)
+            {
+                return ParentEnvironment.GetValue(name, out value);
+            }
+
+            // The variable doesn't exist anywhere.
+            return false;
         }
 
         /// <summary>
@@ -57,6 +78,7 @@ namespace Giosue
         /// <returns>True if the variable's value was successfully updated, false otherwise.</returns>
         public bool AssignIfExists(string name, object value)
         {
+            // Try to update the variable in the current environment first
             if (Variables.TryGetValue(name, out var v))
             {
                 // Redefine the variable only if the types match
@@ -67,7 +89,14 @@ namespace Giosue
                 }
             }
 
-            // Types didn't match or variable doesn't exist.
+            // If no such variable exists in the current environment,
+            // assign it in the parent environment
+            if (ParentEnvironment != null)
+            {
+                return ParentEnvironment.AssignIfExists(name, value);
+            }
+
+            // Types didn't match or variable doesn't exist anywhere.
             return false;
         }
 
