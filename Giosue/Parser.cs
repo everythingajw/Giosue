@@ -92,6 +92,11 @@ namespace Giosue
             return statements;
         }
 
+        private Statements.Statement IfStatement()
+        {
+            throw new NotImplementedException();
+        }
+
         private Statements.Statement Declaration()
         {
             try
