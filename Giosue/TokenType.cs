@@ -197,6 +197,11 @@ namespace Giosue
         #region Keywords
 
         /// <summary>
+        /// The keyword <c>var</c>.
+        /// </summary>
+        Var,
+
+        /// <summary>
         /// The keyword <c>oppure</c>.
         /// </summary>
         /// <remarks>
