@@ -283,6 +283,16 @@ if generate_statement:
                 Field("List<Statements.Statement>", "Statements", "statements"),
             ]
         ),
+        SyntaxTree(
+            statement_namespace,
+            "If",
+            BASE_STATEMENT_CLASS_NAME,
+            [
+                Field("Statements.Expression", "Condition", "condition"),
+                Field("Statements.Statement", "ThenBranch", "thenBranch"),
+                Field("Statements.Statement", "ElseBranch", "ElseBranch"),
+            ]
+        ),
     ]
 
     statement_output_dir = Path(statement_output_dir)

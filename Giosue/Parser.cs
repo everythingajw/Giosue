@@ -79,6 +79,19 @@ namespace Giosue
             //}
         }
 
+        private List<Statements.Statement> Block()
+        {
+            var statements = new List<Statements.Statement>();
+
+            while (!AdvanceIfMatches(out _, TokenType.RightBrace))
+            {
+                statements.Add(Declaration());
+            }
+
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightBrace, "Expected '}' after block.", out _);
+            return statements;
+        }
+
         private Statements.Statement Declaration()
         {
             try

@@ -9,7 +9,7 @@ namespace Giosue
 {
     public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
-        private readonly Environment Environment = new Environment();
+        private Environment Environment = new();
 
         public object Interpret(AST.Expression expression)
         {
@@ -336,6 +336,20 @@ namespace Giosue
         public object VisitBlockStatement(Statements.Block statement)
         {
             throw new NotImplementedException();
+        }
+
+        public void ExecuteBlock(List<Statements.Statement> statements, Environment environment)
+        {
+            var previousEnvironment = Environment;
+
+            try
+            {
+                statements.ForEach(ExecuteStatement);
+            }
+            finally
+            {
+                Environment = previousEnvironment;
+            }
         }
     }
 }
