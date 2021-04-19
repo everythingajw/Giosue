@@ -329,7 +329,7 @@ namespace Giosue
         public object VisitVarStatement(Statements.Var statement)
         {
             var value = statement.Initializer == null ? null : EvaluateExpression(statement.Initializer);
-            Environment.Define(statement.Name.Lexeme, value);
+            Environment.DefineOrOverwrite(statement.Name.Lexeme, value);
             return null;
         }
     }

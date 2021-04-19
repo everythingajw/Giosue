@@ -29,7 +29,7 @@ namespace Giosue
         /// </remarks>
         /// <param name="name">The name of the variable to define.</param>
         /// <param name="value">The value of the variable to define.</param>
-        public void Define(string name, object value)
+        public void DefineOrOverwrite(string name, object value)
         {
             Variables.Add(name, value);
         }
@@ -62,7 +62,7 @@ namespace Giosue
                 // Redefine the variable only if the types match
                 if (value.GetType() == v.GetType())
                 {
-                    Define(name, value);
+                    DefineOrOverwrite(name, value);
                     return true;
                 }
             }
