@@ -11,7 +11,8 @@ namespace Giosue.Exceptions
         AllOK = 0,
         Unknown = 1,
         UndefinedVariable = 2,
-        VariableAlreadyDefined = 3
+        VariableAlreadyDefined = 3,
+        VariableNameIsReservedKeyword = 4
     }
     
     public class EnvironmentException : GiosueException<EnvironmentExceptionType>
