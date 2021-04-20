@@ -239,7 +239,9 @@ namespace Giosue
 
                     TokenType.And
                     | TokenType.Pipe
-                    | TokenType.Caret => throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Only {nameof(Int32)} can be used with bitwise operations"),
+                    | TokenType.Caret => 
+                    // Invalid data types: only Int32 can be used with bitwise operations
+                    throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Solamente {nameof(Int32)} può essere usato con i operatori bitwise"),
 
                     _ => throw new NotImplementedException()
                 },

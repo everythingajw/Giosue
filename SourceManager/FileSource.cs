@@ -113,7 +113,8 @@ namespace SourceManager
             // First check that the token is not too long.
             if (CurrentTokenLength >= BufferLength)
             {
-                throw new TokenTooLongException(CurrentToken, $"The current token is too long. The maximum token length is {BufferLength}.");
+                // The current token is too long. The maximum token length is {BufferLength}.
+                throw new TokenTooLongException(CurrentToken, $"Il token corrente è troppo lungo. La lunghezza massima per un token è {BufferLength}.");
             }
 
             // Because the tokens will be moved around in the buffer,
@@ -141,7 +142,8 @@ namespace SourceManager
             // The token lengths should be the same after reading.
             if (oldTokenLength != CurrentTokenLength)
             {
-                throw new Exception($"Token lengths are not equal. Before:{oldTokenLength} After:{CurrentTokenLength}");
+                // Token lengths are not equal. Before:{oldTokenLength} After:{CurrentTokenLength}
+                throw new Exception($"Le lunghezze dei token non sono uguali. Primo:{oldTokenLength} Dopo:{CurrentTokenLength}");
             }
 
             var charactersToRead = BufferLength - CurrentTokenLength;

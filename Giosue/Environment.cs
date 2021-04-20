@@ -59,7 +59,8 @@ namespace Giosue
                 return value;
             }
 
-            throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"The variable '{name}' is undefined.");
+            // The variable '{name}' is undefined.
+            throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"La variablie '{name}' è imprecisato.");
         }
 
         /// <summary>
@@ -98,7 +99,8 @@ namespace Giosue
         {
             if (!TryAssignIfExists(name, value))
             {
-                throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"Undefined variable: '{name}'.");
+                // The variable '{name}' is undefined
+                throw new EnvironmentException(EnvironmentExceptionType.UndefinedVariable, $"La variablie '{name}' è imprecisato.");
             }
         }
 

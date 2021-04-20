@@ -78,7 +78,8 @@ namespace Giosue
         /// <param name="source">The source code for the <see cref="Scanner"/>.</param>
         public Scanner(Source source)
         {
-            Source = source ?? throw new ArgumentNullException(nameof(source), "The source for a scanner cannot be null.");
+            // The source for a {nameof(Scanner)} cannot be null.
+            Source = source ?? throw new ArgumentNullException(nameof(source), $"La fonte per un {nameof(Scanner)} non può essere nulla.");
         }
 
         /// <summary>
@@ -179,7 +180,8 @@ namespace Giosue
 
                 // Catch all
                 default:
-                    throw new ScannerException(ScannerExceptionType.UnexpectedCharacter, Line, $"Unexpected character '{ch}'");
+                    // Unexpected character '{ch}'
+                    throw new ScannerException(ScannerExceptionType.UnexpectedCharacter, Line, $"Carattere inatteso '{ch}'");
             }
         }
 
@@ -211,7 +213,8 @@ namespace Giosue
                         {
                             // TODO: Turn this into a custom form of GiosueException down the line.
                             // For right now, this will work.
-                            throw new NotSupportedException("Multi-line strings are not supported.");
+                            // Multi-line strings are not supported.
+                            throw new NotSupportedException("È vietato creare una stringa su più di una fila.");
                         }
                     }
                     if (!Source.Advance(out _))
@@ -224,7 +227,8 @@ namespace Giosue
 
             if (Source.IsAtEnd)
             {
-                throw new ScannerException(ScannerExceptionType.UnterminatedString, Line, "Unterminated string.");
+                // Unterminated string
+                throw new ScannerException(ScannerExceptionType.UnterminatedString, Line, "Stringa senza fine.");
             }
 
             // The closing ".
@@ -287,7 +291,8 @@ namespace Giosue
                 tokenType = TokenType.Float;
                 if (!double.TryParse(lexeme, out var @double))
                 {
-                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Could not parse '{lexeme}' to {nameof(Double)}");
+                    // Could not parse '{lexeme}' to {nameof(Double)}
+                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Non poteva trasformare '{lexeme}' a {nameof(Double)}");
                 }
                 parsedNumber = @double;
             }
@@ -296,7 +301,8 @@ namespace Giosue
                 tokenType = TokenType.Integer;
                 if (!int.TryParse(lexeme, out var @int))
                 {
-                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Could not parse '{lexeme}' to {nameof(Int32)}");
+                    // Could not parse '{lexeme}' to {nameof(Int32)}
+                    throw new ScannerException(ScannerExceptionType.MalformedNumericLiteral, Line, $"Non poteva trasformare '{lexeme}' a {nameof(Int32)}");
                 }
                 parsedNumber = @int;
             }

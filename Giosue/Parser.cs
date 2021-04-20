@@ -39,7 +39,8 @@ namespace Giosue
         /// <param name="tokens"></param>
         public Parser(List<Token> tokens)
         {
-            Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens), $"The source tokens for a {nameof(Parser)} cannot be null");
+            // The source tokens for a {nameof(Parser)} cannot be null
+            Tokens = tokens ?? throw new ArgumentNullException(nameof(tokens), $"È vietato creare un {nameof(Parser)} da una lista dei tokens nulla");
         }
 
         /// <summary>
@@ -174,7 +175,8 @@ namespace Giosue
                     return new AST.Assign(name, value);
                 }
 
-                throw new ParserException(ParserExceptionType.Unknown, token, "Invalid assignment target");
+                // It's impossible to assign to that expression
+                throw new ParserException(ParserExceptionType.Unknown, token, "È vietato assegnare a quella espressione.");
             }
 
             return expression;
@@ -322,14 +324,18 @@ namespace Giosue
                 {
                     return new AST.Variable(previous);
                 }
-                throw new ParserException(ParserExceptionType.Unknown, null, "Could not get previous token for variable declaration.");
+                
+                // Could not get previous token for variable declaration.
+                throw new ParserException(ParserExceptionType.Unknown, null, "Prendere il token prima per la creazione di una variabile era impossible");
             }
 
             if (!Peek(out var current))
             {
                 current = null;
             }
-            throw ParseException(current, "Expected expression.");
+            
+            // Expected expression.
+            throw ParseException(current, "Una espressione era previsto.");
         }
 
         #endregion Binary expression
