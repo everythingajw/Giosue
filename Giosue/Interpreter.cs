@@ -221,7 +221,7 @@ namespace Giosue
                     TokenType.Minus => leftInt - rightInt,
                     TokenType.Star => leftInt * rightInt,
                     TokenType.Slash => (double)((double)leftInt / (double)rightInt),
-                    
+
                     // Bitwise operations
                     TokenType.And => leftInt & rightInt,
                     TokenType.Pipe => leftInt | rightInt,
@@ -236,9 +236,9 @@ namespace Giosue
                     TokenType.Minus => leftDouble - rightDouble,
                     TokenType.Star => leftDouble * rightDouble,
                     TokenType.Slash => (double)((double)leftDouble / (double)rightDouble),
-                    
-                    TokenType.And 
-                    | TokenType.Pipe 
+
+                    TokenType.And
+                    | TokenType.Pipe
                     | TokenType.Caret => throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Only {nameof(Int32)} can be used with bitwise operations"),
 
                     _ => throw new NotImplementedException()
@@ -247,7 +247,7 @@ namespace Giosue
                 {
                     TokenType.AndAnd => leftBool && rightBool,
                     TokenType.PipePipe => leftBool || rightBool,
-                    
+
                     // xor is the same as !=
                     TokenType.CaretCaret => leftBool != rightBool,
 
@@ -255,7 +255,7 @@ namespace Giosue
                 },
                 _ => throw new NotImplementedException()
             };
-            
+
             // return null;
         }
 
@@ -354,7 +354,15 @@ namespace Giosue
 
         public object VisitIfStatement(Statements.If statement)
         {
-            throw new NotImplementedException();
+            if (IsTruthy(EvaluateExpression(statement.Condition)))
+            {
+                ExecuteStatement(statement.ThenBranch);
+            }
+            else if (statement.ElseBranch != null)
+            {
+                ExecuteStatement(statement.ElseBranch);
+            }
+            return null;
         }
     }
 }
