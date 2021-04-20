@@ -9,6 +9,19 @@ namespace Giosue
 {
     public class Environment
     {
+        private static readonly HashSet<string> ReservedWords = new()
+        {
+            "intero",
+            "virgola",
+            "mentre",
+            "vero",
+            "falso",
+            "se",
+            "oppure",
+            "bool",
+            "niente"
+        };
+
         private readonly Environment ParentEnvironment = null;
 
         /// <summary>
@@ -41,9 +54,35 @@ namespace Giosue
         /// </remarks>
         /// <param name="name">The name of the variable to define.</param>
         /// <param name="value">The value of the variable to define.</param>
+        /// <exception cref="EnvironmentException">Thrown if <see cref="name"/> is a reserved keyword.</exception>
+        /// <seealso cref="TryDefineOrOverwrite(string, object)"/>
         public void DefineOrOverwrite(string name, object value)
         {
+            if (!TryDefineOrOverwrite(name, value))
+            {
+                // The name of the variable is reserved.
+                throw new EnvironmentException(EnvironmentExceptionType.VariableNameIsReservedKeyword, $"Il nome del variable '{name}' è reservato.");
+            }
+        }
+
+        /// <summary>
+        /// Tries to define a variable with a name and a value.
+        /// </summary>
+        /// <remarks>
+        /// If the variable is already defined, it is overwritten.
+        /// </remarks>
+        /// <param name="name">The name of the variable to define.</param>
+        /// <param name="value">The value of the variable to define.</param>
+        /// <returns>True if the variable was successfully defined or overwritten, false otherwise.</returns>
+        public bool TryDefineOrOverwrite(string name, object value)
+        {
+            if (ReservedWords.Contains(name))
+            {
+                return false;
+            }
+
             Variables.Add(name, value);
+            return true;
         }
 
         /// <summary>
