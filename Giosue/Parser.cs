@@ -182,8 +182,6 @@ namespace Giosue
             return expression;
         }
 
-        #region Binary expression
-
         /// <summary>
         /// Parses a binary expression.
         /// </summary>
@@ -211,21 +209,66 @@ namespace Giosue
         }
 
         /// <summary>
+        /// Parses a logical expression.
+        /// </summary>
+        /// <param name="callback">The function handling the higher precedence operators.</param>
+        /// <param name="tokens">The tokens to be consumed.</param>
+        /// <returns>An <see cref="AST.Expression"/> representing the expression.</returns>
+        private Expression LogicalExpression(Func<Expression> callback, params TokenType[] tokens)
+        {
+            var expression = callback();
+
+            while (AdvanceIfMatches(out _, tokens))
+            {
+                if (PreviousToken(out var @operator))
+                {
+                    expression = new Logical(expression, @operator, callback());
+                }
+                else
+                {
+                    // No previous token was available
+                    break;
+                }
+            }
+
+            return expression;
+        }
+
+        // TODO: Should this go under logical expression?
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         private Expression Equality()
         {
-            return BinaryExpression(BooleanExpression, TokenType.BangEqual, TokenType.EqualEqual);
+            return BinaryExpression(ExclusiveOr, TokenType.BangEqual, TokenType.EqualEqual);
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        private Expression BooleanExpression()
+        private Expression ExclusiveOr()
         {
-            return BinaryExpression(Comparison, TokenType.AndAnd, TokenType.PipePipe, TokenType.CaretCaret);
+            return LogicalExpression(Or, TokenType.CaretCaret);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Expression Or()
+        {
+            return LogicalExpression(And, TokenType.PipePipe);
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Expression And()
+        {
+            return LogicalExpression(Comparison, TokenType.AndAnd);
         }
 
         /// <summary>
@@ -337,8 +380,6 @@ namespace Giosue
             // Expected expression.
             throw ParseException(current, "Una espressione era previsto.");
         }
-
-        #endregion Binary expression
 
         /// <summary>
         /// 

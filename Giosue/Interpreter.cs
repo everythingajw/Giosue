@@ -140,7 +140,6 @@ namespace Giosue
             None,
             Integer,
             Double,
-            Boolean,
         }
 
         object AST.IVisitor<object>.VisitBinaryExpression(AST.Binary expression)
@@ -164,8 +163,6 @@ namespace Giosue
             int rightInt = 0;
             double leftDouble = 0;
             double rightDouble = 0;
-            bool leftBool = false;
-            bool rightBool = false;
 
             if (left is int i1)
             {
@@ -191,19 +188,6 @@ namespace Giosue
                 else
                 {
                     throw new MismatchedTypeException(typeof(double), right.GetType());
-                }
-            }
-            else if (left is bool b1)
-            {
-                if (right is bool b2)
-                {
-                    numericType = NumericType.Boolean;
-                    leftBool = b1;
-                    rightBool = b2;
-                }
-                else
-                {
-                    throw new MismatchedTypeException(typeof(bool), right.GetType());
                 }
             }
             else
@@ -245,16 +229,6 @@ namespace Giosue
 
                     _ => throw new NotImplementedException()
                 },
-                (var t, NumericType.Boolean) => t switch
-                {
-                    TokenType.AndAnd => leftBool && rightBool,
-                    TokenType.PipePipe => leftBool || rightBool,
-
-                    // xor is the same as !=
-                    TokenType.CaretCaret => leftBool != rightBool,
-
-                    _ => throw new NotImplementedException()
-                },
                 _ => throw new NotImplementedException()
             };
 
@@ -283,7 +257,27 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitLogicalExpression(AST.Logical expression)
         {
-            throw new NotImplementedException();
+            object left = EvaluateExpression(expression.Left);
+            object right = EvaluateExpression(expression.Right);
+            
+            if (left is bool l)
+            {
+                if (right is bool r)
+                {
+                    return expression.Operator.Type switch
+                    {
+                        TokenType.AndAnd => l && r,
+                        TokenType.PipePipe => l || r,
+
+                        // xor is the same as !=
+                        TokenType.Caret => l != r,
+
+                        _ => throw new NotImplementedException()
+                    };
+                }
+                throw new MismatchedTypeException(typeof(bool), right.GetType());
+            }
+            throw new MismatchedTypeException(typeof(bool), left.GetType());
         }
 
         object AST.IVisitor<object>.VisitSetExpression(AST.Set expression)
