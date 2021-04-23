@@ -11,6 +11,8 @@ namespace Giosue
     {
         private Environment Environment = new();
 
+        #region Interpreting and evaluating
+
         public object Interpret(AST.Expression expression)
         {
             return EvaluateExpression(expression);
@@ -28,16 +30,34 @@ namespace Giosue
         {
             statement.Accept(this);
         }
+        
+        private object EvaluateExpression(AST.Expression expression)
+        {
+            return expression.Accept(this);
+        }
+
+        public void ExecuteBlock(List<Statements.Statement> statements, Environment environment)
+        {
+            var previousEnvironment = Environment;
+
+            try
+            {
+                statements.ForEach(ExecuteStatement);
+            }
+            finally
+            {
+                Environment = previousEnvironment;
+            }
+        }
+
+        #endregion Interpreting and evaluating
 
         private static string Stringify(object obj)
         {
             return obj?.ToString() ?? "niente";
         }
 
-        private object EvaluateExpression(AST.Expression expression)
-        {
-            return expression.Accept(this);
-        }
+        #region Comparisons and equality
 
         private static bool IsTruthy(object expression)
         {
@@ -102,6 +122,8 @@ namespace Giosue
             throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double) }, left.GetType());
         }
 
+        #endregion Comparisons and equality
+
         private static void ThrowIfNotNumbers(object left, object right)
         {
             switch (left, right)
@@ -118,29 +140,19 @@ namespace Giosue
             }
         }
 
-        //private static int Add(int l, int r) => l + r;
-        //private static double Add(double l, double r) => l + r;
-
-        //private static int Subtract(int l, int r) => l - r;
-        //private static double Subtract(double l, double r) => l - r;
-
-        //private static int Multiply(int l, int r) => l * r;
-        //private static double Multiply(double l, double r) => l * r;
-
-        //private static double Divide(int l, int r) => Divide((double)l, (double)r);
-        //private static double Divide(double l, double r) => l / r;
-
-        object AST.IVisitor<object>.VisitAssignExpression(AST.Assign expression)
-        {
-            throw new NotImplementedException();
-        }
-
         private enum BinaryOperandType
         {
             None,
             Integer,
             Double,
             String
+        }
+
+        #region AST visitors
+
+        object AST.IVisitor<object>.VisitAssignExpression(AST.Assign expression)
+        {
+            throw new NotImplementedException();
         }
 
         object AST.IVisitor<object>.VisitBinaryExpression(AST.Binary expression)
@@ -341,39 +353,29 @@ namespace Giosue
             throw new NotImplementedException();
         }
 
+        #endregion AST visitors
+
+        #region Statement visitors
+
         object Statements.IVisitor<object>.VisitExpressionStatement(Statements.Expression statement)
         {
             EvaluateExpression(statement.Expr);
             return null;
         }
 
-        public object VisitVarStatement(Statements.Var statement)
+        object Statements.IVisitor<object>.VisitVarStatement(Statements.Var statement)
         {
             var value = statement.Initializer == null ? null : EvaluateExpression(statement.Initializer);
             Environment.DefineOrOverwrite(statement.Name.Lexeme, value);
             return null;
         }
 
-        public object VisitBlockStatement(Statements.Block statement)
+        object Statements.IVisitor<object>.VisitBlockStatement(Statements.Block statement)
         {
             throw new NotImplementedException();
         }
 
-        public void ExecuteBlock(List<Statements.Statement> statements, Environment environment)
-        {
-            var previousEnvironment = Environment;
-
-            try
-            {
-                statements.ForEach(ExecuteStatement);
-            }
-            finally
-            {
-                Environment = previousEnvironment;
-            }
-        }
-
-        public object VisitIfStatement(Statements.If statement)
+        object Statements.IVisitor<object>.VisitIfStatement(Statements.If statement)
         {
             if (IsTruthy(EvaluateExpression(statement.Condition)))
             {
@@ -385,5 +387,7 @@ namespace Giosue
             }
             return null;
         }
+
+        #endregion Statement visitors
     }
 }
