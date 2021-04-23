@@ -72,14 +72,6 @@ namespace Giosue
             {
                 return e;
             }
-            //catch (Exception e)
-            //{
-            //    var thisMethod = MethodBase.GetCurrentMethod();
-            //    Console.Error.WriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: {e.GetType()} occurred during parsing");
-            //    Console.Error.WriteLine(e);
-            //    Console.Error.WriteLine();
-            //    return null;
-            //}
         }
 
         private List<Statement> Block()
@@ -181,6 +173,8 @@ namespace Giosue
 
             return expression;
         }
+
+        #region Binary and logical expressions
 
         /// <summary>
         /// Parses a binary expression.
@@ -381,29 +375,7 @@ namespace Giosue
             throw ParseException(current, "Una espressione era previsto.");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tokenType"></param>
-        /// <param name="message"></param>
-        /// <param name="consumed"></param>
-        /// <returns></returns>
-        private bool AdvanceIfMatchesOrCrashIfNotMatches(TokenType tokenType, string message, out Token consumed)
-        {
-            consumed = default;
-
-            if (CurrentTokenTypeEquals(tokenType))
-            {
-                return Advance(out consumed);
-            }
-
-            if (!Peek(out var current))
-            {
-                current = null;
-            }
-
-            throw ParseException(current, message);
-        }
+        #endregion Binary and logical expressions
 
         /// <summary>
         /// 
@@ -448,6 +420,32 @@ namespace Giosue
 
                 Advance(out _);
             }
+        }
+
+        #region Consuming and scanning tokens
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokenType"></param>
+        /// <param name="message"></param>
+        /// <param name="consumed"></param>
+        /// <returns></returns>
+        private bool AdvanceIfMatchesOrCrashIfNotMatches(TokenType tokenType, string message, out Token consumed)
+        {
+            consumed = default;
+
+            if (CurrentTokenTypeEquals(tokenType))
+            {
+                return Advance(out consumed);
+            }
+
+            if (!Peek(out var current))
+            {
+                current = null;
+            }
+
+            throw ParseException(current, message);
         }
 
         /// <summary>
@@ -547,5 +545,7 @@ namespace Giosue
             last = Tokens[CurrentTokenIndex - 1];
             return true;
         }
+
+        #endregion Consuming and scanning tokens
     }
 }
