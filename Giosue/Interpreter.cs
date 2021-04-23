@@ -135,11 +135,12 @@ namespace Giosue
             throw new NotImplementedException();
         }
 
-        private enum NumericType
+        private enum BinaryOperandType
         {
             None,
             Integer,
             Double,
+            String
         }
 
         object AST.IVisitor<object>.VisitBinaryExpression(AST.Binary expression)
@@ -158,17 +159,19 @@ namespace Giosue
                 default: break;
             }
 
-            var numericType = NumericType.None;
+            var numericType = BinaryOperandType.None;
             int leftInt = 0;
             int rightInt = 0;
             double leftDouble = 0;
             double rightDouble = 0;
+            string leftString = null;
+            string rightString = null;
 
             if (left is int i1)
             {
                 if (right is int i2)
                 {
-                    numericType = NumericType.Integer;
+                    numericType = BinaryOperandType.Integer;
                     leftInt = i1;
                     rightInt = i2;
                 }
@@ -181,7 +184,7 @@ namespace Giosue
             {
                 if (right is double d2)
                 {
-                    numericType = NumericType.Double;
+                    numericType = BinaryOperandType.Double;
                     leftDouble = d1;
                     rightDouble = d2;
                 }
@@ -190,15 +193,29 @@ namespace Giosue
                     throw new MismatchedTypeException(typeof(double), right.GetType());
                 }
             }
+            else if (left is string s1)
+            {
+                if (right is string s2)
+                {
+                    numericType = BinaryOperandType.String;
+                    leftString = s1;
+                    rightString = s2;
+                }
+                else
+                {
+                    throw new MismatchedTypeException(typeof(string), right.GetType());
+                }
+            }
+
             else
             {
-                throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double), typeof(bool) }, left.GetType());
+                throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double), typeof(string) }, left.GetType());
             }
 
             return (expression.Operator.Type, numericType) switch
             {
-                (_, NumericType.None) => throw new NotImplementedException(),
-                (var t, NumericType.Integer) => t switch
+                (_, BinaryOperandType.None) => throw new NotImplementedException(),
+                (var t, BinaryOperandType.Integer) => t switch
                 {
                     // Regular math operations
                     TokenType.Plus => leftInt + rightInt,
@@ -214,7 +231,7 @@ namespace Giosue
                     // Everything else
                     _ => throw new NotImplementedException()
                 },
-                (var t, NumericType.Double) => t switch
+                (var t, BinaryOperandType.Double) => t switch
                 {
                     TokenType.Plus => leftDouble + rightDouble,
                     TokenType.Minus => leftDouble - rightDouble,
@@ -228,6 +245,14 @@ namespace Giosue
                     throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Solamente {nameof(Int32)} può essere usato con i operatori bitwise"),
 
                     _ => throw new NotImplementedException()
+                },
+                (var t, BinaryOperandType.String) => t switch
+                {
+                    TokenType.At => leftString + rightString,
+                    _ =>
+                    // It's impossible to use that operator with strings
+                    // TODO: Print invalid operator
+                    throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Non è possibile usare quello operatore con le stringhe")
                 },
                 _ => throw new NotImplementedException()
             };
