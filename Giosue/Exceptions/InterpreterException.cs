@@ -10,7 +10,8 @@ namespace Giosue.Exceptions
     {
         AllOK = 0,
         Unknown = 1,
-        MismatchedTypes
+        MismatchedTypes = 2,
+        MentreWithoutCondition = 3,
     }
 
     public class InterpreterException : GiosueException<InterpreterExceptionType>
