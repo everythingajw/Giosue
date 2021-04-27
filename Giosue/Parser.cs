@@ -161,6 +161,34 @@ namespace Giosue
         }
 
         /// <summary>
+        /// Parse a function definition.
+        /// </summary>
+        /// <returns></returns>
+        private Statements.Function Function()
+        {
+            // A name of a function was expected.
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Un nome di una funzione in atteso.", out var name);
+
+            // A '(' was expected before the arguments of a function.
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.LeftParenthesis, "Un '(' in atteso primo di gli argomenti per una funzione.", out _);
+
+            var arguments = new List<Token>();
+            if (!CurrentTokenTypeEquals(TokenType.RightParenthesis))
+            {
+                do
+                {
+                    AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Un identificatore in atteso per un parametro", out var parameterName);
+                    arguments.Add(parameterName);
+                } while (AdvanceIfMatches(out _, TokenType.Comma));
+            }
+
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Un ')' in atteso dopo gli argomenti per una funzione.", out _);
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.LeftBrace, "Un '{' in atteso primo di il corpo per una funzione.", out _);
+            var body = Block();
+            return new Statements.Function(name, arguments, body);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
