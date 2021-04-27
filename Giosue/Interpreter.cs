@@ -4,12 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Giosue.Exceptions;
+using Giosue.ForeignFunctionInterface;
 
 namespace Giosue
 {
     public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
         private Environment Environment = new();
+
+        public Interpreter()
+        {
+            Environment.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
+            Environment.DefineOrOverwrite(typeof(Print).Name, new Print());
+            Environment.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
+        }
 
         #region Interpreting and evaluating
 
