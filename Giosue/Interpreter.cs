@@ -280,6 +280,12 @@ namespace Giosue
 
             if (callee is IGiosueCallable callable)
             {
+                if (callable.Arity != arguments.Count)
+                {
+                    // It's impossible to that number of parameters with that function.
+                    throw new InterpreterException(InterpreterExceptionType.WrongNumberOfArgumentsPassedToFunction, $"È vietato usare quello numero di parametri con quello funzione.");
+                }
+
                 return callable.Call(this, arguments);
             }
             // It's impossible to use that object as a function.

@@ -11,6 +11,11 @@ namespace Giosue
     /// </summary>
     interface IGiosueCallable
     {
+        /// <summary>
+        /// The number of arguments the <see cref="IGiosueCallable"/> has.
+        /// </summary>
+        int Arity { get; }
+
         object Call(Interpreter interpreter, List<object> arguments);
     }
 }
