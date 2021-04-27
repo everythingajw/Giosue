@@ -390,6 +390,12 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitWhileStatement(Statements.While statement)
         {
+            if (statement.Condition == null)
+            {
+                // A boolean expression is expected after mentre.
+                throw new InterpreterException(InterpreterExceptionType.MentreWithoutCondition, "Un espressione booleana in atteso dopo mentre.");
+            }
+
             while (IsTruthy(EvaluateExpression(statement.Condition)))
             {
                 ExecuteStatement(statement.Body);
