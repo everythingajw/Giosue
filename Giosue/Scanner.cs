@@ -21,6 +21,7 @@ namespace Giosue
         private static readonly Dictionary<string, TokenType> Keywords = new()
         {
             { "var", TokenType.Var },
+            { "fun", TokenType.Fun },
             { "oppure", TokenType.Oppure },
             { "falso", TokenType.Falso },
             { "se", TokenType.Se },

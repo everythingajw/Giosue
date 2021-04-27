@@ -202,6 +202,11 @@ namespace Giosue
         Var,
 
         /// <summary>
+        /// The keyword <c>fun</c>.
+        /// </summary>
+        Fun,
+
+        /// <summary>
         /// The keyword <c>oppure</c>.
         /// </summary>
         /// <remarks>
