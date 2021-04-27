@@ -12,6 +12,7 @@ namespace Giosue.Exceptions
         Unknown = 1,
         MismatchedTypes = 2,
         MentreWithoutCondition = 3,
+        AttemptToCallNonCallableObject = 4
     }
 
     public class InterpreterException : GiosueException<InterpreterExceptionType>

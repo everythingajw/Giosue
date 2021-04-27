@@ -282,6 +282,8 @@ namespace Giosue
             {
                 return callable.Call(this, arguments);
             }
+            // It's impossible to use that object as a function.
+            throw new InterpreterException(InterpreterExceptionType.AttemptToCallNonCallableObject, "Non è possible usare quello oggeto come una funzione.");
         }
 
         object AST.IVisitor<object>.VisitGetExpression(AST.Get expression)
