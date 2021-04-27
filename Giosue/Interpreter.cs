@@ -10,13 +10,15 @@ namespace Giosue
 {
     public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
-        private Environment Environment = new();
+        internal readonly Environment Globals = new();
+        private Environment Environment;
 
         public Interpreter()
         {
-            Environment.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
-            Environment.DefineOrOverwrite(typeof(Print).Name, new Print());
-            Environment.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
+            Environment = Globals;
+            Globals.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
+            Globals.DefineOrOverwrite(typeof(Print).Name, new Print());
+            Globals.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
         }
 
         #region Interpreting and evaluating
@@ -429,7 +431,9 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitFunctionStatement(Statements.Function statement)
         {
-            throw new NotImplementedException();
+            var function = new GiosueFunction(statement);
+            Environment.DefineOrOverwrite(statement.Name.Lexeme, function);
+            return null;
         }
 
         #endregion Statement visitors
