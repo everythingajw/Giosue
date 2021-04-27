@@ -13,5 +13,6 @@ namespace Giosue.Statements
         public T VisitVarStatement(Var statement);
         public T VisitBlockStatement(Block statement);
         public T VisitIfStatement(If statement);
+        public T VisitWhileStatement(While statement);
     }
 }

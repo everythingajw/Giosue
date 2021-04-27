@@ -293,6 +293,15 @@ if generate_statement:
                 Field("Statements.Statement", "ElseBranch", "ElseBranch"),
             ]
         ),
+        SyntaxTree(
+            statement_namespace,
+            "While",
+            BASE_STATEMENT_CLASS_NAME,
+            [
+                Field("AST.Expression", "Condition", "condition"),
+                Field("Statements.Statement", "Body", "body"),
+            ]
+        ),
     ]
 
     statement_output_dir = Path(statement_output_dir)

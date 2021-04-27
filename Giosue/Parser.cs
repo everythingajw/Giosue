@@ -102,6 +102,21 @@ namespace Giosue
             return new Statements.If(condition, thenBranch, elseBranch);
         }
 
+        private Statement MentreStatement()
+        {
+            // A '(' was expected after 'mentre'.
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un '(' in atteso dopo 'mentre'.", out _);
+
+            var condition = Expression();
+            
+            // A ')' was expected after the condition.
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un ')' in atteso dopo il condizione.", out _);
+
+            var body = Statement();
+
+            return new Statements.While(condition, body);
+        }
+
         private Statement Declaration()
         {
             try

@@ -388,6 +388,11 @@ namespace Giosue
             return null;
         }
 
+        object Statements.IVisitor<object>.VisitWhileStatement(Statements.While statement)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Statement visitors
     }
 }
