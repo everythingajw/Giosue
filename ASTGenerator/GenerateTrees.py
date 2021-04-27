@@ -302,6 +302,16 @@ if generate_statement:
                 Field("Statements.Statement", "Body", "body"),
             ]
         ),
+        SyntaxTree(
+            statement_namespace,
+            "Function",
+            BASE_STATEMENT_CLASS_NAME,
+            [
+                Field("Token", "Name", "name"),
+                Field("List<Token>", "Parameters", "parameters"),
+                Field("List<Statement>", "Body", "body"),
+            ]
+        ),
     ]
 
     statement_output_dir = Path(statement_output_dir)

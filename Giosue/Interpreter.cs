@@ -427,6 +427,11 @@ namespace Giosue
             return null;
         }
 
+        object Statements.IVisitor<object>.VisitFunctionStatement(Statements.Function statement)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Statement visitors
     }
 }

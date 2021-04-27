@@ -14,5 +14,6 @@ namespace Giosue.Statements
         public T VisitBlockStatement(Block statement);
         public T VisitIfStatement(If statement);
         public T VisitWhileStatement(While statement);
+        public T VisitFunctionStatement(Function statement);
     }
 }
