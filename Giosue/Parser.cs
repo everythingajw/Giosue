@@ -444,7 +444,7 @@ namespace Giosue
 
             if (AdvanceIfMatches(out _, TokenType.Identifier))
             {
-                if (!PreviousToken(out var previous))
+                if (PreviousToken(out var previous))
                 {
                     return new AST.Variable(previous);
                 }
