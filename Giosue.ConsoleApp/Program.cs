@@ -144,6 +144,7 @@ namespace Giosue.ConsoleApp
                 var thisMethod = MethodBase.GetCurrentMethod();
                 ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: scanner exception");
                 ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}", $"Line: {e.Line}");
+                ErrorWriteLine($"Message: {e.Message}");
                 return e;
             }
         }
@@ -159,6 +160,7 @@ namespace Giosue.ConsoleApp
                 var thisMethod = MethodBase.GetCurrentMethod();
                 ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: parser exception");
                 ErrorWriteLine($"Type: {parseResult.ExceptionType}", $"Type code: {(int)parseResult.ExceptionType}");
+                ErrorWriteLine($"Message: {parseResult.Message}");
             }
 
             return parseResult;
