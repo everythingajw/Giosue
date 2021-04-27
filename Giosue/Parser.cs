@@ -337,6 +337,50 @@ namespace Giosue
         /// 
         /// </summary>
         /// <returns></returns>
+        private Expression Call()
+        {
+            var expression = Primary();
+
+            while (true)
+            {
+                if (AdvanceIfMatches(out _, TokenType.LeftParenthesis))
+                {
+                    expression = FinishCall(expression);
+                } 
+                else
+                {
+                    break;
+                }
+            }
+
+            return expression;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callee"></param>
+        /// <returns></returns>
+        private Expression FinishCall(Expression callee)
+        {
+            var arguments = new List<Expression>();
+            if (!CurrentTokenTypeEquals(TokenType.RightParenthesis))
+            {
+                do
+                {
+                    arguments.Add(Expression());
+                } while (AdvanceIfMatches(out _, TokenType.Comma));
+            }
+
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Un ')' in atteso dopo gli argomenti per una funzione.", out var consumed);
+
+            return new AST.Call(callee, consumed, arguments);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Expression Primary()
         {
             if (AdvanceIfMatches(out _, TokenType.Falso))

@@ -274,7 +274,14 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitCallExpression(AST.Call expression)
         {
-            throw new NotImplementedException();
+            var callee = EvaluateExpression(expression);
+
+            var arguments = expression.Arguments.Select(EvaluateExpression).ToList();
+
+            if (callee is IGiosueCallable callable)
+            {
+                return callable.Call(this, arguments);
+            }
         }
 
         object AST.IVisitor<object>.VisitGetExpression(AST.Get expression)
