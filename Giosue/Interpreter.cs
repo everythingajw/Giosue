@@ -390,7 +390,12 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitWhileStatement(Statements.While statement)
         {
-            throw new NotImplementedException();
+            while (IsTruthy(EvaluateExpression(statement.Condition)))
+            {
+                ExecuteStatement(statement.Body);
+            }
+
+            return null;
         }
 
         #endregion Statement visitors
