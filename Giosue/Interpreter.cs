@@ -19,9 +19,9 @@ namespace Giosue
             if (oldEnvironment == null)
             {
                 Environment = Globals;
-                Globals.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
-                Globals.DefineOrOverwrite(typeof(Print).Name, new Print());
-                Globals.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
+                Globals.DefineOrOverwrite(TimeMillis.Name, new TimeMillis());
+                Globals.DefineOrOverwrite(Print.Name, new Print());
+                Globals.DefineOrOverwrite(PrintLine.Name, new PrintLine());
             }
             else
             {
