@@ -46,8 +46,10 @@ namespace Giosue.ConsoleApp
                 ErrorWriteLine(e);
             }
 
+#if DEBUG
             Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+            Console.ReadKey(); 
+#endif
             return (int)returnCode;
         }
 
