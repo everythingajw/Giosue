@@ -8,8 +8,6 @@ namespace Giosue.ForeignFunctionInterface
 {
     class TimeMillis : GiosueCallable
     {
-        public const string Name = "TempoMillis";
-
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         
         public int Arity => 0;
