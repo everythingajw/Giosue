@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Giosue.ForeignFunctionInterface
+namespace Giosue.Builtins.ForeignFunctionInterface
 {
     class PrintLine : IGiosueCallable
     {
