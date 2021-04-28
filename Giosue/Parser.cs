@@ -323,7 +323,7 @@ namespace Giosue
         /// <returns></returns>
         private Expression Term()
         {
-            return BinaryExpression(Factor, TokenType.Minus, TokenType.Plus);
+            return BinaryExpression(Factor, TokenType.Minus, TokenType.Plus, TokenType.At);
         }
 
         /// <summary>
