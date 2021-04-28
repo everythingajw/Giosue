@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Giosue.Exceptions;
 using Giosue.ForeignFunctionInterface;
+using Giosue.Builtins.Casts;
+
+using CastToString = Giosue.Builtins.Casts.ToString;
 
 namespace Giosue
 {
@@ -22,6 +25,11 @@ namespace Giosue
                 Globals.DefineOrOverwrite(TimeMillis.Name, new TimeMillis());
                 Globals.DefineOrOverwrite(Print.Name, new Print());
                 Globals.DefineOrOverwrite(PrintLine.Name, new PrintLine());
+
+                Globals.DefineOrOverwrite(CastToString.Name, new CastToString());
+                Globals.DefineOrOverwrite(ToBool.Name, new ToBool());
+                Globals.DefineOrOverwrite(ToInt.Name, new ToInt()); 
+                Globals.DefineOrOverwrite(ToDouble.Name, new ToDouble());
             }
             else
             {
