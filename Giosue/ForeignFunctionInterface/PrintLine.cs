@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Giosue.ForeignFunctionInterface
 {
-    class PrintLine : GiosueCallable
+    class PrintLine : IGiosueCallable
     {
         public int Arity => 1;
 

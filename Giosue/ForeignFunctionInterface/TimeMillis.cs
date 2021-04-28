@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Giosue.ForeignFunctionInterface
 {
-    class TimeMillis : GiosueCallable
+    class TimeMillis : IGiosueCallable
     {
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         
