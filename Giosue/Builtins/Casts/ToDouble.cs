@@ -14,7 +14,7 @@ namespace Giosue.Builtins.Casts
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            throw new NotImplementedException();
+            return (double)arguments[0];
         }
     }
 }

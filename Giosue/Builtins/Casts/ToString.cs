@@ -10,11 +10,11 @@ namespace Giosue.Builtins.Casts
     {
         public const string Name = "TrasformaInStringa";
 
-        public int Arity => throw new NotImplementedException();
+        public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            throw new NotImplementedException();
+            return arguments[0].ToString();
         }
     }
 }

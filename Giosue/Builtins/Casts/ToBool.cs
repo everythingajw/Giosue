@@ -10,11 +10,11 @@ namespace Giosue.Builtins.Casts
     {
         public const string Name = "TrasformaInBool";
 
-        public int Arity => throw new NotImplementedException();
+        public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            throw new NotImplementedException();
+            return (bool)arguments[0];
         }
     }
 }
