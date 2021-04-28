@@ -55,11 +55,19 @@ namespace Giosue
 
         private void ExecuteStatement(Statements.Statement statement)
         {
+            if (statement == null)
+            {
+                throw new InterpreterException(InterpreterExceptionType.Unknown, "The given statement is null.");
+            }
             statement.Accept(this);
         }
 
         private object EvaluateExpression(AST.Expression expression)
         {
+            if (expression == null)
+            {
+                throw new InterpreterException(InterpreterExceptionType.Unknown, "The given expression is null.");
+            }
             return expression.Accept(this);
         }
 
@@ -99,16 +107,17 @@ namespace Giosue
 
         private static bool AreEqual(object a, object b)
         {
-            if (a == null)
-            {
-                if (b == null)
-                {
-                    return true;
-                }
-                return false;
-            }
+            //if (a == null)
+            //{
+            //    if (b == null)
+            //    {
+            //        return true;
+            //    }
+            //    return false;
+            //}
 
-            return a.Equals(b);
+            //return a.Equals(b);
+            return CompareObjects(a, b) == 0;
         }
 
         private static int? CompareObjects(object left, object right)
