@@ -8,7 +8,9 @@ namespace Giosue.Builtins.Casts
 {
     class ToDouble : IGiosueCallable
     {
-        public int Arity => throw new NotImplementedException();
+        public const string Name = "TrasformaInVirgola";
+
+        public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {

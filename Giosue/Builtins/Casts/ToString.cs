@@ -8,6 +8,8 @@ namespace Giosue.Builtins.Casts
 {
     class ToString : IGiosueCallable
     {
+        public const string Name = "TrasformaInStringa";
+
         public int Arity => throw new NotImplementedException();
 
         public object Call(Interpreter interpreter, List<object> arguments)
