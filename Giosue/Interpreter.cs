@@ -26,6 +26,7 @@ namespace Giosue
                 Globals.DefineOrOverwrite(TimeMillis.Name, new TimeMillis());
                 Globals.DefineOrOverwrite(Print.Name, new Print());
                 Globals.DefineOrOverwrite(PrintLine.Name, new PrintLine());
+                Globals.DefineOrOverwrite(GetTypeOf.Name, new GetTypeOf());
 
                 Globals.DefineOrOverwrite(CastToString.Name, new CastToString());
                 Globals.DefineOrOverwrite(ToBool.Name, new ToBool());
@@ -107,17 +108,16 @@ namespace Giosue
 
         private static bool AreEqual(object a, object b)
         {
-            //if (a == null)
-            //{
-            //    if (b == null)
-            //    {
-            //        return true;
-            //    }
-            //    return false;
-            //}
+            if (a == null)
+            {
+                if (b == null)
+                {
+                    return true;
+                }
+                return false;
+            }
 
-            //return a.Equals(b);
-            return CompareObjects(a, b) == 0;
+            return (a.GetType() == b.GetType()) && a.Equals(b);
         }
 
         private static int? CompareObjects(object left, object right)
@@ -267,9 +267,9 @@ namespace Giosue
                 (var t, BinaryOperandType.Integer) => t switch
                 {
                     // Regular math operations
-                    TokenType.Plus => leftInt + rightInt,
-                    TokenType.Minus => leftInt - rightInt,
-                    TokenType.Star => leftInt * rightInt,
+                    TokenType.Plus => (int)(leftInt + rightInt),
+                    TokenType.Minus => (int)(leftInt - rightInt),
+                    TokenType.Star => (int)(leftInt * rightInt),
                     TokenType.Slash => (double)((double)leftInt / (double)rightInt),
 
                     // Bitwise operations
