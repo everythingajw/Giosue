@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Giosue.Builtins.Casts
 {
-    class ToDouble
+    class ToDouble : IGiosueCallable
     {
+        public int Arity => throw new NotImplementedException();
+
+        public object Call(Interpreter interpreter, List<object> arguments)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
