@@ -91,7 +91,6 @@ namespace SourceManager
 
             // If the total contents of the base stream fits into the buffer, then
             // initialize the buffer end index to the end of the content.
-            Console.WriteLine(reader.BaseStream.Length);
             if (reader.BaseStream.Length < BufferLength)
             {
                 // Account for zero-indexing
