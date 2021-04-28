@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Giosue
 {
-    class GiosueFunction : IGiosueCallable
+    class GiosueFunction : GiosueCallable
     {
         private readonly Statements.Function Declaration;
 

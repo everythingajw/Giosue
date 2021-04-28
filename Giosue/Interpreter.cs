@@ -296,7 +296,7 @@ namespace Giosue
 
             var arguments = expression.Arguments.Select(EvaluateExpression).ToList();
 
-            if (callee is IGiosueCallable callable)
+            if (callee is GiosueCallable callable)
             {
                 if (callable.Arity != arguments.Count)
                 {

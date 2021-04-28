@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Giosue.ForeignFunctionInterface
 {
-    class TimeMillis : IGiosueCallable
+    class TimeMillis : GiosueCallable
     {
         public const string Name = "TempoMillis";
 

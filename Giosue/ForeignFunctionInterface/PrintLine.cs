@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Giosue.ForeignFunctionInterface
 {
-    class PrintLine : IGiosueCallable
+    class PrintLine : GiosueCallable
     {
         public const string Name = "ScriveLina";
 
