@@ -11,14 +11,22 @@ namespace Giosue
     public class Interpreter : AST.IVisitor<object>, Statements.IVisitor<object>
     {
         internal readonly Environment Globals = new();
-        private Environment Environment;
+        public Environment Environment;
 
-        public Interpreter()
+        public Interpreter(Environment oldEnvironment = null)
         {
-            Environment = Globals;
-            Globals.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
-            Globals.DefineOrOverwrite(typeof(Print).Name, new Print());
-            Globals.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
+            // If no old environment is given, add globals.
+            if (oldEnvironment == null)
+            {
+                Environment = Globals;
+                Globals.DefineOrOverwrite(typeof(TimeMillis).Name, new TimeMillis());
+                Globals.DefineOrOverwrite(typeof(Print).Name, new Print());
+                Globals.DefineOrOverwrite(typeof(PrintLine).Name, new PrintLine());
+            }
+            else
+            {
+                Environment = new Environment(oldEnvironment);
+            }
         }
 
         #region Interpreting and evaluating
@@ -40,7 +48,7 @@ namespace Giosue
         {
             statement.Accept(this);
         }
-        
+
         private object EvaluateExpression(AST.Expression expression)
         {
             return expression.Accept(this);
@@ -262,7 +270,7 @@ namespace Giosue
 
                     TokenType.And
                     | TokenType.Pipe
-                    | TokenType.Caret => 
+                    | TokenType.Caret =>
                     // Invalid data types: only Int32 can be used with bitwise operations
                     throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Solamente {nameof(Int32)} può essere usato con i operatori bitwise"),
 
@@ -321,7 +329,7 @@ namespace Giosue
         {
             object left = EvaluateExpression(expression.Left);
             object right = EvaluateExpression(expression.Right);
-            
+
             if (left is bool l)
             {
                 if (right is bool r)

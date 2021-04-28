@@ -16,6 +16,8 @@ namespace Giosue.ConsoleApp
         const int MaxStringifiedTokenLength = 50;
         static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\BasicCode.gsu");
 
+        private static Environment OldEnvironment;
+
         // TODO: Clean up return codes
 
         static int Main(string[] args)
@@ -95,7 +97,7 @@ namespace Giosue.ConsoleApp
             return RunCodeFromSource(source);
         }
 
-        private static GiosueExceptionCategory RunString(string s)
+        private static GiosueExceptionCategory RunString(string s, Environment environment = null)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -120,8 +122,15 @@ namespace Giosue.ConsoleApp
                 return parseResult.Category;
             }
 
-            var interpreter = new Interpreter();
+            if (statements == null)
+            {
+                ErrorWriteLine("Statements null");
+                return GiosueExceptionCategory.Parser;
+            }
+
+            var interpreter = new Interpreter(OldEnvironment);
             interpreter.Interpret(statements);
+            OldEnvironment = interpreter.Environment;
 
             return GiosueExceptionCategory.AllOK;
         }
