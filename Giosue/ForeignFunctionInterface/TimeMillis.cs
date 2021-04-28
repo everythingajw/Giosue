@@ -21,7 +21,7 @@ namespace Giosue.ForeignFunctionInterface
         {
             unchecked
             {
-                return (int)(DateTime.Now - UnixEpoch).TotalMilliseconds;
+                return (double)(DateTime.Now - UnixEpoch).TotalMilliseconds;
             }
         }
     }
