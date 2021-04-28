@@ -18,6 +18,15 @@ namespace Giosue
     public class Parser
     {
         /// <summary>
+        /// Signals that a synchronization must take place.
+        /// </summary>
+        private class SynchronizeSignal : Exception
+        {
+            public SynchronizeSignal() : base() { }
+            public SynchronizeSignal(string message) : base(message) { }
+        }
+
+        /// <summary>
         /// The <see cref="Token"/>s to be parsed.
         /// </summary>
         private List<Token> Tokens { get; }
@@ -72,7 +81,7 @@ namespace Giosue
         {
             var statements = new List<Statement>();
 
-            while (!AdvanceIfMatches(out _, TokenType.RightBrace))
+            while (!CurrentTokenTypeEquals(TokenType.RightBrace))
             {
                 statements.Add(Declaration());
             }
@@ -125,9 +134,10 @@ namespace Giosue
                 }
                 return Statement();
             }
-            catch (ParserException)
+            catch (SynchronizeSignal s)
             {
                 Synchronize();
+                Console.Error.WriteLine(s.Message);
                 return null;
             }
         }
@@ -460,7 +470,9 @@ namespace Giosue
         {
             // The book handles exceptions differently than I do.\
             // TODO: Figure this out
-            return new ParserException(ParserExceptionType.Unknown, token, "Invalid token");
+            return new ParserException(ParserExceptionType.Unknown, token, message);
+
+            //return new SynchronizeSignal(message);
         }
 
         /// <summary>

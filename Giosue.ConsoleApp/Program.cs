@@ -129,10 +129,33 @@ namespace Giosue.ConsoleApp
             }
 
             var interpreter = new Interpreter(OldEnvironment);
-            interpreter.Interpret(statements);
-            OldEnvironment = interpreter.Environment;
 
-            return GiosueExceptionCategory.AllOK;
+            try
+            {
+                interpreter.Interpret(statements);
+
+                return GiosueExceptionCategory.AllOK;
+            }
+            catch (InterpreterException e)
+            {
+                var thisMethod = MethodBase.GetCurrentMethod();
+                ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: interperter exception");
+                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
+                ErrorWriteLine($"Message: {e.Message}");
+                return e.Category;
+            }
+            catch (EnvironmentException e)
+            {
+                var thisMethod = MethodBase.GetCurrentMethod();
+                ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: environment exception");
+                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
+                ErrorWriteLine($"Message: {e.Message}");
+                return e.Category;
+            }
+            finally
+            {
+                OldEnvironment = interpreter.Environment;
+            }
         }
 
         private static ScannerException ScanCode(Source s, out List<Token> scannedTokens)
