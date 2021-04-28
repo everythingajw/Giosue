@@ -108,12 +108,12 @@ namespace Giosue
         private Statement MentreStatement()
         {
             // A '(' was expected after 'mentre'.
-            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un '(' in atteso dopo 'mentre'.", out _);
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.LeftParenthesis, "Un '(' in atteso dopo 'mentre'.", out _);
 
             var condition = Expression();
 
             // A ')' was expected after the condition.
-            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un ')' in atteso dopo il condizione.", out _);
+            AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Un ')' in atteso dopo il condizione.", out _);
 
             var body = Statement();
 
@@ -158,6 +158,14 @@ namespace Giosue
 
         private Statement Statement()
         {
+            if (AdvanceIfMatches(out _, TokenType.Se))
+            {
+                return IfStatement();
+            }
+            if (AdvanceIfMatches(out _, TokenType.Mentre))
+            {
+                return MentreStatement();
+            }
             return ExpressionStatement();
         }
 

@@ -179,7 +179,8 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitAssignExpression(AST.Assign expression)
         {
-            throw new NotImplementedException();
+            Environment.AssignIfExists(expression.Name.Lexeme, expression.Value);
+            return null;
         }
 
         object AST.IVisitor<object>.VisitBinaryExpression(AST.Binary expression)
@@ -194,7 +195,7 @@ namespace Giosue
                 case TokenType.Less: return CompareNumbers(left, right) < 0;
                 case TokenType.LessEqual: return CompareNumbers(left, right) <= 0;
                 case TokenType.BangEqual: return !AreEqual(left, right);
-                case TokenType.Equal: return AreEqual(left, right);
+                case TokenType.EqualEqual: return AreEqual(left, right);
                 default: break;
             }
 
@@ -338,6 +339,17 @@ namespace Giosue
         {
             object left = EvaluateExpression(expression.Left);
             object right = EvaluateExpression(expression.Right);
+            
+            switch (expression.Operator.Type)
+            {
+                case TokenType.Greater: return CompareNumbers(left, right) > 0;
+                case TokenType.GreaterEqual: return CompareNumbers(left, right) >= 0;
+                case TokenType.Less: return CompareNumbers(left, right) < 0;
+                case TokenType.LessEqual: return CompareNumbers(left, right) <= 0;
+                case TokenType.BangEqual: return !AreEqual(left, right);
+                case TokenType.Equal: return AreEqual(left, right);
+                default: break;
+            }
 
             if (left is bool l)
             {
@@ -349,7 +361,7 @@ namespace Giosue
                         TokenType.PipePipe => l || r,
 
                         // xor is the same as !=
-                        TokenType.Caret => l != r,
+                        TokenType.CaretCaret => l != r,
 
                         _ => throw new NotImplementedException()
                     };
