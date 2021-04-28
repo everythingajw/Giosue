@@ -161,6 +161,7 @@ namespace Giosue.ConsoleApp
                 ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: parser exception");
                 ErrorWriteLine($"Type: {parseResult.ExceptionType}", $"Type code: {(int)parseResult.ExceptionType}");
                 ErrorWriteLine($"Message: {parseResult.Message}");
+                ErrorWriteLine($"Erroneous token: {parseResult.ErroneousToken}");
             }
 
             return parseResult;

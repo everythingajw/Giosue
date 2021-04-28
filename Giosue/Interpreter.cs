@@ -284,7 +284,7 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitCallExpression(AST.Call expression)
         {
-            var callee = EvaluateExpression(expression);
+            var callee = EvaluateExpression(expression.Callee);
 
             var arguments = expression.Arguments.Select(EvaluateExpression).ToList();
 
@@ -375,7 +375,7 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitVariableExpression(AST.Variable expression)
         {
-            throw new NotImplementedException();
+            return Environment.GetValue(expression.Name.Lexeme);
         }
 
         #endregion AST visitors

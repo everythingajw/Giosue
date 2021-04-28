@@ -358,30 +358,7 @@ namespace Giosue
                 }
             }
 
-            return Primary();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private Expression Call()
-        {
-            var expression = Primary();
-
-            while (true)
-            {
-                if (AdvanceIfMatches(out _, TokenType.LeftParenthesis))
-                {
-                    expression = FinishCall(expression);
-                } 
-                else
-                {
-                    break;
-                }
-            }
-
-            return expression;
+            return Call();
         }
 
         /// <summary>
@@ -403,6 +380,22 @@ namespace Giosue
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Un ')' in atteso dopo gli argomenti per una funzione.", out var consumed);
 
             return new AST.Call(callee, consumed, arguments);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Expression Call()
+        {
+            var expression = Primary();
+
+            while (AdvanceIfMatches(out _, TokenType.LeftParenthesis))
+            {
+                expression = FinishCall(expression);
+            }
+
+            return expression;
         }
 
         /// <summary>
