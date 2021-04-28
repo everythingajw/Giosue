@@ -8,6 +8,8 @@ namespace Giosue.ForeignFunctionInterface
 {
     class PrintLine : IGiosueCallable
     {
+        public const string Name = "ScriveLina";
+
         public int Arity => 1;
 
         public PrintLine()
