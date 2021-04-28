@@ -50,28 +50,22 @@ namespace Giosue
         public ParserException Parse(out List<Statement> statements)
         {
             statements = new List<Statement>();
-            try
+
+            // No tokens means nothing to do.
+            if (Tokens.Count <= 0)
             {
-                // No tokens means nothing to do.
-                if (Tokens.Count <= 0)
-                {
-                    return null;
-                }
-                // If there's only one EOF token, there's also nothing to do.
-                if (Tokens.Count == 1 && Tokens[0].Type == TokenType.EOF)
-                {
-                    return null;
-                }
-                while (!IsAtEnd)
-                {
-                    statements.Add(Statement());
-                }
                 return null;
             }
-            catch (ParserException e)
+            // If there's only one EOF token, there's also nothing to do.
+            if (Tokens.Count == 1 && Tokens[0].Type == TokenType.EOF)
             {
-                return e;
+                return null;
             }
+            while (!IsAtEnd)
+            {
+                statements.Add(Declaration());
+            }
+            return null;
         }
 
         private List<Statement> Block()
@@ -108,7 +102,7 @@ namespace Giosue
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un '(' in atteso dopo 'mentre'.", out _);
 
             var condition = Expression();
-            
+
             // A ')' was expected after the condition.
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Mentre, "Un ')' in atteso dopo il condizione.", out _);
 
@@ -121,7 +115,11 @@ namespace Giosue
         {
             try
             {
-                if (AdvanceIfMatches(out _, TokenType.Var))
+                if (AdvanceIfMatches(out var consumed, TokenType.Fun))
+                {
+                    return FunctionDeclaration();
+                }
+                if (AdvanceIfMatches(out consumed, TokenType.Var))
                 {
                     return VariableDeclaration();
                 }
@@ -139,7 +137,7 @@ namespace Giosue
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Expected variable name.", out var variableNameToken);
 
             AST.Expression initializer = null;
-            if (AdvanceIfMatches(out _, TokenType.Integer))
+            if (AdvanceIfMatches(out _, TokenType.Equal))
             {
                 initializer = Expression();
             }
@@ -164,7 +162,7 @@ namespace Giosue
         /// Parse a function definition.
         /// </summary>
         /// <returns></returns>
-        private Statements.Function Function()
+        private Statements.Function FunctionDeclaration()
         {
             // A name of a function was expected.
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.Identifier, "Un nome di una funzione in atteso.", out var name);
@@ -298,7 +296,7 @@ namespace Giosue
         {
             return LogicalExpression(And, TokenType.PipePipe);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -417,15 +415,9 @@ namespace Giosue
                 return new Literal(null);
             }
 
-            if (AdvanceIfMatches(out _, TokenType.Integer, TokenType.Float, TokenType.String))
+            if (AdvanceIfMatches(out var consumed, TokenType.Integer, TokenType.Float, TokenType.String))
             {
-                if (PreviousToken(out var previous))
-                {
-                    return new Literal(previous.Literal);
-                }
-
-                // TODO: What should happen here? Exception?
-                return null;
+                return new Literal(consumed.Literal);
             }
 
             if (AdvanceIfMatches(out _, TokenType.LeftParenthesis))
@@ -441,7 +433,7 @@ namespace Giosue
                 {
                     return new AST.Variable(previous);
                 }
-                
+
                 // Could not get previous token for variable declaration.
                 throw new ParserException(ParserExceptionType.Unknown, null, "Prendere il token prima per la creazione di una variabile era impossible");
             }
@@ -450,9 +442,10 @@ namespace Giosue
             {
                 current = null;
             }
-            
+
             // Expected expression.
-            throw ParseException(current, "Una espressione era previsto.");
+            //throw ParseException(current, "Una espressione era previsto.");
+            return null;
         }
 
         #endregion Binary and logical expressions
@@ -494,6 +487,8 @@ namespace Giosue
                         case TokenType.Se:
                         case TokenType.Oppure:
                         case TokenType.Mentre:
+                        case TokenType.Var:
+                        case TokenType.Fun:
                             return;
                     }
                 }

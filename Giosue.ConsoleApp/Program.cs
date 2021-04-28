@@ -153,18 +153,19 @@ namespace Giosue.ConsoleApp
         {
             statements = default;
             var parser = new Parser(code);
-            var parseResult = parser.Parse(out statements);
-
-            if (parseResult != null)
+            try
+            {
+                return parser.Parse(out statements);
+            }
+            catch (ParserException e)
             {
                 var thisMethod = MethodBase.GetCurrentMethod();
                 ErrorWriteLine($"{thisMethod.DeclaringType.FullName}.{thisMethod.Name} :: parser exception");
-                ErrorWriteLine($"Type: {parseResult.ExceptionType}", $"Type code: {(int)parseResult.ExceptionType}");
-                ErrorWriteLine($"Message: {parseResult.Message}");
-                ErrorWriteLine($"Erroneous token: {parseResult.ErroneousToken}");
+                ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
+                ErrorWriteLine($"Message: {e.Message}");
+                ErrorWriteLine($"Erroneous token: {e.ErroneousToken}");
+                return e;
             }
-
-            return parseResult;
         }
 
         /// <summary>
