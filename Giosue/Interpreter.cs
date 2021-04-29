@@ -435,7 +435,8 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitBlockStatement(Statements.Block statement)
         {
-            throw new NotImplementedException();
+            ExecuteBlock(statement.Statements, new Environment(Environment));
+            return null;
         }
 
         object Statements.IVisitor<object>.VisitIfStatement(Statements.If statement)

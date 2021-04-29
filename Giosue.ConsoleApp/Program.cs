@@ -14,7 +14,7 @@ namespace Giosue.ConsoleApp
     class Program
     {
         const int MaxStringifiedTokenLength = 50;
-        static readonly string TestCodePath = Path.GetFullPath(@"..\..\..\..\TestCode\BasicCode.gsu");
+        static readonly string TestCodePath = Path.GetFullPath(@"D:\AJ\code\Giosue\Giosue\Giosue.ConsoleApp\bin\Release\net5.0\test.gsu");
 
         private static Environment OldEnvironment;
 
@@ -23,35 +23,36 @@ namespace Giosue.ConsoleApp
         static int Main(string[] args)
         {
             var returnCode = GiosueExceptionCategory.AllOK;
-//            var src = @"
-//ScriveLina(1 + 1 == 2);
-//ScriveLina(1 + 1 == 2.0);
-//ScriveLina(1 - 1 == 0);
-//ScriveLina(1 - 1 == 0.0);
-//ScriveLina(1 > 2);
-//ScriveLina(1 < 2);
-//ScriveLina(1 + 3 > 2);
-//ScriveLina(1 + 3 < 2);
-//ScriveLina(TipoDiDato(1+1));
-//ScriveLina(TipoDiDato(1));
-//ScriveLina(TipoDiDato(2));";
+            //            var src = @"
+            //ScriveLina(1 + 1 == 2);
+            //ScriveLina(1 + 1 == 2.0);
+            //ScriveLina(1 - 1 == 0);
+            //ScriveLina(1 - 1 == 0.0);
+            //ScriveLina(1 > 2);
+            //ScriveLina(1 < 2);
+            //ScriveLina(1 + 3 > 2);
+            //ScriveLina(1 + 3 < 2);
+            //ScriveLina(TipoDiDato(1+1));
+            //ScriveLina(TipoDiDato(1));
+            //ScriveLina(TipoDiDato(2));";
             try
             {
-                if (args.Length == 0)
-                {
-                    returnCode = RunREPL();
-                }
-                else if (args.Length == 1)
-                {
-                    returnCode = RunFile(args[0]);
-                }
-                else
-                {
-                    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
-                    returnCode = GiosueExceptionCategory.Unknown;
-                }
+                //if (args.Length == 0)
+                //{
+                //    returnCode = RunREPL();
+                //}
+                //else if (args.Length == 1)
+                //{
+                //returnCode = RunFile(args[0]);
+                //}
+                //else
+                //{
+                //    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
+                //    returnCode = GiosueExceptionCategory.Unknown;
+                //}
                 //Console.WriteLine(src);
                 //RunString(src);
+                RunFile(TestCodePath);
             }
             catch (Exception e)
             {
@@ -62,7 +63,7 @@ namespace Giosue.ConsoleApp
 
 #if DEBUG
             Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey(); 
+            Console.ReadKey();
 #endif
             return (int)returnCode;
         }
