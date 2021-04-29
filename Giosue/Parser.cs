@@ -56,25 +56,33 @@ namespace Giosue
         /// 
         /// </summary>
         /// <returns></returns>
-        public ParserException Parse(out List<Statement> statements)
+        public bool TryParse(out List<Statement> statements, out ParserException exception)
         {
+            // TODO: Wrap this in a try block to prevent any possible errors.
+
+            var success = true;
             statements = new List<Statement>();
+            exception = default;
 
             // No tokens means nothing to do.
             if (Tokens.Count <= 0)
             {
-                return null;
+                return success;
             }
             // If there's only one EOF token, there's also nothing to do.
             if (Tokens.Count == 1 && Tokens[0].Type == TokenType.EOF)
             {
-                return null;
+                return success;
             }
             while (!IsAtEnd)
             {
-                statements.Add(Declaration());
+                if (!TryDeclaration(out var parsedStatement))
+                {
+                    return false;
+                }
+                statements.Add(parsedStatement);
             }
-            return null;
+            return true;
         }
 
         private List<Statement> Block()
@@ -83,7 +91,8 @@ namespace Giosue
 
             while (!CurrentTokenTypeEquals(TokenType.RightBrace))
             {
-                statements.Add(Declaration());
+                TryDeclaration(out var statement);
+                statements.Add(statement);
             }
 
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightBrace, "Expected '}' after block.", out _);
@@ -120,25 +129,30 @@ namespace Giosue
             return new Statements.While(condition, body);
         }
 
-        private Statement Declaration()
+        private bool TryDeclaration(out Statement statement)
         {
+            statement = default;
             try
             {
                 if (AdvanceIfMatches(out var consumed, TokenType.Fun))
                 {
-                    return FunctionDeclaration();
+                    statement = FunctionDeclaration();
                 }
-                if (AdvanceIfMatches(out consumed, TokenType.Var))
+                else if (AdvanceIfMatches(out consumed, TokenType.Var))
                 {
-                    return VariableDeclaration();
+                    statement = VariableDeclaration();
                 }
-                return Statement();
+                else
+                {
+                    statement = Statement();
+                }
+                return true;
             }
             catch (SynchronizeSignal s)
             {
                 Synchronize();
                 Console.Error.WriteLine(s.Message);
-                return null;
+                return false;
             }
         }
 
@@ -158,15 +172,19 @@ namespace Giosue
 
         private Statement Statement()
         {
-            if (AdvanceIfMatches(out _, TokenType.Se))
+            if (AdvanceIfMatches(out var t, TokenType.Se))
             {
+                Console.WriteLine(t);
                 return IfStatement();
             }
-            if (AdvanceIfMatches(out _, TokenType.Mentre))
+            else if (AdvanceIfMatches(out _, TokenType.Mentre))
             {
                 return MentreStatement();
             }
-            return ExpressionStatement();
+            else
+            {
+                return ExpressionStatement();
+            }
         }
 
         private Statement ExpressionStatement()

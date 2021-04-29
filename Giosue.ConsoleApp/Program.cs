@@ -23,35 +23,35 @@ namespace Giosue.ConsoleApp
         static int Main(string[] args)
         {
             var returnCode = GiosueExceptionCategory.AllOK;
-            var src = @"
-ScriveLina(1 + 1 == 2);
-ScriveLina(1 + 1 == 2.0);
-ScriveLina(1 - 1 == 0);
-ScriveLina(1 - 1 == 0.0);
-ScriveLina(1 > 2);
-ScriveLina(1 < 2);
---ScriveLina(1 + 3 > 2.0);
---ScriveLina(1 + 3 < 2.0);
-ScriveLina(TipoDiDato(1+1));
-ScriveLina(TipoDiDato(1));
-ScriveLina(TipoDiDato(2));";
+//            var src = @"
+//ScriveLina(1 + 1 == 2);
+//ScriveLina(1 + 1 == 2.0);
+//ScriveLina(1 - 1 == 0);
+//ScriveLina(1 - 1 == 0.0);
+//ScriveLina(1 > 2);
+//ScriveLina(1 < 2);
+//ScriveLina(1 + 3 > 2);
+//ScriveLina(1 + 3 < 2);
+//ScriveLina(TipoDiDato(1+1));
+//ScriveLina(TipoDiDato(1));
+//ScriveLina(TipoDiDato(2));";
             try
             {
-                //if (args.Length == 0)
-                //{
-                //    returnCode = RunREPL();
-                //}
-                //else if (args.Length == 1)
-                //{
-                //    returnCode = RunFile(args[0]);
-                //}
-                //else
-                //{
-                //    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
-                //    returnCode = GiosueExceptionCategory.Unknown;
-                //}
-                Console.WriteLine(src);
-                RunString(src);
+                if (args.Length == 0)
+                {
+                    returnCode = RunREPL();
+                }
+                else if (args.Length == 1)
+                {
+                    returnCode = RunFile(args[0]);
+                }
+                else
+                {
+                    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
+                    returnCode = GiosueExceptionCategory.Unknown;
+                }
+                //Console.WriteLine(src);
+                //RunString(src);
             }
             catch (Exception e)
             {
@@ -132,16 +132,10 @@ ScriveLina(TipoDiDato(2));";
                 return scanResult.Category;
             }
 
-            var parseResult = ParseCode(scannedTokens, out var statements);
-            if (parseResult != null)
+            var successfullyParsed = ParseCode(scannedTokens, out var statements, out var parserException);
+            if (!successfullyParsed)
             {
-                return parseResult.Category;
-            }
-
-            if (statements == null)
-            {
-                ErrorWriteLine("Statements null");
-                return GiosueExceptionCategory.Parser;
+                return parserException.Category;
             }
 
             var interpreter = new Interpreter(OldEnvironment);
@@ -197,13 +191,15 @@ ScriveLina(TipoDiDato(2));";
             }
         }
 
-        private static ParserException ParseCode(List<Token> code, out List<Statements.Statement> statements)
+        private static bool ParseCode(List<Token> code, out List<Statements.Statement> statements, out ParserException exception)
         {
             statements = default;
+            exception = default;
+
             var parser = new Parser(code);
             try
             {
-                return parser.Parse(out statements);
+                return parser.TryParse(out statements, out exception);
             }
             catch (ParserException e)
             {
@@ -212,7 +208,8 @@ ScriveLina(TipoDiDato(2));";
                 ErrorWriteLine($"Type: {e.ExceptionType}", $"Type code: {(int)e.ExceptionType}");
                 ErrorWriteLine($"Message: {e.Message}");
                 ErrorWriteLine($"Erroneous token: {e.ErroneousToken}");
-                return e;
+                exception = e;
+                return false;
             }
         }
 
