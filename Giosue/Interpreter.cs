@@ -209,17 +209,19 @@ namespace Giosue
             }
 
             var numericType = BinaryOperandType.None;
-            int leftInt = 0;
-            int rightInt = 0;
-            double leftDouble = 0;
-            double rightDouble = 0;
+            int leftInt = default;
+            int rightInt = default;
+            double leftDouble = default;
+            double rightDouble = default;
             string leftString = null;
             string rightString = null;
 
             if (left is int i1)
             {
+                Console.WriteLine("li");
                 if (right is int i2)
                 {
+                    Console.WriteLine("ri");
                     numericType = BinaryOperandType.Integer;
                     leftInt = i1;
                     rightInt = i2;
@@ -231,8 +233,10 @@ namespace Giosue
             }
             else if (left is double d1)
             {
+                Console.WriteLine("ld");
                 if (right is double d2)
                 {
+                    Console.WriteLine("rd");
                     numericType = BinaryOperandType.Double;
                     leftDouble = d1;
                     rightDouble = d2;
@@ -244,8 +248,10 @@ namespace Giosue
             }
             else if (left is string s1)
             {
+                Console.WriteLine("ls");
                 if (right is string s2)
                 {
+                    Console.WriteLine("rs");
                     numericType = BinaryOperandType.String;
                     leftString = s1;
                     rightString = s2;
@@ -260,6 +266,7 @@ namespace Giosue
             {
                 throw new MismatchedTypeException(new List<Type>() { typeof(int), typeof(double), typeof(string) }, left.GetType());
             }
+
 
             return (expression.Operator.Type, numericType) switch
             {

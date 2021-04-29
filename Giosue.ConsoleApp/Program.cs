@@ -23,21 +23,24 @@ namespace Giosue.ConsoleApp
         static int Main(string[] args)
         {
             var returnCode = GiosueExceptionCategory.AllOK;
+            var src = @"ScriveLina(1+1==2);ScriveLina(1+1==2.0);ScriveLina(TipoDiDato(1+1));ScriveLina(TipoDiDato(1));ScriveLina(TipoDiDato(2));";
             try
             {
-                if (args.Length == 0)
-                {
-                    returnCode = RunREPL();
-                }
-                else if (args.Length == 1)
-                {
-                    returnCode = RunFile(args[0]);
-                }
-                else
-                {
-                    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
-                    returnCode = GiosueExceptionCategory.Unknown;
-                }
+                //if (args.Length == 0)
+                //{
+                //    returnCode = RunREPL();
+                //}
+                //else if (args.Length == 1)
+                //{
+                //    returnCode = RunFile(args[0]);
+                //}
+                //else
+                //{
+                //    ErrorWriteLine("Usage: giosue.exe [path-to-file]");
+                //    returnCode = GiosueExceptionCategory.Unknown;
+                //}
+                Console.WriteLine(src);
+                RunString(src);
             }
             catch (Exception e)
             {
