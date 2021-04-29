@@ -78,6 +78,7 @@ namespace Giosue
 
             try
             {
+                Environment = environment;
                 statements.ForEach(ExecuteStatement);
             }
             finally
@@ -188,7 +189,8 @@ namespace Giosue
 
         object AST.IVisitor<object>.VisitAssignExpression(AST.Assign expression)
         {
-            Environment.AssignIfExists(expression.Name.Lexeme, expression.Value);
+            var value = EvaluateExpression(expression.Value);
+            Environment.AssignIfExists(expression.Name.Lexeme, value);
             return null;
         }
 

@@ -81,7 +81,9 @@ namespace Giosue
                 return false;
             }
 
-            Variables.Add(name, value);
+            
+
+            Variables[name] = value;
             return true;
         }
 
@@ -174,6 +176,28 @@ namespace Giosue
 
             // Types didn't match or variable doesn't exist anywhere.
             return false;
+        }
+
+        private void PrintEnvironment(Environment environment)
+        {
+            if (environment == null)
+            {
+                return;
+            }
+
+            Console.WriteLine("Environment:");
+            foreach (var pair in Variables) 
+            {
+                Console.WriteLine($"  Name: {pair.Key}");
+                Console.WriteLine($"  Value: {pair.Value}");
+            }
+
+            PrintEnvironment(environment.ParentEnvironment);
+        }
+
+        public void PrintEnvironment()
+        {
+            PrintEnvironment(this);
         }
 
     }
