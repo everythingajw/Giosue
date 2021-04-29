@@ -470,7 +470,7 @@ namespace Giosue
 
         object Statements.IVisitor<object>.VisitFunctionStatement(Statements.Function statement)
         {
-            var function = new GiosueFunction(statement);
+            var function = new GiosueFunction(statement, Environment);
             Environment.DefineOrOverwrite(statement.Name.Lexeme, function);
             return null;
         }

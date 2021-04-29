@@ -9,17 +9,19 @@ namespace Giosue
     class GiosueFunction : IGiosueCallable
     {
         private readonly Statements.Function Declaration;
+        private readonly Environment Closure;
 
         public int Arity => Declaration.Parameters.Count;
 
-        public GiosueFunction(Statements.Function declaration)
+        public GiosueFunction(Statements.Function declaration, Environment closure)
         {
             Declaration = declaration;
+            Closure = closure;
         }
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            var environment = new Environment(interpreter.Globals);
+            var environment = new Environment(Closure);
             for (int i = 0; i < arguments.Count; i++)
             {
                 environment.DefineOrOverwrite(Declaration.Parameters[i].Lexeme, arguments[i]);

@@ -104,8 +104,6 @@ namespace Giosue
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.LeftParenthesis, "Expected '(' after 'if'.", out _);
             var condition = Expression();
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Expected ')' after 'if'.", out _);
-            Peek(out var c);
-            Console.WriteLine(c);
             var thenBranch = Statement();
             Statement elseBranch = default;
             if (AdvanceIfMatches(out _, TokenType.Oppure))
@@ -413,7 +411,6 @@ namespace Giosue
             }
 
             AdvanceIfMatchesOrCrashIfNotMatches(TokenType.RightParenthesis, "Un ')' in atteso dopo gli argomenti per una funzione.", out var consumed);
-            Console.WriteLine(consumed);
             return new AST.Call(callee, consumed, arguments);
         }
 
