@@ -218,10 +218,8 @@ namespace Giosue
 
             if (left is int i1)
             {
-                Console.WriteLine("li");
                 if (right is int i2)
                 {
-                    Console.WriteLine("ri");
                     numericType = BinaryOperandType.Integer;
                     leftInt = i1;
                     rightInt = i2;
@@ -233,10 +231,8 @@ namespace Giosue
             }
             else if (left is double d1)
             {
-                Console.WriteLine("ld");
                 if (right is double d2)
                 {
-                    Console.WriteLine("rd");
                     numericType = BinaryOperandType.Double;
                     leftDouble = d1;
                     rightDouble = d2;
@@ -248,10 +244,8 @@ namespace Giosue
             }
             else if (left is string s1)
             {
-                Console.WriteLine("ls");
                 if (right is string s2)
                 {
-                    Console.WriteLine("rs");
                     numericType = BinaryOperandType.String;
                     leftString = s1;
                     rightString = s2;
@@ -268,50 +262,49 @@ namespace Giosue
             }
 
 
-            return (expression.Operator.Type, numericType) switch
+            //! WARNING !//
+            //! DO NOT USE A SWITCH EXPRESSION HERE !//
+            // Using a switch expression instead of a switch statement causes integer
+            // addition to result in floating point numbers.
+            switch (expression.Operator.Type, numericType)
             {
-                (_, BinaryOperandType.None) => throw new NotImplementedException(),
-                (var t, BinaryOperandType.Integer) => t switch
-                {
-                    // Regular math operations
-                    TokenType.Plus => (int)(leftInt + rightInt),
-                    TokenType.Minus => (int)(leftInt - rightInt),
-                    TokenType.Star => (int)(leftInt * rightInt),
-                    TokenType.Slash => (double)((double)leftInt / (double)rightInt),
+                case (_, BinaryOperandType.None): throw new NotImplementedException();
+                case (var t, BinaryOperandType.Integer):
+                    switch (t)
+                    {
+                        case TokenType.Plus: return leftInt + rightInt;
+                        case TokenType.Minus: return leftInt - rightInt;
+                        case TokenType.Star: return leftInt * rightInt;
+                        case TokenType.Slash: return (double)((double)leftInt / (double)rightInt);
 
-                    // Bitwise operations
-                    TokenType.And => leftInt & rightInt,
-                    TokenType.Pipe => leftInt | rightInt,
-                    TokenType.Caret => leftInt ^ rightInt,
+                        case TokenType.And: return leftInt & rightInt;
+                        case TokenType.Pipe: return leftInt | rightInt;
+                        case TokenType.Caret: return leftInt ^ rightInt;
+                        default: throw new NotImplementedException();
+                    }
+                case (var t, BinaryOperandType.Double):
+                    switch (t)
+                    {
+                        case TokenType.Plus: return leftDouble + rightDouble;
+                        case TokenType.Minus: return leftDouble - rightDouble;
+                        case TokenType.Star: return leftDouble * rightDouble;
+                        case TokenType.Slash: return (double)((double)leftDouble / (double)rightDouble);
 
-                    // Everything else
-                    _ => throw new NotImplementedException()
-                },
-                (var t, BinaryOperandType.Double) => t switch
-                {
-                    TokenType.Plus => leftDouble + rightDouble,
-                    TokenType.Minus => leftDouble - rightDouble,
-                    TokenType.Star => leftDouble * rightDouble,
-                    TokenType.Slash => (double)((double)leftDouble / (double)rightDouble),
-
-                    TokenType.And
-                    | TokenType.Pipe
-                    | TokenType.Caret =>
-                    // Invalid data types: only Int32 can be used with bitwise operations
-                    throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Solamente {nameof(Int32)} può essere usato con i operatori bitwise"),
-
-                    _ => throw new NotImplementedException()
-                },
-                (var t, BinaryOperandType.String) => t switch
-                {
-                    TokenType.At => leftString + rightString,
-                    _ =>
-                    // It's impossible to use that operator with strings
-                    // TODO: Print invalid operator
-                    throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Non è possibile usare quello operatore con le stringhe")
-                },
-                _ => throw new NotImplementedException()
-            };
+                        case TokenType.And:
+                        case TokenType.Pipe:
+                        case TokenType.Caret:
+                            throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Solamente {nameof(Int32)} può essere usato con i operatori bitwise");
+                        default: throw new NotImplementedException();
+                    }
+                case (var t, BinaryOperandType.String):
+                    switch (t)
+                    {
+                        case TokenType.At: return leftString + rightString;
+                        default: throw new InterpreterException(InterpreterExceptionType.MismatchedTypes, $"Non è possibile usare quello operatore con le stringhe");
+                    }
+                default:
+                    throw new NotImplementedException();
+            }
 
             // return null;
         }

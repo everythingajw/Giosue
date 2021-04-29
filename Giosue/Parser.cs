@@ -330,7 +330,7 @@ namespace Giosue
         /// <returns></returns>
         private Expression Comparison()
         {
-            return BinaryExpression(Term, TokenType.GreaterEqual, TokenType.LessEqual, TokenType.LessEqual);
+            return BinaryExpression(Term, TokenType.Greater, TokenType.GreaterEqual, TokenType.Less, TokenType.LessEqual);
         }
 
         /// <summary>

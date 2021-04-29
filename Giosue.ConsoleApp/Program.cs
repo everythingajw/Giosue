@@ -23,7 +23,18 @@ namespace Giosue.ConsoleApp
         static int Main(string[] args)
         {
             var returnCode = GiosueExceptionCategory.AllOK;
-            var src = @"ScriveLina(1+1==2);ScriveLina(1+1==2.0);ScriveLina(TipoDiDato(1+1));ScriveLina(TipoDiDato(1));ScriveLina(TipoDiDato(2));";
+            var src = @"
+ScriveLina(1 + 1 == 2);
+ScriveLina(1 + 1 == 2.0);
+ScriveLina(1 - 1 == 0);
+ScriveLina(1 - 1 == 0.0);
+ScriveLina(1 > 2);
+ScriveLina(1 < 2);
+--ScriveLina(1 + 3 > 2.0);
+--ScriveLina(1 + 3 < 2.0);
+ScriveLina(TipoDiDato(1+1));
+ScriveLina(TipoDiDato(1));
+ScriveLina(TipoDiDato(2));";
             try
             {
                 //if (args.Length == 0)
