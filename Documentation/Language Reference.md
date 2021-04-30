@@ -133,3 +133,8 @@ mentre (vero)
     ScriveLina("Running forever and ever and ever and ever!");
 }
 ```
+
+## Exiting
+
+- Terminating a program while running is currently not implemented in the standard library.
+- To quit a REPL session, type the EOF character or type one of `#q;;`, `#quit;;`, or `#exit;;` to exit. Note that the latter three options must be typed as-is and cannot contain whitespace before or after them.
