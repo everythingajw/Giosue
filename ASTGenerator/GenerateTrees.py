@@ -112,11 +112,15 @@ def write_tree_to_file(output_dir: Path, confirmation_prompt: str, namespace: st
     using_statements = "\n".join(using_statements)
 
     with open(output_dir / "IVisitor.cs", "w") as f:
+        f.write(f"{LICENSE_AGREEMENT}\n\n")
+        f.write(f"{GENERATED_CODE_WARNING}\n\n")
         f.writelines(using_statements)
         f.write("\n\n")
         f.write("\n".join(visitor_interface))
 
     with open(output_dir / f"{base_class_name}.cs", "w") as f:
+        f.write(f"{LICENSE_AGREEMENT}\n\n")
+        f.write(f"{GENERATED_CODE_WARNING}\n\n")
         f.writelines(using_statements)
         f.write("\n\n")
         f.write("\n".join(base_class))
@@ -124,6 +128,8 @@ def write_tree_to_file(output_dir: Path, confirmation_prompt: str, namespace: st
     for tree in trees:
         output_file_path = output_dir / f"{tree.name}.cs"
         with open(output_file_path, "w") as f:
+            f.write(f"{LICENSE_AGREEMENT}\n\n")
+            f.write(f"{GENERATED_CODE_WARNING}\n\n")
             f.writelines(using_statements)
             f.write("\n\n")
             f.write(tree.generate_tree())
@@ -339,3 +345,4 @@ if generate_statement:
 
 
 print("OK.", file=sys.stderr)
+
